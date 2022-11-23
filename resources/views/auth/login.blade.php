@@ -53,5 +53,13 @@
                 </x-primary-button>
             </div>
         </form>
+         <div class="text-center">
+            <span class="text-center font-bold">Or</span>
+            <div clas="mt-4">
+                <a href="{{route('google-auth')}}">
+                    <span class="text-center font-bold">Continue with Google</span>
+                </a>
+            </div>
+        </div>
     </x-auth-card>
 </x-guest-layout>
