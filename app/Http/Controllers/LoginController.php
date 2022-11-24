@@ -12,14 +12,51 @@ use Illuminate\Support\Facades\Hash;
 class LoginController extends Controller
 {
     function Register(Request $request) {
-     $user = new User;
-     $user->name = $request->input('name');
+      $user = new User;
+      $user->name = $request->input('name');
       $user->email = $request->input('email');
       $user->google_id = $request->input('googleId');
-      $user->remember_token = $request->input('accessToken');
+      $user->remember_token = $request->input('accessToken'); 
+      
+      $useremail=$request->input('email');             
+      $useremail= User::where('email', $useremail)->first();
+      
+        if(isset($useremail)){
+           return Response::json(array(
+           'status' => "Error",     
+           )); 
+        }
+        else{
        $user->save();
-       return $user;
+           return Response::json(array(
+           'status' => "success",
+           'msg' => $user
+       ));
     }
- 
+    }
+    
+    function loginValidation(Request $request,){
+         
+        $useremail=$request->input('email');                
+        $user= User::where('email', $useremail)->first();
+        
+        if(isset($user)){
+         $email = $user->email;
+         
+           if($email == $useremail){       
+                $userAccessToken =$request->input('accessToken');
+                $updatedLoginDetail=User::where('email', $useremail)->update(['remember_token'=>$userAccessToken]);
+                return Response::json(array(
+                'status' => "success",
+                'msg' => $user
+                ));      
+          }        
+        }
+        else{      
+         return Response::json(array(
+          'status' => "Error",     
+       ));          
+    } 
+}
 }
 

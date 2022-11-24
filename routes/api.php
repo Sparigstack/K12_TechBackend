@@ -15,5 +15,6 @@ Route::get('/test',[RegisteredUserController::class,'getData']);
 
 });
 Route::post('/register',[LoginController::class,'register']);
+Route::post('/loginValidation',[LoginController::class,'loginValidation']);
 
 
