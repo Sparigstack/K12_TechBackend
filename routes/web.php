@@ -29,8 +29,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('auth/google',[GoogleAuthController::class, 'redirect'])->name('google-auth');
-Route::get('',[GoogleAuthController::class, 'callbackGoogle']);
 
 
 require __DIR__.'/auth.php';
