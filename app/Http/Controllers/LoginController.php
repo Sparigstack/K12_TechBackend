@@ -19,12 +19,19 @@ class LoginController extends Controller
       $user->remember_token = $request->input('accessToken'); 
       
       $useremail=$request->input('email');             
-      $useremail= User::where('email', $useremail)->first();
+      $usersavedemail= User::where('email', $useremail)->first();
       
         if(isset($useremail)){
-           return Response::json(array(
-           'status' => "Error",     
-           )); 
+            $email = $usersavedemail->email;
+         
+           if($email == $useremail){   
+          $userAccessToken =$request->input('accessToken');
+          $updatedLoginDetail=User::where('email', $useremail)->update(['remember_token'=>$userAccessToken]);
+                return Response::json(array(
+                'status' => "success",
+                'msg' => $user
+                ));      
+        }
         }
         else{
        $user->save();
