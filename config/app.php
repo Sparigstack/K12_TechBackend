@@ -70,6 +70,7 @@ return [
     */
 
     'timezone' => 'UTC',
+    'Input' => Illuminate\Support\Facades\Input::class,
 
     /*
     |--------------------------------------------------------------------------

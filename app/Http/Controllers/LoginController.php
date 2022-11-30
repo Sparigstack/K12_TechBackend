@@ -16,17 +16,21 @@ class LoginController extends Controller
       $user->name = $request->input('name');
       $user->email = $request->input('email');
       $user->google_id = $request->input('googleId');
+      $user->microsoft_id = $request->input('microsoftId');
       $user->remember_token = $request->input('accessToken'); 
-      
+     
       $useremail=$request->input('email');             
-      $usersavedemail= User::where('email', $useremail)->first();
+     
       
         if(isset($useremail)){
+               $usersavedemail= User::where('email', $useremail)->first();      
             $email = $usersavedemail->email;
          
            if($email == $useremail){   
-          $userAccessToken =$request->input('accessToken');
-          $updatedLoginDetail=User::where('email', $useremail)->update(['remember_token'=>$userAccessToken]);
+          $userAccessToken =$request->input('accessToken');   
+          $userMicrosoftId =$request->input('microsoftId');
+          $userGoogleId =$request->input('googleId');
+          $updatedLoginDetail=User::where('email', $useremail)->update(['remember_token'=>$userAccessToken,'google_id'=>$userGoogleId,'microsoft_id'=>$userMicrosoftId]);
                 return Response::json(array(
                 'status' => "success",
                 'msg' => $user
@@ -42,7 +46,8 @@ class LoginController extends Controller
     }
     }
     
-    function loginValidation(Request $request,){
+    
+    function loginValidation(Request $request){
          
         $useremail=$request->input('email');                
         $user= User::where('email', $useremail)->first();
