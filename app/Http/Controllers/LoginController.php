@@ -19,18 +19,25 @@ class LoginController extends Controller
       $user->microsoft_id = $request->input('microsoftId');
       $user->remember_token = $request->input('accessToken'); 
      
-      $useremail=$request->input('email');             
-     
-      
-        if(isset($useremail)){
-               $usersavedemail= User::where('email', $useremail)->first();      
-            $email = $usersavedemail->email;
-         
-           if($email == $useremail){   
+
+       $usersavedemail= User::where('email', $request->input('email'))->first();
+        if(isset($usersavedemail)){       
+             
+               $email = $usersavedemail->email;
+                     $useremail=$request->input('email');
+           if($email == $useremail){
+                     
+                
           $userAccessToken =$request->input('accessToken');   
           $userMicrosoftId =$request->input('microsoftId');
           $userGoogleId =$request->input('googleId');
-          $updatedLoginDetail=User::where('email', $useremail)->update(['remember_token'=>$userAccessToken,'google_id'=>$userGoogleId,'microsoft_id'=>$userMicrosoftId]);
+          $flag = $request->input('flag');
+          if($flag == 1){
+               $updatedLoginDetail=User::where('email', $useremail)->update(['remember_token'=>$userAccessToken,'google_id'=>$userGoogleId]);
+          }else{
+               $updatedLoginDetail=User::where('email', $useremail)->update(['remember_token'=>$userAccessToken,'microsoft_id'=>$userMicrosoftId]);
+          }
+         
                 return Response::json(array(
                 'status' => "success",
                 'msg' => $user
