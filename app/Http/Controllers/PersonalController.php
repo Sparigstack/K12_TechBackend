@@ -12,14 +12,14 @@ class PersonalController extends Controller
 {
 
     public function showform(Request $request)
-    {    
+    {   
+      
         return view('upload');
     }
     public function store(Request $request)
     {
-        $upload =Input::file('upload_file');
-        $file_path =Input::file('upload_file')->getRealPath();
-        $file = fopen($file_path,'r');
+         $result =$request->file('file');
+        $file = fopen($result,'r');
         $header = fgetcsv($file);
         $escapedheader=[];       
         foreach($header as $key =>$value){

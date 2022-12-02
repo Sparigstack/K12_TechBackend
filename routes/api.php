@@ -16,6 +16,7 @@ Route::middleware('auth')->group(function () {
 });
 Route::post('/register',[LoginController::class,'register']);
 Route::post('/loginValidation',[LoginController::class,'loginValidation']);
- Route::post('/upload', [PersonalController::class, 'store']); 
+ Route::post('/upload', [PersonalController::class, 'store']);
+ Route::post('/uploadfile', [PersonalController::class, 'showform']);
 
 
