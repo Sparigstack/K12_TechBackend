@@ -21,5 +21,6 @@ Route::post('/loginValidation',[LoginController::class,'loginValidation']);
 Route::post('/upload', [InventoryController::class, 'store']); 
 Route::post('/addNdUpdateDevice', [DeviceController::class, 'addDevice']);
 Route::get('/allDevice', [DeviceController::class, 'allDevice']);
+Route::get('/fetchDevice', [DeviceController::class, 'allDevice']);
 
 

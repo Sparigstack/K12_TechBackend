@@ -39,7 +39,11 @@ class DeviceController extends Controller
     }
     public function allDevice(){
         $devices = Device::all();
-        return $devices;
+         return response()->json(
+        collect([
+        'response' => 'success',
+        'user' => $devices,
+    ]));
     }
     
     
