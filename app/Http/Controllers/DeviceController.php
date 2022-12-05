@@ -37,6 +37,10 @@ class DeviceController extends Controller
            return "success";      
     }                           
     }
+    public function allDevice(){
+        $devices = Device::all();
+        return $devices;
+    }
     
     
 }
