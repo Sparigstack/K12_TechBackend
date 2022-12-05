@@ -42,7 +42,16 @@ class DeviceController extends Controller
          return response()->json(
         collect([
         'response' => 'success',
-        'user' => $devices,
+        'msg' => $devices,
+    ]));
+    }
+     public function fetchDevice(Request $request){
+        $deviceId= $request->input('ID');
+        $device= Device::where('ID', $request->input('ID'))->first(); 
+         return response()->json(
+        collect([
+        'response' => 'success',
+        'msg' => $device,
     ]));
     }
     
