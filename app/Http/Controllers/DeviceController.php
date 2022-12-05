@@ -45,8 +45,7 @@ class DeviceController extends Controller
         'msg' => $devices,
     ]));
     }
-     public function fetchDevice(Request $request){
-        $deviceId= $request->input('ID');
+     public function fetchDevice(Request $request){     
         $device= Device::where('ID', $request->input('ID'))->first(); 
          return response()->json(
         collect([
@@ -55,5 +54,9 @@ class DeviceController extends Controller
     ]));
     }
     
+    public function DeleteDevice(Request $request){
+        $device= Device::where('ID', $request->input('ID'))->delete(); 
+         return 'success';
+    }
     
 }
