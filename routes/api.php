@@ -19,6 +19,6 @@ Route::middleware('auth')->group(function () {
 Route::post('/register',[LoginController::class,'register']);
 Route::post('/loginValidation',[LoginController::class,'loginValidation']);
 Route::post('/upload', [InventoryController::class, 'store']); 
-Route::post('/addDevice', [DeviceController::class, 'addDevice']);
+Route::post('/addNdUpdateDevice', [DeviceController::class, 'addDevice']);
 
 
