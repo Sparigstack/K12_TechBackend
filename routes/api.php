@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\DeviceController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -17,7 +18,7 @@ Route::middleware('auth')->group(function () {
 });
 Route::post('/register',[LoginController::class,'register']);
 Route::post('/loginValidation',[LoginController::class,'loginValidation']);
- Route::post('/upload', [InventoryController::class, 'store']);
- Route::post('/uploadfile', [InventoryController::class, 'showform']);
+Route::post('/upload', [InventoryController::class, 'store']); 
+Route::post('/addDevice', [DeviceController::class, 'addDevice']);
 
 
