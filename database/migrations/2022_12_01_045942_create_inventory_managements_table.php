@@ -6,19 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+   
     public function up()
     {
-        Schema::create('inventory_managements', function (Blueprint $table) {
+        Schema::create('inventory_management', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('Purchase_date');
-            $table->timestamp('OEM_warranty_until');            
-            $table->timestamp('Extended_warranty_until')->nullable();
-            $table->timestamp('ADP_coverage')->nullable();
+            $table->date('Purchase_date')->nullable();
+            $table->date('OEM_warranty_until')->nullable();            
+            $table->date('Extended_warranty_until')->nullable();
+            $table->date('ADP_coverage')->nullable();
             $table->string('OEM')->nullable();
             $table->string('Device_model')->nullable();
             $table->string('OS')->nullable();
@@ -32,17 +28,13 @@ return new class extends Migration
             $table->string('Parent_phone_number')->nullable();
             $table->tinyint('Parental_coverage')->nullable();
             $table->string('Repair_cap')->nullable();
-            
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+   
     public function down()
     {
-        Schema::dropIfExists('personal_access_tokens');
+        Schema::dropIfExists('inventory_management');
     }
 };
