@@ -28,3 +28,5 @@ Route::delete('/deleteDevice', [DeviceController::class, 'DeleteDevice']);
 //os
 Route::post('/addNdUpdateOs', [OperatingSystemController::class, 'addOs']);
 Route::get('/allOs', [OperatingSystemController::class, 'allOs']);
+Route::get('/fetchOs/{id?}', [OperatingSystemController::class, 'fetchOs']);
+Route::delete('/deleteOs', [OperatingSystemController::class, 'DeleteOs']);
