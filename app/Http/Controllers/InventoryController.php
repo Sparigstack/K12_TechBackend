@@ -12,7 +12,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 
 class InventoryController extends Controller
 {
-    public function store(Request $request)
+    public function uploadInventory(Request $request)
     {
         $result =$request->file('file');
         $file = fopen($result,'r');
@@ -76,4 +76,13 @@ class InventoryController extends Controller
          }
       return 'success' ;                                       
 }
+
+   public function getInventories(){
+        $inventory = InventoryManagement::all();
+         return response()->json(
+        collect([
+        'response' => 'success',
+        'msg' => $inventory,
+    ]));
+   }
 }

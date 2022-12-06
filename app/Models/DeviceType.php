@@ -9,11 +9,11 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 
-class Device extends Model
+class DeviceType extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;
- 
-    
+    protected $table="devicetypes";
+     
 }
 
 
