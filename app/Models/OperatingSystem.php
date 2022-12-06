@@ -11,5 +11,5 @@ use Illuminate\Database\Eloquent\Model;
 class OperatingSystem extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;    
-    protected $table="operating_systems";     
+    protected $table="operatingsystems";     
 }
