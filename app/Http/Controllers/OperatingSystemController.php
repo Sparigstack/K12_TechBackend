@@ -33,6 +33,14 @@ class OperatingSystemController extends Controller
            return "success";      
     }                           
     }
-    
+    public function allOs(){
+        $os = OperatingSystem::all();
+         return response()->json(
+        collect([
+        'response' => 'success',
+        'msg' => $os,
+    ]));
+    }
+   
     
 }
