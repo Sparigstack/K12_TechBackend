@@ -16,19 +16,15 @@ class DeviceTypeController extends Controller
     public function addDevice(Request $request)
     {
        $device = new DeviceType; 
-       $device->name = $request->input('name');
-       $device->type = $request->input('type');
-       $device->device_num = $request->input('device_num');
+       $device->type = $request->input('type');   
        
        $checkdevice= DeviceType::where('ID', $request->input('ID'))->first();      
         if(isset($checkdevice)){ 
             $deviceIDfromDB = $checkdevice->ID;          
-             $deviceId= $request->input('ID');
-             $deviceName= $request->input('name');
-             $deviceType= $request->input('type');
-             $deviceNum= $request->input('device_num');  
+             $deviceId= $request->input('ID');            
+             $deviceType= $request->input('type');           
              if($deviceIDfromDB == $deviceId){
-            $updatedLoginDetail=DeviceType::where('ID', $deviceId)->update(['name'=>$deviceName,'type'=>$deviceType,'device_num'=>$deviceNum]);
+            $updatedLoginDetail=DeviceType::where('ID', $deviceId)->update(['type'=>$deviceType]);
         }  
          return   "success";    
         }
