@@ -19,7 +19,7 @@ class InventoryController extends Controller
         $header = fgetcsv($file);
         $escapedheader=[];       
         foreach($header as $key =>$value){          
-         $lheader = strtolower($value);           
+        $lheader = strtolower($value);           
          $escapedItem=preg_replace('/[^a-z]/','',$lheader);        
          array_push($escapedheader,$escapedItem);
         }  
@@ -35,7 +35,6 @@ class InventoryController extends Controller
                $value;               
             }              
             $data = array_combine($escapedheader,$columns);   
-//            return $data;
             $Purchase_date=$data['purchasedate']; 
             $OEM_warranty_until=$data['oemwarrantyuntil'];
             $Extended_warranty_until=$data['extendedwarrantyuntil'];
