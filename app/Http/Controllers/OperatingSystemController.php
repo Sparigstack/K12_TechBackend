@@ -41,14 +41,14 @@ class OperatingSystemController extends Controller
         'msg' => $os,
     ]));
     }
-//     public function fetchOs($id){        
-//        $os= OperatingSystem::where('ID',$id)->first();     
-//         return response()->json(
-//        collect([
-//        'response' => 'success',
-//        'msg' => $os,
-//    ]));
-//    }
+     public function fetchOs($id){        
+        $os= OperatingSystem::where('ID',$id)->first();     
+         return response()->json(
+        collect([
+        'response' => 'success',
+        'msg' => $os,
+    ]));
+    }
     
     public function DeleteOs(Request $request){
         $os= OperatingSystem::where('ID', $request->input('ID'))->delete(); 
