@@ -25,6 +25,7 @@ Route::post('/loginValidation',[LoginController::class,'loginValidation']);
 Route::post('/upload', [InventoryController::class, 'uploadInventory']); 
 Route::get('/getInventories/{sid?}', [InventoryController::class, 'getInventories']);
 Route::get('/getexport', [InventoryController::class, 'getexport']);
+Route::post('/addmanualInventoy', [InventoryController::class, 'addmanualInventoy']);
 //device
 Route::post('/addNdUpdateDevice', [DeviceTypeController::class, 'addDevice']);
 Route::get('/allDevice', [DeviceTypeController::class, 'allDevice']);

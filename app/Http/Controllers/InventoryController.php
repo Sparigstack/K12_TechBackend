@@ -105,5 +105,34 @@ class InventoryController extends Controller
       'msg' => $os,
   ]));
   }
+ public function addmanualInventoy(Request $request){
+       $inventory = new InventoryManagement;
+            $inventory->Purchase_date = $request->input('PurchaseDate');
+            $inventory->OEM_warranty_until = $request->input('OemWarrantyUntil');
+            $inventory->Extended_warranty_until = $request->input('ExtendedWarrantyUntil');
+            $inventory->ADP_coverage =$request->input('ADPCoverage');
+            $inventory->OEM = $request->input('OEM');
+            $inventory->Device_model = $request->input('DeviceModel');
+            $inventory->OS = $request->input('OS');
+            $inventory->Serial_number = $request->input('SerialNumber');
+            $inventory->Asset_tag = $request->input('AssetTag');
+            $inventory->Building =$request->input('Building');
+            $inventory->Grade = $request->input('Grade');
+            $inventory->Student_name = $request->input('StudentName');
+            $inventory->Student_ID = $request->input('StudentID');
+            $inventory->Parent_email = $request->input('ParentEmail');
+            $inventory->Parent_phone_number = $request->input('ParentPhoneNumber');
+            $inventory->Parental_coverage = $request->input('ParentalCoverage');
+            $inventory->Repair_cap = $request->input('Repaircap');
+            $inventory->user_csv_num = $request->input('usercsvnum');
+            $inventory->user_id = $request->input('userId');
+            $inventory->school_id = $request->input('schoolId');
+            $inventory->save();
+     return response()->json(
+      collect([
+      'response' => 'success',
+      'msg' => $inventory,
+  ]));
+ }
   
 }
