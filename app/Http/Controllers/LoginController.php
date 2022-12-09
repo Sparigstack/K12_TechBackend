@@ -18,6 +18,7 @@ class LoginController extends Controller
       $user->google_id = $request->input('googleId');
       $user->microsoft_id = $request->input('microsoftId');
       $user->remember_token = $request->input('accessToken'); 
+      $user->school_id = $request->input('schoolId'); 
      
 
        $usersavedemail= User::where('email', $request->input('email'))->first();

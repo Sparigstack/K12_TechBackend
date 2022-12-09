@@ -9,12 +9,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request as Input;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class InventoryController extends Controller
 {
     public function uploadInventory(Request $request)
     {
         $userId =$request->input('ID');
+        $createdby=$request->input('createdBy');
+        $schId =$request->input('schId');
         $result =$request->file('file');
         $file = fopen($result,'r');
         $header = fgetcsv($file);
@@ -76,6 +79,8 @@ class InventoryController extends Controller
             $inventory->Parental_coverage = $Parental_coverage;
             $inventory->Repair_cap = $Repair_cap;
             $inventory->user_csv_num = $UserCsvNumber;
+            $inventory->user_id = $createdby;
+            $inventory->school_id = $schId;
             $inventory->save();
                  
             $csvCont++;
@@ -83,8 +88,8 @@ class InventoryController extends Controller
       return 'success' ;                                       
 }
 
-   public function getInventories(){
-        $inventory = InventoryManagement::orderby('id','asc')->paginate(5);
+   public function getInventories($sid){
+        $inventory = InventoryManagement::where('school_id',$sid)->orderby('id','asc')->paginate(10);
          return response()->json(
         collect([
         'response' => 'success',
@@ -100,4 +105,5 @@ class InventoryController extends Controller
       'msg' => $os,
   ]));
   }
+  
 }
