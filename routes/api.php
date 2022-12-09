@@ -27,6 +27,9 @@ Route::post('/addNdUpdateDevice', [DeviceTypeController::class, 'addDevice']);
 Route::get('/allDevice', [DeviceTypeController::class, 'allDevice']);
 Route::get('/fetchDevice/{id?}', [DeviceTypeController::class, 'fetchDevice']);
 Route::delete('/deleteDevice', [DeviceTypeController::class, 'DeleteDevice']);
+Route::get('/fetchDeviceDetails/{id?}', [InventoryController::class, 'fetchDeviceDetail']);
+
+
 //os
 Route::post('/addNdUpdateOs', [OperatingSystemController::class, 'addOs']);
 Route::get('/allOs', [OperatingSystemController::class, 'allOs']);

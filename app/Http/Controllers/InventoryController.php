@@ -14,6 +14,7 @@ class InventoryController extends Controller
 {
     public function uploadInventory(Request $request)
     {
+        $userId =$request->input('ID');
         $result =$request->file('file');
         $file = fopen($result,'r');
         $header = fgetcsv($file);
@@ -23,9 +24,13 @@ class InventoryController extends Controller
          $escapedItem=preg_replace('/[^a-z]/','',$lheader);        
          array_push($escapedheader,$escapedItem);
         }  
+    $csvCont = '1';
     
           while($columns=fgetcsv($file))
-         {            
+         {    
+              $UserCsvNumber="csv_".$userId ."_". $csvCont;
+//           $dd =    strrpos($UserCsvNumber, "_", -1);
+//          return $dd;    
             if($columns[0]=="") 
             {
                 continue;
@@ -70,18 +75,29 @@ class InventoryController extends Controller
             $inventory->Parent_phone_number = $Parent_phone_number;
             $inventory->Parental_coverage = $Parental_coverage;
             $inventory->Repair_cap = $Repair_cap;
+            $inventory->user_csv_num = $UserCsvNumber;
             $inventory->save();
-                    
+                 
+            $csvCont++;
          }
       return 'success' ;                                       
 }
 
    public function getInventories(){
-        $inventory = InventoryManagement::all();
+        $inventory = InventoryManagement::orderby('id','asc')->paginate(5);
          return response()->json(
         collect([
         'response' => 'success',
         'msg' => $inventory,
     ]));
    }
+     public function fetchDeviceDetail($id){        
+      $os= InventoryManagement::where('ID',$id)->first(); 
+      
+       return response()->json(
+      collect([
+      'response' => 'success',
+      'msg' => $os,
+  ]));
+  }
 }

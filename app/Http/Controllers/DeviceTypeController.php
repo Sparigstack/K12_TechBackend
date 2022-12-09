@@ -54,5 +54,5 @@ class DeviceTypeController extends Controller
         $device= DeviceType::where('ID', $request->input('ID'))->delete(); 
          return 'success';
     }
-    
+  
 }
