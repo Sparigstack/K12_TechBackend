@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request as Input;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class InventoryController extends Controller
 {
@@ -175,8 +176,22 @@ class InventoryController extends Controller
                  ]));
             }
  }
+  public function searchInventoy($key){
+      if($key =="name"){
+    $inventory = QueryBuilder::for(InventoryManagement::class)
+    ->defaultSort('Student_name')
+    ->allowedSorts('Student_name')
+    ->get(); 
+      return response()->json(
+                collect([
+                'response' => 'success',
+                'msg' => $inventory,
+                 ]));
+}else{
+    return "error";
 }
- 
+  }
+}
 // public function searchInventoy($key){
 //     $get = InventoryManagement::where('Student_name','LIKE',"%$key%")->get();
 //     return response()->json(
