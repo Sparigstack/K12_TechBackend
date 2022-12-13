@@ -105,8 +105,8 @@ class InventoryController extends Controller
       'msg' => $os,
   ]));
   }
- public function addmanualInventoy(Request $request){
-       $inventory = new InventoryManagement;
+ public function manualAddEditInventoy(Request $request){
+            $inventory = new InventoryManagement;
             $inventory->Purchase_date = $request->input('PurchaseDate');
             $inventory->OEM_warranty_until = $request->input('OemWarrantyUntil');
             $inventory->Extended_warranty_until = $request->input('ExtendedWarrantyUntil');
@@ -126,13 +126,41 @@ class InventoryController extends Controller
             $inventory->Repair_cap = $request->input('Repaircap');
             $inventory->user_csv_num = $request->input('usercsvnum');
             $inventory->user_id = $request->input('userId');
-            $inventory->school_id = $request->input('schoolId');
-            $inventory->save();
-     return response()->json(
-      collect([
-      'response' => 'success',
-      'msg' => $inventory,
-  ]));
+            $inventory->school_id = $request->input('schoolId');            
+            $checkinventory= InventoryManagement::where('ID', $request->input('ID'))->first();  
+               if(isset($checkinventory)){
+                $deviceIDfromDB = $checkinventory->ID;          
+                $deviceId= $request->input('ID');                                    
+                if($deviceIDfromDB == $deviceId){
+                $updatedInventory=InventoryManagement::where('ID', $deviceId)
+                        ->update(['Purchase_date'=>$request->input('PurchaseDate'),
+                            'OEM_warranty_until'=>$request->input('OemWarrantyUntil'),
+                            'Extended_warranty_until'=>$request->input('ExtendedWarrantyUntil'),
+                            'ADP_coverage'=>$request->input('ADPCoverage'),
+                            'OEM'=>$request->input('OEM'),
+                            'Device_model'=>$request->input('DeviceModel'),
+                            'OS'=>$request->input('OS'),
+                            'Serial_number'=>$request->input('SerialNumber'),
+                            'Asset_tag'=>$request->input('AssetTag'),
+                            'Building'=>$request->input('Building'),
+                            'Grade'=>$request->input('Grade'),
+                            'Student_name'=>$request->input('StudentName'),
+                            'Student_ID'=>$request->input('StudentID'),
+                            'Parent_email'=>$request->input('ParentEmail'),
+                            'Parent_phone_number'=>$request->input('ParentPhoneNumber'),
+                            'Parental_coverage'=>$request->input('ParentalCoverage'),
+                            'Repair_cap'=>$request->input('Repaircap'),
+                            'user_id'=>$request->input('userId'),
+                            'school_id'=>$request->input('schoolId')                            
+                            ]);
+                return "success";
+               }
+               } else{
+                return response()->json(
+                collect([
+                'response' => 'success',
+                'msg' => $inventory,
+                 ]));
+            }
  }
-  
-}
+ }
