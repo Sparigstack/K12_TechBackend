@@ -164,4 +164,13 @@ class InventoryController extends Controller
                  ]));
             }
  }
+ public function searchInventoy($key){
+     $get = InventoryManagement::where('Student_name','LIKE',"%$key%")->get();
+     return response()->json(
+                collect([
+                'response' => 'success',
+                'msg' => $get,
+                 ]));
+            }
  }
+ 

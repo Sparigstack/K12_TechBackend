@@ -33,5 +33,10 @@ Route::middleware('auth')->group(function () {
  Route::get('/upload', [InventoryController::class, 'showform']);
     Route::post('/upload', [InventoryController::class, 'store']); 
 
+Route::get('/test', function () {
+    return view('test');
+});
 
+Route::get('/','SearchController@index');
+Route::get('/search','SearchController@search');
 require __DIR__.'/auth.php';

@@ -41,3 +41,5 @@ Route::get('/fetchOs/{id?}', [OperatingSystemController::class, 'fetchOs']);
 Route::delete('/deleteOs', [OperatingSystemController::class, 'DeleteOs']);
 //school
 Route::post('/addSchool', [SchoolController::class, 'addSchool']);
+//search
+Route::get('/search/{key}', [InventoryController::class, 'searchInventoy']);
