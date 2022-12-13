@@ -156,6 +156,7 @@ class InventoryController extends Controller
                 return "success";
                }
                } else{
+                 $inventory->save();   
                 return response()->json(
                 collect([
                 'response' => 'success',
