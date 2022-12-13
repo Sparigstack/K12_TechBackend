@@ -89,15 +89,15 @@ class InventoryController extends Controller
 }
 
    public function getInventories($sid,$key){
-       if($key == "NULL"){
-        $inventory = InventoryManagement::where('school_id',$sid)->orderby('id','asc')->paginate(2); 
+       if($key == "null"){
+        $inventory = InventoryManagement::where('school_id',$sid)->orderby('id','asc')->paginate(8); 
         return response()->json(
         collect([
         'response' => 'success',
         'msg' => $inventory,        
          ]));
        }else{
-        $get = InventoryManagement::where('Student_name','LIKE',"%$key%")->paginate(2);  
+        $get = InventoryManagement::where('Student_name','LIKE',"%$key%")->paginate(8);  
         return response()->json(
          collect([
         'response' => 'success',
@@ -175,14 +175,15 @@ class InventoryController extends Controller
                  ]));
             }
  }
+}
  
- public function searchInventoy($key){
-     $get = InventoryManagement::where('Student_name','LIKE',"%$key%")->get();
-     return response()->json(
-                collect([
-                'response' => 'success',
-                'msg' => $get,
-                 ]));
-            }
- }
+// public function searchInventoy($key){
+//     $get = InventoryManagement::where('Student_name','LIKE',"%$key%")->get();
+//     return response()->json(
+//                collect([
+//                'response' => 'success',
+//                'msg' => $get,
+//                 ]));
+//            }
+// }
  
