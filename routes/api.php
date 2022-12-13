@@ -23,7 +23,7 @@ Route::post('/register',[LoginController::class,'register']);
 Route::post('/loginValidation',[LoginController::class,'loginValidation']);
 //inventory
 Route::post('/upload', [InventoryController::class, 'uploadInventory']); 
-Route::get('/getInventories/{sid?}&{key?}&{skey}', [InventoryController::class, 'getInventories']);
+Route::get('/getInventories/{sid?}&{key?}', [InventoryController::class, 'getInventories']);
 Route::get('/getexport', [InventoryController::class, 'getexport']);
 Route::post('/addeditmanualInventoy', [InventoryController::class, 'manualAddEditInventoy']);
 //device
@@ -42,4 +42,4 @@ Route::delete('/deleteOs', [OperatingSystemController::class, 'DeleteOs']);
 //school
 Route::post('/addSchool', [SchoolController::class, 'addSchool']);
 //search
-Route::get('/search/{key}', [InventoryController::class, 'searchInventoy']);
+Route::get('/search/{sid?}&{key}', [InventoryController::class, 'searchInventoy']);

@@ -176,7 +176,7 @@ class InventoryController extends Controller
                  ]));
             }
  }
-  public function searchInventoy($key){
+  public function searchInventoy($sid,$key){
       if($key =="name"){
     $inventory = QueryBuilder::for(InventoryManagement::class)
     ->defaultSort('Student_name')
