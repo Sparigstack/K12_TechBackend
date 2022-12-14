@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\OperatingSystem;
 use App\Models\DeviceIssue;
+use App\Models\Ticket;
 use App\Models\InventoryManagement;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
@@ -22,6 +23,25 @@ class TicketController extends Controller
         'msg' => $issues,
     ]));
     }
-    
+     public function generateIssue(Request $request){
+         
+       
+        $msg = $request->input('msg');
+        $devicearray = $request->input('DeviceIssueArray');       
+        foreach($devicearray as $devicearraydata){
+        $issues = new Ticket();    
+        $issues->device_issue_id = $devicearraydata['ID']; 
+        $issues->school_id = $msg['schoolId'];
+        $issues->user_id  = $msg['userId'];      
+        $issues->inventory_id = $msg['inventoryId'];
+        $issues->ticket_status =$msg['status'];
+        $issues->notes =$msg['Notes'];       
+        $issues->save();
+           
+        }   
+     return "success";
+        
+        
+    }
     
 }
