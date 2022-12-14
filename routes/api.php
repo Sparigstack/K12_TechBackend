@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\OperatingSystemController;
@@ -43,3 +44,5 @@ Route::delete('/deleteOs', [OperatingSystemController::class, 'DeleteOs']);
 Route::post('/addSchool', [SchoolController::class, 'addSchool']);
 //search
 Route::get('/search/{sid?}&{key}', [InventoryController::class, 'searchInventoy']);
+//issue
+Route::get('/allDeviceIssue', [TicketController::class, 'allIssue']);
