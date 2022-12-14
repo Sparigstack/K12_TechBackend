@@ -45,5 +45,5 @@ Route::post('/addSchool', [SchoolController::class, 'addSchool']);
 //search
 Route::get('/search/{sid?}&{key}', [InventoryController::class, 'searchInventoy']);
 //issue
-Route::get('/allDeviceIssue', [TicketController::class, 'allIssue']);
+Route::get('/allDeviceIssue/{key}', [TicketController::class, 'allIssue']);
 Route::post('/generateIssue', [TicketController::class, 'generateIssue']);
