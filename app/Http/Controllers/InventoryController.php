@@ -18,9 +18,9 @@ class InventoryController extends Controller
     public function uploadInventory(Request $request)
     {
        try{
-        $userId =$request->input('ID');
-        $createdby=$request->input('createdBy');
+        $userId =$request->input('ID');    
         $schId =$request->input('schId');
+        
         $result =$request->file('file');
         $file = fopen($result,'r');
         $header = fgetcsv($file);
@@ -29,14 +29,10 @@ class InventoryController extends Controller
         $lheader = strtolower($value);           
          $escapedItem=preg_replace('/[^a-z]/','',$lheader);        
          array_push($escapedheader,$escapedItem);
-        }  
-    $csvCont = '1';
+        }   
     
           while($columns=fgetcsv($file))
-         {    
-              $UserCsvNumber="csv_".$userId ."_". $csvCont;
-//           $dd =    strrpos($UserCsvNumber, "_", -1);
-//          return $dd;    
+         {                
             if($columns[0]=="") 
             {
                 continue;
@@ -80,18 +76,15 @@ class InventoryController extends Controller
             $inventory->Parent_email = $Parent_email;
             $inventory->Parent_phone_number = $Parent_phone_number;
             $inventory->Parental_coverage = $Parental_coverage;
-            $inventory->Repair_cap = $Repair_cap;
-            $inventory->user_csv_num = $UserCsvNumber;
-            $inventory->user_id = $createdby;
-            $inventory->school_id = $schId;
-            $inventory->save();
-                 
-            $csvCont++;
+            $inventory->Repair_cap = $Repair_cap;      
+            $inventory->user_id = $userId;
+            $inventory->school_id =$schId;
+            $inventory->save();                            
          }
       return 'success' ;                                       
 }
-catch (\Throwable $th) {
-        return "Enter Valid Csv";
+catch (\Throwable $th) {    
+        return "Invalid CSV";
     }
     }
 
