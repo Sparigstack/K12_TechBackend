@@ -28,10 +28,10 @@ class ManageTicketController extends Controller
          $serialNum = $Inventory['Serial_number'];
          $studentName = $Inventory['Student_name'];
          $ticketID =$ticketdata['ID']; 
-         if($ticketdata['ticket_status'] == "open"){                      
-           array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"open"]);
+         if($ticketdata['ticket_status'] == 1){                      
+           array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Open"]);
          }else{
-             array_push($array_closeTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"close"]);
+             array_push($array_closeTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Close"]);
          }   
     
          }return response()->json(
