@@ -98,7 +98,10 @@ class InventoryController extends Controller
         'msg' => $inventory,        
          ]));
        }else{
-        $get = InventoryManagement::where('Student_name','LIKE',"%$key%")->paginate(8);  
+        $get = InventoryManagement::where('Student_name','LIKE',"%$key%")
+                ->orWhere('Device_model', 'like', '%' . $key . '%')
+                ->orWhere('Serial_number', 'like', '%' . $key . '%')
+                ->paginate(8);  
         return response()->json(
          collect([
         'response' => 'success',
