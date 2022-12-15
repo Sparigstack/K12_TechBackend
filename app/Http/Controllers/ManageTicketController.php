@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request as Input;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Carbon\Carbon;
 
 class ManageTicketController extends Controller
 {
@@ -27,11 +28,12 @@ class ManageTicketController extends Controller
          $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();
          $serialNum = $Inventory['Serial_number'];
          $studentName = $Inventory['Student_name'];
-         $ticketID =$ticketdata['ID']; 
+         $ticketID =$ticketdata['ID'];
+         $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y');                
          if($ticketdata['ticket_status'] == 1){                      
-           array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Open"]);
+           array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Open","Date"=>$ticketCreateDate]);
          }else{
-             array_push($array_closeTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Close"]);
+             array_push($array_closeTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Close","Date"=>$ticketCreateDate]);
          }   
     
          }return response()->json(
@@ -39,9 +41,14 @@ class ManageTicketController extends Controller
          'response' => 'success',          
           'username'=>$userName,
           'Closeticket'=>$array_closeTicket,
-          'Openticket'=>$array_openTicket    
+          'Openticket'=>$array_openTicket,          
     ]));
     }
+    
+    function getopentickets(){
+        
+    }
+    
     
 }
     
