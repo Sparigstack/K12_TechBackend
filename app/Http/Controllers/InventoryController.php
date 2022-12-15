@@ -180,10 +180,7 @@ catch (\Throwable $th) {
  }
   public function sortbyInventory($sid,$key){
       if($key =="name"){
-    $inventory = QueryBuilder::for(InventoryManagement::class)
-    ->defaultSort('Student_name')
-    ->allowedSorts('Student_name')
-    ->get(); 
+      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->get();
       return response()->json(
                 collect([
                 'response' => 'success',
