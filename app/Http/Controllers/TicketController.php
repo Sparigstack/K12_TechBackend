@@ -25,7 +25,7 @@ class TicketController extends Controller
 }
      public function generateIssue(Request $request){
          
-       
+try{       
         $msg = $request->input('msg');
         $devicearray = $request->input('DeviceIssueArray');       
         foreach($devicearray as $devicearraydata){
@@ -42,6 +42,9 @@ class TicketController extends Controller
      return "success";
         
         
-    } 
+    }catch (\Throwable $th){
+      return "Error";  
+    }
+}
 }
     
