@@ -178,7 +178,7 @@ catch (\Throwable $th) {
                  ]));
             }
  }
-  public function searchInventoy($sid,$key){
+  public function sortbyInventory($sid,$key){
       if($key =="name"){
     $inventory = QueryBuilder::for(InventoryManagement::class)
     ->defaultSort('Student_name')
@@ -193,14 +193,17 @@ catch (\Throwable $th) {
     return "error";
 }
   }
-}
-// public function searchInventoy($key){
-//     $get = InventoryManagement::where('Student_name','LIKE',"%$key%")->get();
-//     return response()->json(
-//                collect([
-//                'response' => 'success',
-//                'msg' => $get,
-//                 ]));
-//            }
-// }
+
+ public function searchInventory($key){
+     $get = InventoryManagement::where('Student_name','LIKE',"%$key%")
+             ->orWhere('Device_model', 'like', '%' . $key . '%')
+             ->orWhere('Serial_number', 'like', '%' . $key . '%')
+             ->get();
+     return response()->json(
+                collect([
+                'response' => 'success',
+                'msg' => $get,
+                 ]));
+            }
+ }
  

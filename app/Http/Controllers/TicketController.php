@@ -15,23 +15,13 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 class TicketController extends Controller
 {
     
-    public function allIssue($key){
-        if($key =="null"){
+    public function allIssue(){     
         $issues = DeviceIssue::all();
          return response()->json(
         collect([
         'response' => 'success',
         'msg' => $issues,
-    ]));
-    }else{
-        $get = DeviceIssue::where('issue','LIKE',"%$key%")->get();
-            return response()->json(
-                collect([
-                'response' => 'success',
-                'msg' => $get,
-                 ]));
-            }
-    
+    ]));        
 }
      public function generateIssue(Request $request){
          
