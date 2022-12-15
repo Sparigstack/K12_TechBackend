@@ -11,11 +11,13 @@ use Illuminate\Support\Facades\Request as Input;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\QueryBuilder\QueryBuilder;
+use Exception;
 
 class InventoryController extends Controller
 {
     public function uploadInventory(Request $request)
     {
+       try{
         $userId =$request->input('ID');
         $createdby=$request->input('createdBy');
         $schId =$request->input('schId');
@@ -88,6 +90,10 @@ class InventoryController extends Controller
          }
       return 'success' ;                                       
 }
+catch (\Throwable $th) {
+        return "Enter Valid Csv";
+    }
+    }
 
    public function getInventories($sid,$key){
        if($key == "null"){
