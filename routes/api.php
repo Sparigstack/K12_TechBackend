@@ -7,6 +7,7 @@ use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\ManageTicketController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\OperatingSystemController;
@@ -48,3 +49,4 @@ Route::get('/searchInventory/{key}', [InventoryController::class, 'searchInvento
 //issue
 Route::get('/allDeviceIssue', [TicketController::class, 'allIssue']);
 Route::post('/generateIssue', [TicketController::class, 'generateIssue']);
+Route::get('/allTickets/{sid?}&{uid}', [ManageTicketController::class, 'allTickets']);
