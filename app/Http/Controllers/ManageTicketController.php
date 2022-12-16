@@ -66,7 +66,7 @@ class ManageTicketController extends Controller
     function OpenTickets($sid){
         try{
         $data = Ticket::where('school_id',$sid)->get();
-         $array_openTicket = array();                
+         $array_openTicket = array();        
          foreach($data as $ticketdata){  
          $ticketUserId = $ticketdata['user_id'];
          $user = User::where('id',$ticketUserId)->first(); 
@@ -76,11 +76,11 @@ class ManageTicketController extends Controller
          $serialNum = $Inventory['Serial_number'];
          $studentName = $Inventory['Student_name'];
          $ticketID =$ticketdata['ID'];
-         $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y');
+         $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y');         
          if($ticketdata['ticket_status'] == 1){                      
          array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Open","Date"=>$ticketCreateDate,"ticketCreatedBy"=>$ticketCreatedBy]);       
         }    
-    }
+        }                
     return response()->json(
           collect([
          'response' => 'success',                            
@@ -116,6 +116,5 @@ class ManageTicketController extends Controller
          }catch (\Throwable $th) {    
         return "something went wrong.";
     }
-}
-}
- 
+}    
+ }

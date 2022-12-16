@@ -59,6 +59,7 @@ class InventoryController extends Controller
             $Parent_phone_number=$data['parentphonenumber'];
             $Parental_coverage=$data['parentalcoverage'];
             $Repair_cap=$data['repaircap'];
+            $Inventory_status=$data['inventorystatus'];
             $inventory = new InventoryManagement;           
             $inventory->Purchase_date = $Purchase_date;
             $inventory->OEM_warranty_until = $OEM_warranty_until;
@@ -76,7 +77,8 @@ class InventoryController extends Controller
             $inventory->Parent_email = $Parent_email;
             $inventory->Parent_phone_number = $Parent_phone_number;
             $inventory->Parental_coverage = $Parental_coverage;
-            $inventory->Repair_cap = $Repair_cap;      
+            $inventory->Repair_cap = $Repair_cap;
+            $inventory->inventory_status =$Inventory_status;
             $inventory->user_id = $userId;
             $inventory->school_id =$schId;
             $inventory->save();                            
@@ -91,10 +93,12 @@ catch (\Throwable $th) {
    public function getInventories($sid,$key){
        if($key == "null"){
         $inventory = InventoryManagement::where('school_id',$sid)->orderby('id','asc')->paginate(8); 
+        $decommission = InventoryManagement::where('school_id',$sid)->where('inventory_status',2)->orderby('id','asc')->paginate(8);
         return response()->json(
         collect([
         'response' => 'success',
-        'msg' => $inventory,        
+        'msg' => $inventory,
+        'decommisionInvenoty'=>$decommission    
          ]));
        }else{
         $get = InventoryManagement::where('Student_name','LIKE',"%$key%")
@@ -137,14 +141,14 @@ catch (\Throwable $th) {
             $inventory->Parent_email = $request->input('ParentEmail');
             $inventory->Parent_phone_number = $request->input('ParentPhoneNumber');
             $inventory->Parental_coverage = $request->input('ParentalCoverage');
-            $inventory->Repair_cap = $request->input('Repaircap');
-            $inventory->user_csv_num = $request->input('usercsvnum');
+            $inventory->Repair_cap = $request->input('Repaircap');          
+            $inventory->inventory_status =$request->input('inventorystatus');
             $inventory->user_id = $request->input('userId');
             $inventory->school_id = $request->input('schoolId');            
             $checkinventory= InventoryManagement::where('ID', $request->input('ID'))->first();  
-               if(isset($checkinventory)){
+               if(isset($checkinventory)){                  
                 $deviceIDfromDB = $checkinventory->ID;          
-                $deviceId= $request->input('ID');                                    
+                $deviceId= $request->input('ID');                  
                 if($deviceIDfromDB == $deviceId){
                 $updatedInventory=InventoryManagement::where('ID', $deviceId)
                         ->update(['Purchase_date'=>$request->input('PurchaseDate'),
@@ -164,6 +168,7 @@ catch (\Throwable $th) {
                             'Parent_phone_number'=>$request->input('ParentPhoneNumber'),
                             'Parental_coverage'=>$request->input('ParentalCoverage'),
                             'Repair_cap'=>$request->input('Repaircap'),
+                            'inventory_status'=>$request->input('inventorystatus'),
                             'user_id'=>$request->input('userId'),
                             'school_id'=>$request->input('schoolId')                            
                             ]);
@@ -180,15 +185,26 @@ catch (\Throwable $th) {
  }
   public function sortbyInventory($sid,$key){
       if($key =="name"){
-      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->get();
-      return response()->json(
+      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->get();      
+      }elseif($key =="Devicemodel"){
+      $inventory= InventoryManagement::orderBy("Device_model", "asc")->where("school_id",$sid)->get();     
+      }elseif($key =="Grade"){
+      $inventory= InventoryManagement::orderBy("Grade", "asc")->where("school_id",$sid)->get();      
+      }elseif($key =="Building"){
+      $inventory= InventoryManagement::orderBy("Building", "asc")->where("school_id",$sid)->get();      
+      }elseif($key =="OEM"){
+      $inventory= InventoryManagement::orderBy("OEM", "asc")->where("school_id",$sid)->get();     
+      }elseif($key =="PurchaseDate"){
+      $inventory= InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id",$sid)->get();     
+      }
+      else{
+      return "error";
+      }
+ return response()->json(
                 collect([
                 'response' => 'success',
                 'msg' => $inventory,
-                 ]));
-}else{
-    return "error";
-}
+                 ])); 
   }
 
  public function searchInventory($key){
