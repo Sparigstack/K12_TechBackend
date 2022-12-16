@@ -184,17 +184,17 @@ catch (\Throwable $th) {
             }
  }
   public function sortbyInventory($sid,$key){
-      if($key =="name"){
+      if($key ==1){
       $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->get();      
-      }elseif($key =="Devicemodel"){
+      }elseif($key == 2){
       $inventory= InventoryManagement::orderBy("Device_model", "asc")->where("school_id",$sid)->get();     
-      }elseif($key =="Grade"){
+      }elseif($key == 3){
       $inventory= InventoryManagement::orderBy("Grade", "asc")->where("school_id",$sid)->get();      
-      }elseif($key =="Building"){
+      }elseif($key == 4){
       $inventory= InventoryManagement::orderBy("Building", "asc")->where("school_id",$sid)->get();      
-      }elseif($key =="OEM"){
+      }elseif($key == 5){
       $inventory= InventoryManagement::orderBy("OEM", "asc")->where("school_id",$sid)->get();     
-      }elseif($key =="PurchaseDate"){
+      }elseif($key == 6){
       $inventory= InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id",$sid)->get();     
       }
       else{
