@@ -50,3 +50,5 @@ Route::get('/searchInventory/{key}', [InventoryController::class, 'searchInvento
 Route::get('/allDeviceIssue', [TicketController::class, 'allIssue']);
 Route::post('/generateIssue', [TicketController::class, 'generateIssue']);
 Route::get('/allTickets/{sid?}&{uid}', [ManageTicketController::class, 'allTickets']);
+Route::get('/getTicketStatus', [ManageTicketController::class, 'getTicketStatusforManageTicket']);
+Route::post('/changeticketStatus', [ManageTicketController::class, 'changeticketStatus']);

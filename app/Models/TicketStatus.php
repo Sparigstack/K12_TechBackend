@@ -9,7 +9,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\InventoryManagement;
 
-class Ticket extends Model
+class TicketStatus extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;    
     protected $table="ticket_status";   

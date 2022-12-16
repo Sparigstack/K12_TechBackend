@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\OperatingSystem;
 use App\Models\DeviceIssue;
 use App\Models\Ticket;
+use App\Models\TicketStatus;
 use App\Models\User;
 use App\Models\InventoryManagement;
 use App\Http\Requests\ProfileUpdateRequest;
@@ -45,10 +46,22 @@ class ManageTicketController extends Controller
     ]));
     }
     
-    function getopentickets(){
+    function changeticketStatus(Request $request){
+        $currentStatus = $request->input('status');
+        $ticketID = $request->input('ticketID');
+        $updateTicketDetail=Ticket::where('ID', $ticketID)->update(['ticket_status'=>$currentStatus]);  
+        return response()->json(
+                collect([
+                'response' => 'success',
+                'msg' => $updateTicketDetail,
+                 ]));
         
-    }
+    }     
     
+    function getTicketStatusforManageTicket(Request $request){
+        $status = TicketStatus::whereIn('ID', [2,3,4,5])->get();
+        return $status;
+    }
     
 }
     
