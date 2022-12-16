@@ -114,6 +114,30 @@ catch (\Throwable $th) {
        
         
    }
+   public function getallInventories($sid,$key){
+       if($key == "null"){
+        $inventory = InventoryManagement::where('school_id',$sid)->orderby('id','asc')->paginate(8); 
+      
+        return response()->json(
+        collect([
+        'response' => 'success',
+        'msg' => $inventory,         
+         ]));
+       }else{
+        $get = InventoryManagement::where('Student_name','LIKE',"%$key%")
+                ->orWhere('Device_model', 'like', '%' . $key . '%')
+                ->orWhere('Serial_number', 'like', '%' . $key . '%')
+                ->paginate(8);  
+        return response()->json(
+         collect([
+        'response' => 'success',
+        'msg' => $get       
+         ]));
+       }
+       
+        
+   }
+   
      public function fetchDeviceDetail($id){        
       $os= InventoryManagement::where('ID',$id)->first(); 
       
@@ -142,7 +166,7 @@ catch (\Throwable $th) {
             $inventory->Parent_phone_number = $request->input('ParentPhoneNumber');
             $inventory->Parental_coverage = $request->input('ParentalCoverage');
             $inventory->Repair_cap = $request->input('Repaircap');          
-            $inventory->inventory_status =$request->input('inventorystatus');
+//            $inventory->inventory_status =$request->input('inventorystatus');
             $inventory->user_id = $request->input('userId');
             $inventory->school_id = $request->input('schoolId');            
             $checkinventory= InventoryManagement::where('ID', $request->input('ID'))->first();  

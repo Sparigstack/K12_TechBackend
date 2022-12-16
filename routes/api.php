@@ -28,6 +28,7 @@ Route::post('/upload', [InventoryController::class, 'uploadInventory']);
 Route::get('/getInventories/{sid?}&{key?}', [InventoryController::class, 'getInventories']);
 Route::get('/getexport', [InventoryController::class, 'getexport']);
 Route::post('/addeditmanualInventoy', [InventoryController::class, 'manualAddEditInventoy']);
+Route::get('/getallInventories/{sid?}&{key?}', [InventoryController::class, 'getallInventories']);
 //device
 Route::post('/addNdUpdateDevice', [DeviceTypeController::class, 'addDevice']);
 Route::get('/allDevice', [DeviceTypeController::class, 'allDevice']);
