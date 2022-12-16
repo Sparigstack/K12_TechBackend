@@ -92,7 +92,7 @@ catch (\Throwable $th) {
 
    public function getInventories($sid,$key){
        if($key == "null"){
-        $inventory = InventoryManagement::where('school_id',$sid)->orderby('id','asc')->paginate(8); 
+        $inventory = InventoryManagement::where('school_id',$sid)->where('inventory_status',1)->orderby('id','asc')->paginate(8); 
         $decommission = InventoryManagement::where('school_id',$sid)->where('inventory_status',2)->orderby('id','asc')->paginate(8);
         return response()->json(
         collect([
