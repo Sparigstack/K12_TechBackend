@@ -259,19 +259,16 @@ catch (\Throwable $th) {
                  ]));
             }
             
-// public function manageInventoryAction($id,$aid){
-//     $inventoryIds =  array( $id);
-////     return $inventoryIds;
-//     foreach ($inventoryIds as $idn){
-//     if($aid == 1){
-//         return $idn;
-//          $updatedInventory=InventoryManagement::where('ID', $id)
-//                        ->update(['inventory_status'=>2]);
-//         
-//     }
-//     }
-//     return "success";
-// }
+ public function manageInventoryAction(Request $request){ 
+     $idArray = $request->input('IDArray');
+     $msg= $request->input('msg');    
+     foreach ($idArray as $id){           
+     if($msg['actionId'] == 2){
+     $updatedInventory=InventoryManagement::where('ID', $id)->update(['inventory_status'=>2]);         
+     }
+     }
+     return "success";
+ }
 }
  
  
