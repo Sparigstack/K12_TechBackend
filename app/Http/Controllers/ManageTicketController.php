@@ -116,5 +116,15 @@ class ManageTicketController extends Controller
          }catch (\Throwable $th) {    
         return "something went wrong.";
     }
-}    
+}  
+
+  function getTicketNotes($sid,$id){
+    $ticketNotes = Ticket::where('school_id',$sid)->where('ID',$id)->first();
+     $Notes = $ticketNotes['notes'] ;
+     return response()->json(
+          collect([
+         'response' => 'success',                            
+         'note'=>$Notes,          
+    ]));
+  } 
  }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Personal;
+use App\Models\User;
 use App\Models\Ticket;
 use App\Models\TicketStatus;
 use App\Models\InventoryManagement;
@@ -143,6 +144,9 @@ catch (\Throwable $th) {
    
      public function fetchDeviceDetail($id){       
       $inventorydata = InventoryManagement::where('ID',$id)->first(); 
+      $userid = $inventorydata->user_id;      
+      $user = User::where('id',$userid)->first();
+      $username = $user->name;
       $ticketdata = Ticket::where('inventory_id',$id)->get();      
          $deviceHistory = array();        
          foreach($ticketdata as $data){  
@@ -161,6 +165,7 @@ catch (\Throwable $th) {
       'response' => 'success',
       'msg' => $inventorydata,
       'deviceHistory' => $deviceHistory,   
+      'userName'=> $username,   
   ]));
   }
  public function manualAddEditInventoy(Request $request){
