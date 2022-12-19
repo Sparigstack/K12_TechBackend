@@ -119,7 +119,7 @@ catch (\Throwable $th) {
    }
    public function getallInventories($sid,$key){
        if($key == "null"){
-        $inventory = InventoryManagement::where('school_id',$sid)->orderby('id','asc')->paginate(8); 
+        $inventory = InventoryManagement::where('school_id',$sid)->orderby('id','asc')->get(); 
       
         return response()->json(
         collect([
@@ -225,17 +225,17 @@ catch (\Throwable $th) {
  }
   public function sortbyInventory($sid,$key){
       if($key ==1){
-      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->paginate(8);      
+      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->get();      
       }elseif($key == 2){
-      $inventory= InventoryManagement::orderBy("Device_model", "asc")->where("school_id",$sid)->paginate(8);     
+      $inventory= InventoryManagement::orderBy("Device_model", "asc")->where("school_id",$sid)->get();     
       }elseif($key == 3){
-      $inventory= InventoryManagement::orderBy("Grade", "asc")->where("school_id",$sid)->paginate(8);      
+      $inventory= InventoryManagement::orderBy("Grade", "asc")->where("school_id",$sid)->get();      
       }elseif($key == 4){
-      $inventory= InventoryManagement::orderBy("Building", "asc")->where("school_id",$sid)->paginate(8);      
+      $inventory= InventoryManagement::orderBy("Building", "asc")->where("school_id",$sid)->get();      
       }elseif($key == 5){
-      $inventory= InventoryManagement::orderBy("OEM", "asc")->where("school_id",$sid)->paginate(8);     
+      $inventory= InventoryManagement::orderBy("OEM", "asc")->where("school_id",$sid)->get();     
       }elseif($key == 6){
-      $inventory= InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id",$sid)->paginate(8);     
+      $inventory= InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id",$sid)->get();     
       }
       else{
       return "error";
