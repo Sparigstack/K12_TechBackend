@@ -130,7 +130,7 @@ catch (\Throwable $th) {
         $get = InventoryManagement::where('Student_name','LIKE',"%$key%")
                 ->orWhere('Device_model', 'like', '%' . $key . '%')
                 ->orWhere('Serial_number', 'like', '%' . $key . '%')
-                ->paginate(8);  
+                ->get();  
         return response()->json(
          collect([
         'response' => 'success',
@@ -265,10 +265,12 @@ catch (\Throwable $th) {
      foreach ($idArray as $id){           
      if($msg['actionId'] == 2){
      $updatedInventory=InventoryManagement::where('ID', $id)->update(['inventory_status'=>2]);         
-     }
+     }else{
+         return "select any action";
      }
      return "success";
  }
+}
 }
  
  
