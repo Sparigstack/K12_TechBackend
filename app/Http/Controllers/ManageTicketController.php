@@ -66,8 +66,9 @@ class ManageTicketController extends Controller
         return $status;
     }
     
-    function OpenTickets($sid){
-        try{            
+    function OpenTickets($sid,$key){
+        try{
+            
         $data = Ticket::where('school_id',$sid)->get();
          $array_openTicket = array();        
          foreach($data as $ticketdata){  
@@ -78,23 +79,34 @@ class ManageTicketController extends Controller
          $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();
          $serialNum = $Inventory['Serial_number'];
          $studentName = $Inventory['Student_name'];
+         $grade =$Inventory['Grade'];
          $ticketID =$ticketdata['ID'];
          $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y'); 
          $ticketStatusid =$ticketdata['ticket_status'];
          $ticketStatus = TicketStatus::where('ID',$ticketStatusid)->first();
          $status = $ticketStatus['status'];
          $notes = $ticketdata['notes'];
+         
          if($ticketdata['ticket_status'] != 2){                      
-         array_push($array_openTicket,["notes"=>$notes,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>$status,"Date"=>$ticketCreateDate,"ticketCreatedBy"=>$ticketCreatedBy]);       
+         array_push($array_openTicket,["Grade"=>$grade,"notes"=>$notes,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>$status,"Date"=>$ticketCreateDate,"ticketCreatedBy"=>$ticketCreatedBy]);       
         }    
-        }                
+        }  
+        if($key =="null"){
     return response()->json(
           collect([
          'response' => 'success',                            
          'Openticket'=>$array_openTicket,          
-            ]));
-            
-         }catch (\Throwable $th) {    
+            ]));          
+        }else{
+         $array = collect($array_openTicket)->sortByDesc('Grade')->reverse()->toArray();
+         return response()->json(
+          collect([
+         'response' => 'success',                            
+         'Openticket'=>$array,          
+            ]));  
+        
+         }
+        } catch (\Throwable $th) {    
         return "something went wrong.";
     }
 }
