@@ -30,11 +30,14 @@ class ManageTicketController extends Controller
          $serialNum = $Inventory['Serial_number'];
          $studentName = $Inventory['Student_name'];
          $ticketID =$ticketdata['ID'];
-         $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y');                
-         if($ticketdata['ticket_status'] == 1){                      
-           array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Open","Date"=>$ticketCreateDate]);
+         $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y');  
+         $ticketStatusid =$ticketdata['ticket_status'];
+         $ticketStatus = TicketStatus::where('ID',$ticketStatusid)->first();
+         $status = $ticketStatus['status'];
+         if($ticketdata['ticket_status'] == 2){                      
+           array_push($array_closeTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
          }else{
-             array_push($array_closeTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Close","Date"=>$ticketCreateDate]);
+             array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
          }   
     
          }return response()->json(
@@ -59,12 +62,12 @@ class ManageTicketController extends Controller
     }     
     
     function getTicketStatusforManageTicket(Request $request){
-        $status = TicketStatus::whereIn('ID', [2,3,4,5])->get();
+        $status = TicketStatus::all();
         return $status;
     }
     
     function OpenTickets($sid){
-        try{
+        try{            
         $data = Ticket::where('school_id',$sid)->get();
          $array_openTicket = array();        
          foreach($data as $ticketdata){  
@@ -76,16 +79,21 @@ class ManageTicketController extends Controller
          $serialNum = $Inventory['Serial_number'];
          $studentName = $Inventory['Student_name'];
          $ticketID =$ticketdata['ID'];
-         $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y');         
-         if($ticketdata['ticket_status'] == 1){                      
-         array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Open","Date"=>$ticketCreateDate,"ticketCreatedBy"=>$ticketCreatedBy]);       
+         $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y'); 
+         $ticketStatusid =$ticketdata['ticket_status'];
+         $ticketStatus = TicketStatus::where('ID',$ticketStatusid)->first();
+         $status = $ticketStatus['status'];
+         $notes = $ticketdata['notes'];
+         if($ticketdata['ticket_status'] != 2){                      
+         array_push($array_openTicket,["notes"=>$notes,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>$status,"Date"=>$ticketCreateDate,"ticketCreatedBy"=>$ticketCreatedBy]);       
         }    
         }                
     return response()->json(
           collect([
          'response' => 'success',                            
          'Openticket'=>$array_openTicket,          
-    ]));
+            ]));
+            
          }catch (\Throwable $th) {    
         return "something went wrong.";
     }
@@ -104,8 +112,11 @@ class ManageTicketController extends Controller
          $studentName = $Inventory['Student_name'];
          $ticketID =$ticketdata['ID'];
          $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y');
-         if($ticketdata['ticket_status'] == 2){                      
-         array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Close","Date"=>$ticketCreateDate,"ticketCreatedBy"=>$ticketCreatedBy]);       
+         $ticketStatusid =$ticketdata['ticket_status'];
+         $ticketStatus = TicketStatus::where('ID',$ticketStatusid)->first();
+         $status = $ticketStatus['status'];
+         if($ticketdata['ticket_status'] != 1){                      
+         array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>$status,"Date"=>$ticketCreateDate,"ticketCreatedBy"=>$ticketCreatedBy]);       
         }    
     }
     return response()->json(
@@ -118,13 +129,39 @@ class ManageTicketController extends Controller
     }
 }  
 
-  function getTicketNotes($sid,$id){
-    $ticketNotes = Ticket::where('school_id',$sid)->where('ID',$id)->first();
-     $Notes = $ticketNotes['notes'] ;
-     return response()->json(
-          collect([
-         'response' => 'success',                            
-         'note'=>$Notes,          
-    ]));
-  } 
- }
+//  function getTicketNotes($sid,$id){
+//    $ticketNotes = Ticket::where('school_id',$sid)->where('ID',$id)->first();
+//     $Notes = $ticketNotes['notes'] ;
+//     return response()->json(
+//          collect([
+//         'response' => 'success',                            
+//         'note'=>$Notes,          
+//    ]));
+//  }
+//  function filterTickets($sid,$fid){
+//      $data = Ticket::where('school_id',$sid)->get();
+//         $array_openTicket = array();        
+//         foreach($data as $ticketdata){  
+//         $ticketUserId = $ticketdata['user_id'];
+//         $user = User::where('id',$ticketUserId)->first(); 
+//         $ticketCreatedBy = $user->name;
+//         $ticketInventoryID = $ticketdata['inventory_id'];
+//         $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();
+//         $serialNum = $Inventory['Serial_number'];
+//         $studentName = $Inventory['Student_name'];
+//         $ticketID =$ticketdata['ID'];
+//         $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y');         
+//         if($ticketdata['ticket_status'] == 1){                            
+//        array_push($array_openTicket,["serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>"Close","Date"=>$ticketCreateDate,"ticketCreatedBy"=>$ticketCreatedBy]);  
+//      
+//  }
+// }
+//// $array=$array_openTicket->sortBy('studentName', [], true);
+// $array = collect($array_openTicket)->sortByDesc('studentName')->reverse()->toArray();
+// return response()->json(
+//          collect([
+//         'response' => 'success',                            
+//         'note'=>$array,          
+//    ]));
+//  }
+}
