@@ -225,17 +225,17 @@ catch (\Throwable $th) {
  }
   public function sortbyInventory($sid,$key){
       if($key ==1){
-      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->get();      
+      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->paginate(8);      
       }elseif($key == 2){
-      $inventory= InventoryManagement::orderBy("Device_model", "asc")->where("school_id",$sid)->get();     
+      $inventory= InventoryManagement::orderBy("Device_model", "asc")->where("school_id",$sid)->paginate(8);     
       }elseif($key == 3){
-      $inventory= InventoryManagement::orderBy("Grade", "asc")->where("school_id",$sid)->get();      
+      $inventory= InventoryManagement::orderBy("Grade", "asc")->where("school_id",$sid)->paginate(8);      
       }elseif($key == 4){
-      $inventory= InventoryManagement::orderBy("Building", "asc")->where("school_id",$sid)->get();      
+      $inventory= InventoryManagement::orderBy("Building", "asc")->where("school_id",$sid)->paginate(8);      
       }elseif($key == 5){
-      $inventory= InventoryManagement::orderBy("OEM", "asc")->where("school_id",$sid)->get();     
+      $inventory= InventoryManagement::orderBy("OEM", "asc")->where("school_id",$sid)->paginate(8);     
       }elseif($key == 6){
-      $inventory= InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id",$sid)->get();     
+      $inventory= InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id",$sid)->paginate(8);     
       }
       else{
       return "error";
@@ -258,5 +258,20 @@ catch (\Throwable $th) {
                 'msg' => $get,
                  ]));
             }
- }
+            
+// public function manageInventoryAction($id,$aid){
+//     $inventoryIds =  array( $id);
+////     return $inventoryIds;
+//     foreach ($inventoryIds as $idn){
+//     if($aid == 1){
+//         return $idn;
+//          $updatedInventory=InventoryManagement::where('ID', $id)
+//                        ->update(['inventory_status'=>2]);
+//         
+//     }
+//     }
+//     return "success";
+// }
+}
+ 
  
