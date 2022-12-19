@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\Personal;
+use App\Models\Ticket;
+use App\Models\TicketStatus;
 use App\Models\InventoryManagement;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
@@ -12,6 +14,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\QueryBuilder\QueryBuilder;
 use Exception;
+use App\Models\DeviceIssue;
 
 class InventoryController extends Controller
 {
@@ -138,13 +141,26 @@ catch (\Throwable $th) {
         
    }
    
-     public function fetchDeviceDetail($id){        
-      $os= InventoryManagement::where('ID',$id)->first(); 
-      
+     public function fetchDeviceDetail($id){       
+      $inventorydata = InventoryManagement::where('ID',$id)->first(); 
+      $ticketdata = Ticket::where('inventory_id',$id)->get();      
+         $deviceHistory = array();        
+         foreach($ticketdata as $data){  
+         $notes = $data['notes'];
+         $ticketStaus =$data['ticket_status'];
+         $statusdata = TicketStatus::where('ID',$ticketStaus)->first();
+         $status = $statusdata->status;
+         $deviceIssue =$data['device_issue_id'];
+         $issuedata = DeviceIssue::where('ID',$deviceIssue)->first();
+         $issue = $issuedata->issue;
+         $created_at =$data['created_at']->format('m-d-Y');
+         array_push($deviceHistory,["Issue"=>$issue,"Notes"=>$notes,"Status"=>$status,"Issue_createdDate"=>$created_at]);
+         }     
        return response()->json(
       collect([
       'response' => 'success',
-      'msg' => $os,
+      'msg' => $inventorydata,
+      'deviceHistory' => $deviceHistory,   
   ]));
   }
  public function manualAddEditInventoy(Request $request){
