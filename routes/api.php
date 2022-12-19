@@ -28,7 +28,7 @@ Route::post('/upload', [InventoryController::class, 'uploadInventory']);
 Route::get('/getInventories/{sid?}&{key?}', [InventoryController::class, 'getInventories']);
 Route::get('/getexport', [InventoryController::class, 'getexport']);
 Route::post('/addeditmanualInventoy', [InventoryController::class, 'manualAddEditInventoy']);
-Route::get('/getallInventories/{sid?}', [InventoryController::class, 'getallInventories']);
+Route::get('/getallInventories/{sid?}&{key?}', [InventoryController::class, 'getallInventories']);
 Route::post('/manageInventoryAction', [InventoryController::class, 'manageInventoryAction']);
 //device
 Route::post('/addNdUpdateDevice', [DeviceTypeController::class, 'addDevice']);
@@ -54,7 +54,7 @@ Route::post('/generateIssue', [TicketController::class, 'generateIssue']);
 Route::get('/allTickets/{sid?}&{uid}', [ManageTicketController::class, 'allTickets']);
 Route::get('/getTicketStatus', [ManageTicketController::class, 'getTicketStatusforManageTicket']);
 Route::post('/changeticketStatus', [ManageTicketController::class, 'changeticketStatus']);
-Route::get('/openTickets/{sid?}&{key}', [ManageTicketController::class, 'OpenTickets']);
+Route::get('/openTickets/{sid?}', [ManageTicketController::class, 'OpenTickets']);
 Route::get('/closeTickets/{sid?}', [ManageTicketController::class, 'CloseTickets']);
 Route::get('/getTicketNotes/{sid?}&{id}', [ManageTicketController::class, 'getTicketNotes']);
 Route::get('/filterTickets/{sid?}&{fid}', [ManageTicketController::class, 'filterTickets']);
