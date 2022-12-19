@@ -259,11 +259,11 @@ catch (\Throwable $th) {
                  ]));
             }
             
- public function manageInventoryAction(Request $request){ 
+  function manageInventoryAction(Request $request){ 
      $idArray = $request->input('IDArray');
-     $msg= $request->input('msg');    
+     $actionId= $request->input('actionid');    
      foreach ($idArray as $id){           
-     if($msg['actionId'] == 2){
+     if($actionId == 2){
      $updatedInventory=InventoryManagement::where('ID', $id)->update(['inventory_status'=>2]);         
      }else{
          return "select any action";
