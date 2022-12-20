@@ -49,24 +49,25 @@ class ManageTicketController extends Controller
     ]));
     }
     
-    function changeticketStatus(Request $request){
-        $currentStatus = $request->input('status');
-        $ticketID = $request->input('ticketID');
-        $updateTicketDetail=Ticket::where('ID', $ticketID)->update(['ticket_status'=>$currentStatus]);  
-        return response()->json(
-                collect([
-                'response' => 'success',
-                'msg' => $updateTicketDetail,
-                 ]));
-        
-    }     
-    
+    function changeticketStatus(Request $request) {
+        try {
+            $idArray = $request->input('IDArray');
+            $ticketStatusID = $request->input('Status');
+            foreach ($idArray as $id) {
+                $updatedTicketStatus = Ticket::where('ID', $id)->update(['ticket_status' => $ticketStatusID]);
+            }
+            return "success";
+        } catch (\Throwable $th) {
+            return "something went wrong.";
+        }
+    }
+
     function getTicketStatusforManageTicket(Request $request){
         $status = TicketStatus::all();
         return $status;
     }
     
-    function OpenTickets($sid,$key){
+    function OpenTickets($sid,$key,$skey){
         try{
             
         $data = Ticket::where('school_id',$sid)->get();
@@ -122,13 +123,13 @@ class ManageTicketController extends Controller
          'Openticket'=>$array,          
             ]));  
         
-         }else{
-               return response()->json(
+         }else{            
+          return response()->json(
           collect([
          'response' => 'success',                            
          'Openticket'=>$array_openTicket,          
             ]));
-         }
+         }        
         } catch (\Throwable $th) {    
         return "something went wrong.";
     }
@@ -153,7 +154,7 @@ class ManageTicketController extends Controller
          $ticketStatus = TicketStatus::where('ID',$ticketStatusid)->first();
          $status = $ticketStatus['status'];
          $notes = $ticketdata['notes'];
-         if($ticketdata['ticket_status'] != 1){                      
+         if($ticketdata['ticket_status'] == 2){                      
         array_push($array_closeTicket,["Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","studentName"=>$studentName,"ticket_status"=>$status,"Date"=>$ticketCreateDate,"ticketCreatedBy"=>$ticketCreatedBy]);       
         }    
     }
@@ -161,14 +162,14 @@ class ManageTicketController extends Controller
     return response()->json(
           collect([
          'response' => 'success',                            
-         'Openticket'=>$array_closeTicket,          
+         'Closeticket'=>$array_closeTicket,          
             ]));          
         }elseif($key == 1){
          $array = collect($array_closeTicket)->sortBy('Grade')->values();
          return response()->json(
           collect([
          'response' => 'success',                            
-         'Openticket'=>$array,          
+         'Closeticket'=>$array,          
             ]));  
         
          }elseif($key == 2){
@@ -176,7 +177,7 @@ class ManageTicketController extends Controller
          return response()->json(
           collect([
          'response' => 'success',                            
-         'Openticket'=>$array,          
+         'Closeticket'=>$array,          
             ]));  
         
          }elseif($key == 3){
@@ -184,7 +185,7 @@ class ManageTicketController extends Controller
          return response()->json(
           collect([
          'response' => 'success',                            
-         'Openticket'=>$array,          
+         'Closeticket'=>$array,          
             ]));  
         
          }else{
@@ -197,6 +198,6 @@ class ManageTicketController extends Controller
         } catch (\Throwable $th) {    
         return "something went wrong.";
     }
-}  
+} 
 
 }
