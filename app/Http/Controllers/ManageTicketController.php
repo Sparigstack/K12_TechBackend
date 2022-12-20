@@ -67,7 +67,7 @@ class ManageTicketController extends Controller
         return $status;
     }
     
-    function OpenTickets($sid,$key,$skey){
+    function OpenTickets($sid,$key){
         try{
             
         $data = Ticket::where('school_id',$sid)->get();
