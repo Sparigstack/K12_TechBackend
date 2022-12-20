@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request as Input;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Carbon\Carbon;
-
+use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Builder;
 class ManageTicketController extends Controller
 {
     function allTickets($sid,$uid){ 
@@ -199,5 +200,5 @@ class ManageTicketController extends Controller
         return "something went wrong.";
     }
 } 
-
+  
 }
