@@ -63,7 +63,7 @@ class InventoryController extends Controller
             $Parent_phone_number=$data['parentphonenumber'];
             $Parental_coverage=$data['parentalcoverage'];
             $Repair_cap=$data['repaircap'];
-            $Inventory_status=$data['inventorystatus'];                   
+            $Inventory_status=$data['inventorystatus'];           
             $inventory = new InventoryManagement;           
             $inventory->Purchase_date = $Purchase_date;
             $inventory->OEM_warranty_until = $OEM_warranty_until;
@@ -256,19 +256,19 @@ catch (\Throwable $th) {
                  ]));
             }
  }
-  public function sortbyInventory($sid,$key){
+  public function sortbyInventory($sid,$key,$skey){
       if($key ==1){
-      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->get();      
+      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();      
       }elseif($key == 2){
-      $inventory= InventoryManagement::orderBy("Device_model", "asc")->where("school_id",$sid)->get();     
+      $inventory= InventoryManagement::orderBy("Device_model", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();     
       }elseif($key == 3){
-      $inventory= InventoryManagement::orderBy("Grade", "asc")->where("school_id",$sid)->get();      
+      $inventory= InventoryManagement::orderBy("Grade", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();      
       }elseif($key == 4){
-      $inventory= InventoryManagement::orderBy("Building", "asc")->where("school_id",$sid)->get();      
+      $inventory= InventoryManagement::orderBy("Building", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();      
       }elseif($key == 5){
-      $inventory= InventoryManagement::orderBy("OEM", "asc")->where("school_id",$sid)->get();     
+      $inventory= InventoryManagement::orderBy("OEM", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();     
       }elseif($key == 6){
-      $inventory= InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id",$sid)->get();     
+      $inventory= InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();     
       }
       else{
       return "error";
