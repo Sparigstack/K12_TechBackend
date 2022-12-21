@@ -12,7 +12,7 @@ use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\DeviceTypeController;
 use App\Http\Controllers\OperatingSystemController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use App\Http\Controllers\UserController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -59,4 +59,8 @@ Route::get('/closeTickets/{sid?}&{key}', [ManageTicketController::class, 'CloseT
 Route::get('/getTicketNotes/{sid?}&{id}', [ManageTicketController::class, 'getTicketNotes']);
 Route::get('/filterTickets/{sid?}&{fid}', [ManageTicketController::class, 'filterTickets']);
 Route::get('/searchTicket/{sid?}&{skey}', [ManageTicketController::class, 'searchTicket']);
-
+//user
+Route::post('/addUser',[UserController::class,'addUser']);
+Route::get('/allUser',[UserController::class,'allUser']);
+Route::post('/updateUser',[UserController::class,'updateUser']);
+Route::get('/allAccess',[UserController::class,'allAccess']);
