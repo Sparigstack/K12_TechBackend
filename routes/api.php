@@ -64,4 +64,4 @@ Route::post('/addUser',[UserController::class,'addUser']);
 Route::get('/allUser',[UserController::class,'allUser']);
 Route::post('/updateUser',[UserController::class,'updateUser']);
 Route::get('/allAccess',[UserController::class,'allAccess']);
-Route::get('/updateUserdata/{uid?}',[UserController::class,'updateUser']);
+Route::get('/getUserById/{uid?}',[UserController::class,'updateUserData']);

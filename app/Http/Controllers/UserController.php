@@ -52,6 +52,10 @@ class UserController extends Controller
         return "something went wrong.";
     }
     }
+    function updateUserData($uid){
+        $data = User::where('ID',$uid)->get();
+        return $data;
+    }
     function deleteUser(){
         
     }
