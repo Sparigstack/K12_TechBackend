@@ -63,7 +63,31 @@ class InventoryController extends Controller
             $Parent_phone_number=$data['parentphonenumber'];
             $Parental_coverage=$data['parentalcoverage'];
             $Repair_cap=$data['repaircap'];
-            $Inventory_status=$data['inventorystatus'];           
+            $Inventory_status=$data['inventorystatus'];             
+            $savedInventory= InventoryManagement::where('Serial_number', $data['serialnumber'])->first();
+            
+            if(isset($savedInventory)){
+                $SerialNum = $savedInventory->Serial_number;
+                $CsvSerialNum=$data['serialnumber']; 
+                $updatedDetail=InventoryManagement::where('Serial_number', $CsvSerialNum)->update(['Purchase_date' => $Purchase_date,
+                    'OEM_warranty_until'=>$OEM_warranty_until,
+                    'Extended_warranty_until'=> $Extended_warranty_until ? $Extended_warranty_until : $savedInventory->Extended_warranty_until,
+                    "ADP_coverage"=>$ADP_coverage ? $ADP_coverage : $savedInventory->ADP_coverage,
+                    'OEM'=>$OEM ? $OEM : $savedInventory->OEM ,
+                    'Device_model'=>$Device_model ? $Device_model : $savedInventory->Device_model,
+                    'OS'=>$OS ? $OS : $savedInventory->OS,
+                    'Asset_tag'=>$Asset_tag ? $Asset_tag : $savedInventory->Asset_tag ,
+                    'Building'=>$Building ? $Building : $savedInventory->Building,
+                    'Grade'=>$Grade ? $Grade : $savedInventory->Grade ,
+                    'Student_name'=>$Student_name ? $Student_name: $savedInventory->Student_name,
+                    'Student_ID'=>$Student_ID ? $Student_ID: $savedInventory->Student_ID,
+                    'Parent_email'=>$Parent_email ? $Parent_email:$savedInventory->Parent_email,
+                    'Parent_phone_number'=>$Parent_phone_number ? $Parent_phone_number:$savedInventory->Parent_phone_number,
+                    'Parental_coverage'=>$Parental_coverage ? $Parental_coverage:$savedInventory->Parental_coverage ,
+                    'Repair_cap'=>$Repair_cap ? $Repair_cap:$savedInventory->Repair_cap,
+                    'inventory_status'=>$Inventory_status ? $Inventory_status: $savedInventory->inventory_status]);
+                
+            }else{
             $inventory = new InventoryManagement;           
             $inventory->Purchase_date = $Purchase_date;
             $inventory->OEM_warranty_until = $OEM_warranty_until;
@@ -87,12 +111,14 @@ class InventoryController extends Controller
             $inventory->school_id =$schId;
             $inventory->save();
          }
+         
+            }
       return 'success' ;                                       
-}
+    }
 catch (\Throwable $th) {    
         return "Invalid CSV";
     }
-    }
+    } 
 
    public function getInventories($sid,$key){
        if($key == "null"){
@@ -298,7 +324,11 @@ catch (\Throwable $th) {
      foreach ($idArray as $id){           
      if($actionId == 2){
      $updatedInventory=InventoryManagement::where('ID', $id)->update(['inventory_status'=>2]);         
-     }else{
+     }elseif($actionId ==3){
+      $updatedInventory=InventoryManagement::where('ID', $id)->update(['inventory_status'=>1]);      
+     }
+     
+     else{
          return "select any action";
      }
     
