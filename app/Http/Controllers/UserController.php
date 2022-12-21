@@ -51,7 +51,7 @@ class UserController extends Controller
     }catch (\Throwable $th){
         return "something went wrong.";
     }
-    
+    }
     function deleteUser(){
         
     }
@@ -59,5 +59,5 @@ class UserController extends Controller
          $Access = Access::all();
          return $Access;
     }    
-}
+
 }
