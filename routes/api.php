@@ -29,7 +29,9 @@ Route::get('/getInventories/{sid?}&{key?}', [InventoryController::class, 'getInv
 Route::get('/getexport', [InventoryController::class, 'getexport']);
 Route::post('/addeditmanualInventoy', [InventoryController::class, 'manualAddEditInventoy']);
 Route::get('/getallInventories/{sid?}&{key?}', [InventoryController::class, 'getallInventories']);
+Route::get('/getallDecommission/{sid?}&{key?}', [InventoryController::class, 'getallDecommission']);
 Route::post('/manageInventoryAction', [InventoryController::class, 'manageInventoryAction']);
+Route::post('/adddecommission', [InventoryController::class, 'addDecommission']);
 //device
 Route::post('/addNdUpdateDevice', [DeviceTypeController::class, 'addDevice']);
 Route::get('/allDevice', [DeviceTypeController::class, 'allDevice']);
