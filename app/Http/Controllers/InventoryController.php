@@ -144,20 +144,23 @@ catch (\Throwable $th) {
        
         
    }
-   public function getallInventories($sid,$key){
+   public function getallInventories($sid,$flag,$key){
        if($key == "null"){
-        $inventory = InventoryManagement::where('school_id',$sid)->where("inventory_status",1)->orderby('id','asc')->get(); 
+        $inventory = InventoryManagement::where('school_id',$sid)->where("inventory_status",$flag)->orderby('id','asc')->get(); 
       
         return response()->json(
         collect([
         'response' => 'success',
         'msg' => $inventory,         
          ]));
-       }else{
-        $get = InventoryManagement::where('Student_name','LIKE',"%$key%")
-                ->orWhere('Device_model', 'like', '%' . $key . '%')
-                ->orWhere('Serial_number', 'like', '%' . $key . '%')
-                ->get();  
+       }else{           
+        $get = InventoryManagement::where('school_id',$sid)->where("inventory_status",$flag)->where(function($query) use ($key){
+        $query->where('Device_model','LIKE',"%$key%");
+        $query->orWhere('Student_name','LIKE',"%$key%");
+        $query->orWhere('Serial_number','LIKE',"%$key%");
+    })               
+                ->get(); 
+        return $get;
         return response()->json(
          collect([
         'response' => 'success',
