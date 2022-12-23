@@ -49,7 +49,8 @@ class UserController extends Controller
             $userID = $request->input('id');
             $userName = $request->input('username');
             $userAccessType = $request->input('access');
-            $updateUser = User::where('ID', $userID)->update(['name' => $userName, 'access_type' => $userAccessType]);
+            $useremail = $request->input('email');
+            $updateUser = User::where('ID', $userID)->update(['name' => $userName, 'access_type' => $userAccessType,'email'=>$useremail]);
             return "success";
         } catch (\Throwable $th) {
             return "something went wrong.";
