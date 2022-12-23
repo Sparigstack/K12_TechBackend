@@ -54,13 +54,13 @@ Route::get('/searchInventory/{key}', [InventoryController::class, 'searchInvento
 Route::get('/allDeviceIssue', [TicketController::class, 'allIssue']);
 Route::post('/generateIssue', [TicketController::class, 'generateIssue']);
 Route::get('/allTickets/{sid?}&{uid}', [ManageTicketController::class, 'allTickets']);
-Route::get('/getTicketStatus', [ManageTicketController::class, 'getTicketStatusforManageTicket']);
+//Route::get('/getTicketStatus', [ManageTicketController::class, 'getTicketStatusforManageTicket']);
 Route::post('/changeticketStatus', [ManageTicketController::class, 'changeticketStatus']);
 Route::get('/openTickets/{sid?}&{key}', [ManageTicketController::class, 'OpenTickets']);
 Route::get('/closeTickets/{sid?}&{key}', [ManageTicketController::class, 'CloseTickets']);
 Route::get('/getTicketNotes/{sid?}&{id}', [ManageTicketController::class, 'getTicketNotes']);
-Route::get('/filterTickets/{sid?}&{fid}', [ManageTicketController::class, 'filterTickets']);
-Route::get('/searchTicket/{sid?}&{skey}', [ManageTicketController::class, 'searchTicket']);
+//Route::get('/filterTickets/{sid?}&{fid}', [ManageTicketController::class, 'filterTickets']);
+//Route::get('/searchTicket/{sid?}&{skey}', [ManageTicketController::class, 'searchTicket']);
 //user
 Route::post('/addUser',[UserController::class,'addUser']);
 Route::get('/allUser',[UserController::class,'allUser']);

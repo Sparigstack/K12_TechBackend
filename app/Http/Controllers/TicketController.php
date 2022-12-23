@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Models\OperatingSystem;
 use App\Models\DeviceIssue;
 use App\Models\Ticket;
+use App\Models\TicketIssue;
+use App\Models\User;
 use App\Models\InventoryManagement;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
@@ -23,28 +25,52 @@ class TicketController extends Controller
         'msg' => $issues,
     ]));        
 }
-     public function generateIssue(Request $request){
-         
-try{       
+     public function generateIssue(Request $request){            
         $msg = $request->input('msg');
-        $devicearray = $request->input('DeviceIssueArray');       
-        foreach($devicearray as $devicearraydata){
-        $issues = new Ticket();    
-        $issues->device_issue_id = $devicearraydata['ID']; 
-        $issues->school_id = $msg['schoolId'];
-        $issues->user_id  = $msg['userId'];      
-        $issues->inventory_id = $msg['inventoryId'];
-        $issues->ticket_status =$msg['status'];
-        $issues->notes =$msg['Notes'];       
-        $issues->save();
-           
-        }   
-     return "success";
-        
-        
-    }catch (\Throwable $th){
-      return "Error";  
-    }
+        $devicearray = $request->input('DeviceIssueArray');
+        $statusid = "";         
+        $data = Ticket::where('user_id', $msg['userId'])->first();
+        if (isset($data)) {
+            foreach ($devicearray as $devicearraydata) {
+             $statusid .= "," . $devicearraydata['ID'];
+            }
+            $IdStatus = ltrim($statusid, ',');
+            $TicketIssuedata = TicketIssue::where('ticket_Id', $data->ID)->first();
+            if (isset($TicketIssuedata)) {              
+                $alreadyExcistId = $TicketIssuedata->issue_Id;
+                $IdStatus = ltrim($statusid, ',');
+                TicketIssue::where('id', $TicketIssuedata->ID)->update(['issue_Id' =>$IdStatus .','.$alreadyExcistId]);
+            }else {
+                foreach ($devicearray as $devicearraydata) {
+                    $statusid .= "," . $devicearraydata['ID'];
+                } $IdStatus = ltrim($statusid, ',');
+                $Issue = new TicketIssue();
+                $Issue->ticket_Id = $data->ID;
+                $Issue->issue_Id = $IdStatus;
+                $Issue->user_id = $data->user_id;
+                $Issue->save();
+            }
+        } else {
+            $ticket = new Ticket();
+            $ticket->school_id = $msg['schoolId'];
+            $ticket->user_id = $msg['userId'];
+            $ticket->inventory_id = $msg['inventoryId'];          
+            $ticket->notes = $msg['Notes'];
+            $ticket->save();
+
+            $Issue = new TicketIssue();
+            foreach ($devicearray as $devicearraydata) {
+                $statusid .= "," . $devicearraydata['ID'];
+            }
+            $IdStatus = ltrim($statusid, ',');
+            $Issue->ticket_Id = $ticket->id;
+            $Issue->issue_Id = $IdStatus;
+            $Issue->user_id = $msg['userId'];
+            $Issue->save();
+            Ticket::where('id', $ticket->id)->update(['ticket_issue_Id' => $Issue->id]);
+        }
+        return "success";
+
 }
 }
     
