@@ -67,3 +67,4 @@ Route::get('/allUser',[UserController::class,'allUser']);
 Route::post('/updateUser',[UserController::class,'updateUser']);
 Route::get('/allAccess',[UserController::class,'allAccess']);
 Route::get('/getUserById/{uid?}',[UserController::class,'updateUserData']);
+Route::delete('/deleteUser', [UserController::class, 'deleteUser']);

@@ -61,8 +61,9 @@ class UserController extends Controller
         return $data;
     }
 
-    function deleteUser() {
-        
+    function deleteUser(Request $request) {
+     $user= User::where('ID', $request->input('ID'))->delete(); 
+     return 'done';
     }
 
     function allAccess(){
