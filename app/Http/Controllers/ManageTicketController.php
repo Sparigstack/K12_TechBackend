@@ -127,23 +127,38 @@ class ManageTicketController extends Controller
          'Openticket'=>$array_openTicket,          
     ]));                   
         }elseif($key == 1){
-         $array = collect($array_openTicket)->sortBy('Grade')->values();
+         if($flag == 'as'){
+                $array = collect($array_openTicket)->sortBy('Grade')->values();
+               
+            }else{
+                $array = collect($array_openTicket)->sortByDesc('Grade')->values();
+            }
          return response()->json(
           collect([
          'response' => 'success',                            
          'Openticket'=>$array,          
             ]));  
         
-         }elseif($key == 2){
-         $array = collect($array_openTicket)->sortBy('Building')->values();
+         }elseif($key == 2){       
+          if($flag == 'as'){
+                $array = collect($array_openTicket)->sortBy('Building')->values();
+               
+            }else{
+                $array = collect($array_openTicket)->sortByDesc('Building')->values();
+            }
          return response()->json(
           collect([
          'response' => 'success',                            
          'Openticket'=>$array,          
             ]));  
         
-         }elseif($key == 3){
-         $array = collect($array_openTicket)->sortByDesc('ticket_status')->values();
+         }elseif($key == 3){       
+          if($flag == 'as'){
+                $array = collect($array_openTicket)->sortBy('ticket_status')->values();
+               
+            }else{
+                $array = collect($array_openTicket)->sortByDesc('ticket_status')->values();
+            }
          return response()->json(
           collect([
          'response' => 'success',                            
