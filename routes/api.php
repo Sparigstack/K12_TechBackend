@@ -59,6 +59,7 @@ Route::post('/changeticketStatus', [ManageTicketController::class, 'changeticket
 Route::get('/openTickets/{sid?}&{key}&{flag}', [ManageTicketController::class, 'OpenTickets']);
 Route::get('/closeTickets/{sid?}&{key}&{flag}', [ManageTicketController::class, 'CloseTickets']);
 Route::get('/getTicketNotes/{sid?}&{id}', [ManageTicketController::class, 'getTicketNotes']);
+Route::get('/searchOpenTicket/{sid?}&{key}&{flag}', [ManageTicketController::class, 'searchOpenTicket']);
 //Route::get('/filterTickets/{sid?}&{fid}', [ManageTicketController::class, 'filterTickets']);
 //Route::get('/searchTicket/{sid?}&{skey}', [ManageTicketController::class, 'searchTicket']);
 //user

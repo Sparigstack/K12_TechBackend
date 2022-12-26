@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Personal;
 use App\Models\User;
 use App\Models\Ticket;
@@ -17,327 +18,363 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Exception;
 use App\Models\DeviceIssue;
 
-class InventoryController extends Controller
-{
-    public function uploadInventory(Request $request)
-    {
-       try{
-        $userId =$request->input('ID');    
-        $schId =$request->input('schId');
-        
-        $result =$request->file('file');
-        $file = fopen($result,'r');
-        $header = fgetcsv($file);
-        $escapedheader=[];       
-        foreach($header as $key =>$value){          
-        $lheader = strtolower($value);           
-         $escapedItem=preg_replace('/[^a-z]/','',$lheader);        
-         array_push($escapedheader,$escapedItem);
-        }   
-    
-          while($columns=fgetcsv($file))
-         {                
-            if($columns[0]=="") 
-            {
-                continue;
-            }
-            foreach($columns as $key=> &$value)
-            {                   
-               $value;               
-            }              
-            $data = array_combine($escapedheader,$columns); 
-            $Purchase_date=$data['purchasedate']; 
-            $OEM_warranty_until=$data['oemwarrantyuntil'];
-            $Extended_warranty_until=$data['extendedwarrantyuntil'];
-            $ADP_coverage=$data['adpcoverage'];
-            $OEM=$data['oem'];
-            $Device_model=$data['devicemodel'];
-            $OS=$data['os'];
-            $Serial_number=$data['serialnumber'];
-            $Asset_tag=$data['assettag'];
-            $Building=$data['building'];
-            $Grade=$data['grade'];
-            $Student_name=$data['studentname'];
-            $Student_ID=$data['studentid'];
-            $Parent_email=$data['parentemail'];
-            $Parent_phone_number=$data['parentphonenumber'];
-            $Parental_coverage=$data['parentalcoverage'];
-            $Repair_cap=$data['repaircap'];        
-            $Inventory_status=$data['inventorystatus'];             
-            $savedInventory= InventoryManagement::where('Serial_number', $data['serialnumber'])->first();
-            
-            if(isset($savedInventory)){
-                $SerialNum = $savedInventory->Serial_number;
-                $CsvSerialNum=$data['serialnumber']; 
-                $updatedDetail=InventoryManagement::where('Serial_number', $CsvSerialNum)->update(['Purchase_date' => $Purchase_date,
-                    'OEM_warranty_until'=>$OEM_warranty_until,
-                    'Extended_warranty_until'=> $Extended_warranty_until ? $Extended_warranty_until : $savedInventory->Extended_warranty_until,
-                    "ADP_coverage"=>$ADP_coverage ? $ADP_coverage : $savedInventory->ADP_coverage,
-                    'OEM'=>$OEM ? $OEM : $savedInventory->OEM ,
-                    'Device_model'=>$Device_model ? $Device_model : $savedInventory->Device_model,
-                    'OS'=>$OS ? $OS : $savedInventory->OS,
-                    'Asset_tag'=>$Asset_tag ? $Asset_tag : $savedInventory->Asset_tag ,
-                    'Building'=>$Building ? $Building : $savedInventory->Building,
-                    'Grade'=>$Grade ? $Grade : $savedInventory->Grade ,
-                    'Student_name'=>$Student_name ? $Student_name: $savedInventory->Student_name,
-                    'Student_ID'=>$Student_ID ? $Student_ID: $savedInventory->Student_ID,
-                    'Parent_email'=>$Parent_email ? $Parent_email:$savedInventory->Parent_email,
-                    'Parent_phone_number'=>$Parent_phone_number ? $Parent_phone_number:$savedInventory->Parent_phone_number,
-                    'Parental_coverage'=>$Parental_coverage ? $Parental_coverage:$savedInventory->Parental_coverage ,
-                    'Repair_cap'=>$Repair_cap ? $Repair_cap:$savedInventory->Repair_cap,
-                    'inventory_status'=>$Inventory_status ? $Inventory_status: $savedInventory->inventory_status]);
-                
-            }else{
-            $inventory = new InventoryManagement;           
-            $inventory->Purchase_date = $Purchase_date;
-            $inventory->OEM_warranty_until = $OEM_warranty_until;
-            $inventory->Extended_warranty_until = $Extended_warranty_until;
-            $inventory->ADP_coverage = $ADP_coverage;
-            $inventory->OEM = $OEM;
-            $inventory->Device_model = $Device_model;
-            $inventory->OS = $OS;
-            $inventory->Serial_number = $Serial_number;
-            $inventory->Asset_tag = $Asset_tag;
-            $inventory->Building = $Building;
-            $inventory->Grade = $Grade;
-            $inventory->Student_name = $Student_name;
-            $inventory->Student_ID = $Student_ID;
-            $inventory->Parent_email = $Parent_email;
-            $inventory->Parent_phone_number = $Parent_phone_number;
-            $inventory->Parental_coverage = $Parental_coverage;
-            $inventory->Repair_cap = $Repair_cap;
-            $inventory->inventory_status =$Inventory_status;
-            $inventory->user_id = $userId;
-            $inventory->school_id =$schId;
-            $inventory->save();
-         }
-         
-            }
-      return 'success' ;                                       
-    }
-catch (\Throwable $th) {    
-        return "Invalid CSV";
-    }
-    } 
+class InventoryController extends Controller {
 
-   public function getInventories($sid,$key){
-       if($key == "null"){
-        $inventory = InventoryManagement::where('school_id',$sid)->where('inventory_status',1)->orderby('id','asc')->paginate(8); 
-        $decommission = InventoryManagement::where('school_id',$sid)->where('inventory_status',2)->orderby('id','asc')->paginate(8);
+    public function uploadInventory(Request $request) {
+//        try {
+            $userId = $request->input('ID');
+            $schId = $request->input('schId');
+
+            $result = $request->file('file');
+            $file = fopen($result, 'r');
+            $header = fgetcsv($file);
+            $escapedheader = [];
+            foreach ($header as $key => $value) {
+                $lheader = strtolower($value);
+                $escapedItem = preg_replace('/[^a-z]/', '', $lheader);
+                array_push($escapedheader, $escapedItem);
+            }
+
+            while ($columns = fgetcsv($file)) {
+                if ($columns[0] == "") {
+                    continue;
+                }
+                foreach ($columns as $key => &$value) {
+                    $value;
+                }
+              
+                $data = array_combine($escapedheader, $columns);
+//                  return $data;
+//                $User_id =   
+                $Device_manufacturer = $data['devicemanufacturer'];
+                $Device_Type = $data['devicetype'];
+                $Device_model = $data['devicemodel'];
+                $Device_os = $data['deviceos'];
+                $Manufacturer_warranty_until = $data['manufacturerwarrantyuntil'];
+                $Manufacturer_ADP_until = $data['manufactureradpuntil'];
+                $Third_party_extended_warranty_until = $data['thirdpartyextendedwarrantyuntil'];
+                $Third_party_ADP_until = $data['thirdpartyadpuntil'];
+                $Expected_retirement = $data['expectedretirement'];
+                $Loaner_device = $data['loanerdevice'];
+                $Device_user_first_name = $data['deviceuserfirstname'];
+                $Device_user_last_name = $data['deviceuserlastname'];
+                $Student_ID = $data['studentid'];
+                $Grade = $data['gradedepartment'];
+                $Device_MPN = $data['devicempn'];
+                $Serial_number = $data['serialnumber'];
+                $Asset_tag = $data['assettag'];
+                $Purchase_date = $data['purchasedate'];
+                $Building = $data['building'];
+                $User_type = $data['usertype'];
+                $Parent_guardian_name = $data['parentguardianname'];
+                $Parent_Guardian_Email = $data['parentguardianemail'];
+                $Parent_phone_number = $data['parentphonenumber'];
+                $Parental_coverage = $data['parentalcoverage'];
+                $Repair_cap = $data['repaircap'];
+                $inventory_status = $data['inventorystatus'];
+
+                $savedInventory = InventoryManagement::where('Serial_number', $data['serialnumber'])->first();
+
+                if (isset($savedInventory)) {
+                    $SerialNum = $savedInventory->Serial_number;
+                    $CsvSerialNum = $data['serialnumber'];
+                    $updatedDetail = InventoryManagement::where('Serial_number', $CsvSerialNum)
+                            ->update(['Purchase_date' => $Purchase_date ? $Purchase_date : $savedInventory->Purchase_date,
+                        'Device_manufacturer' => $Device_manufacturer ? $Device_manufacturer : $savedInventory->Device_manufacturer,
+                        'Device_Type' => $Device_Type ? $Device_Type : $savedInventory->Device_Type,
+                        'Device_model' => $Device_model ? $Device_model : $savedInventory->Device_model,
+                        'Device_os' => $Device_os ? $Device_os : $savedInventory->Device_os,
+                        'Manufacturer_warranty_until' => $Manufacturer_warranty_until ? $Manufacturer_warranty_until : $savedInventory->Manufacturer_warranty_until,
+                        'Manufacturer_ADP_until' => $Manufacturer_ADP_until ? $Manufacturer_ADP_until : $savedInventory->Manufacturer_ADP_until,
+                        'Third_party_extended_warranty_until' => $Third_party_extended_warranty_until ? $Third_party_extended_warranty_until : $savedInventory->Third_party_extended_warranty_until,
+                        'Third_party_ADP_until' => $Third_party_ADP_until ? $Third_party_ADP_until : $savedInventory->Third_party_ADP_until,
+                        'Expected_retirement' => $Expected_retirement ? $Expected_retirement : $savedInventory->Expected_retirement,
+                        'Loaner_device' => $Loaner_device ? $Loaner_device : $savedInventory->Loaner_device,
+                        'Device_user_first_name' => $Device_user_first_name ? $Device_user_first_name : $savedInventory->Device_user_first_name,
+                        'Device_user_last_name' => $Device_user_last_name ? $Device_user_last_name : $savedInventory->Device_user_last_name,
+                        'Student_ID' => $Student_ID ? $Student_ID : $savedInventory->Student_ID,
+                        'Grade' => $Grade ? $Grade : $savedInventory->Grade,
+                        'Device_MPN' => $Device_MPN ? $Device_MPN : $savedInventory->Device_MPN,
+                        'Asset_tag' => $Asset_tag ? $Asset_tag : $savedInventory->Asset_tag,
+                        'Building' => $Building ? $Building : $savedInventory->Building,
+                        'Parent_guardian_name' => $Parent_guardian_name ? $Parent_guardian_name : $savedInventory->Parent_guardian_name,
+                        'User_type' => $User_type ? $User_type : $savedInventory->User_type,
+                        'Parent_Guardian_Email' => $Parent_Guardian_Email ? $Parent_Guardian_Email : $savedInventory->Parent_Guardian_Email,
+                        'Parent_phone_number' => $Parent_phone_number ? $Parent_phone_number : $savedInventory->Parent_phone_number,
+                        'Parental_coverage' => $Parental_coverage ? $Parental_coverage : $savedInventory->Parental_coverage,
+                        'Repair_cap' => $Repair_cap ? $Repair_cap : $savedInventory->Repair_cap]);
+                } else {
+                    $inventory = new InventoryManagement;
+                    $inventory->Purchase_date = $Purchase_date;
+                    $inventory->Device_manufacturer = $Device_manufacturer;
+                    $inventory->Device_Type = $Device_Type;
+                    $inventory->Device_model = $Device_model;
+//                    $inventory->Device_os = $Device_os;
+                    $inventory->Manufacturer_warranty_until = $Manufacturer_warranty_until;
+                    $inventory->Manufacturer_ADP_until = $Manufacturer_ADP_until;
+                    $inventory->Serial_number = $Serial_number;
+                    $inventory->Third_party_extended_warranty_until = $Third_party_extended_warranty_until;
+                    $inventory->Third_party_ADP_until = $Third_party_ADP_until;
+                    $inventory->Expected_retirement = $Expected_retirement;
+                    $inventory->Loaner_device = $Loaner_device;
+                    $inventory->Device_user_first_name = $Device_user_first_name;
+                    $inventory->Device_user_last_name = $Device_user_last_name;
+                    $inventory->Student_ID = $Student_ID;
+                    $inventory->Grade = $Grade;
+                    $inventory->Device_MPN = $Device_MPN;
+                    $inventory->Asset_tag = $Asset_tag;
+                    $inventory->Building = $Building;
+                    $inventory->Parent_guardian_name = $Parent_guardian_name;
+                    $inventory->User_type = $User_type;
+                    $inventory->Parent_Guardian_Email = $Parent_Guardian_Email;
+                    $inventory->Parent_phone_number = $Parent_phone_number;
+                    $inventory->Parental_coverage = $Parental_coverage;
+                    $inventory->Repair_cap = $Repair_cap;
+                    $inventory->user_id = $userId;
+                    $inventory->school_id = $schId;
+                    $inventory->inventory_status = $inventory_status;
+                    $inventory->save();
+                }
+            }
+            return 'success';
+//        } catch (\Throwable $th) {
+//            return "Invalid CSV";
+//        }
+    }
+
+    public function getInventories($sid, $key) {
+        if ($key == "null") {
+            $inventory = InventoryManagement::where('school_id', $sid)->where('inventory_status', 1)->orderby('id', 'asc')->paginate(8);
+            $decommission = InventoryManagement::where('school_id', $sid)->where('inventory_status', 2)->orderby('id', 'asc')->paginate(8);
+            return response()->json(
+                            collect([
+                        'response' => 'success',
+                        'msg' => $inventory,
+                        'decommisionInvenoty' => $decommission
+            ]));
+        } else {
+            $get = InventoryManagement::where('Device_user_first_name', 'LIKE', "%$key%")
+                    ->orWhere('Device_user_last_name', 'LIKE', "%$key%")
+                    ->orWhere('Device_model', 'like', '%' . $key . '%')
+                    ->orWhere('Serial_number', 'like', '%' . $key . '%')
+                    ->paginate(8);
+            return response()->json(
+                            collect([
+                        'response' => 'success',
+                        'msg' => $get
+            ]));
+        }
+    }
+
+    public function getallInventories($sid, $flag, $key) {
+        if ($key == "null") {
+            $inventory = InventoryManagement::where('school_id', $sid)->where("inventory_status", $flag)->orderby('id', 'asc')->get();
+
+            return response()->json(
+                            collect([
+                        'response' => 'success',
+                        'msg' => $inventory,
+            ]));
+        } else {
+            $get = InventoryManagement::where('school_id', $sid)->where("inventory_status", $flag)->where(function ($query) use ($key) {
+                        $query->where('Device_model', 'LIKE', "%$key%");
+                        $query->orWhere('Device_user_last_name', 'LIKE', "%$key%");
+                        $query->orWhere('Device_user_first_name', 'LIKE', "%$key%");
+                        $query->orWhere('Serial_number', 'LIKE', "%$key%");
+                    })
+                    ->get();
+            return $get;
+            return response()->json(
+                            collect([
+                        'response' => 'success',
+                        'msg' => $get
+            ]));
+        }
+    }
+
+    function addDecommission(Request $request) {
+        $inventoryId = $request->input('ID');
+        $updateUser = InventoryManagement::where('ID', $inventoryId)->update(['inventory_status' => 2]);
+        return 'success';
+    }
+
+    function getallDecommission($sid, $key) {
+        if ($key == "null") {
+            $inventory = InventoryManagement::where('school_id', $sid)->where("inventory_status", 2)->orderby('id', 'asc')->get();
+
+            return response()->json(
+                            collect([
+                        'response' => 'success',
+                        'msg' => $inventory,
+            ]));
+        } else {
+            $get = InventoryManagement::where('Device_user_first_name', 'LIKE', "%$key%")
+                    ->orWhere('Device_user_last_name', 'like', '%' . $key . '%')
+                    ->orWhere('Device_model', 'like', '%' . $key . '%')
+                    ->orWhere('Serial_number', 'like', '%' . $key . '%')
+                    ->get();
+            return response()->json(
+                            collect([
+                        'response' => 'success',
+                        'msg' => $get
+            ]));
+        }
+    }
+
+    public function fetchDeviceDetail($id) {
+        $inventorydata = InventoryManagement::where('ID', $id)->first();
+        $userid = $inventorydata->user_id;
+        $user = User::where('id', $userid)->first();
+        $username = $user->name;
+        $ticketdata = Ticket::where('inventory_id', $id)->get();
+        $deviceHistory = array();
+        foreach ($ticketdata as $data) {
+            $notes = $data['notes'];
+            $ticketStaus = $data['ticket_status'];
+            $statusdata = TicketStatus::where('ID', $ticketStaus)->first();
+            $status = $statusdata->status;
+            $deviceIssue = $data['device_issue_id'];
+            $issuedata = DeviceIssue::where('ID', $deviceIssue)->first();
+            $issue = $issuedata->issue;
+            $created_at = $data['created_at']->format('m-d-Y');
+            array_push($deviceHistory, ["Issue" => $issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+        }
         return response()->json(
-        collect([
-        'response' => 'success',
-        'msg' => $inventory,
-        'decommisionInvenoty'=>$decommission    
-         ]));
-       }else{
-        $get = InventoryManagement::where('Student_name','LIKE',"%$key%")
-                ->orWhere('Device_model', 'like', '%' . $key . '%')
-                ->orWhere('Serial_number', 'like', '%' . $key . '%')
-                ->paginate(8);  
-        return response()->json(
-         collect([
-        'response' => 'success',
-        'msg' => $get       
-         ]));
-       }
-       
-        
-   }
-   public function getallInventories($sid,$flag,$key){
-       if($key == "null"){
-        $inventory = InventoryManagement::where('school_id',$sid)->where("inventory_status",$flag)->orderby('id','asc')->get(); 
-      
-        return response()->json(
-        collect([
-        'response' => 'success',
-        'msg' => $inventory,         
-         ]));
-       }else{           
-        $get = InventoryManagement::where('school_id',$sid)->where("inventory_status",$flag)->where(function($query) use ($key){
-        $query->where('Device_model','LIKE',"%$key%");
-        $query->orWhere('Student_name','LIKE',"%$key%");
-        $query->orWhere('Serial_number','LIKE',"%$key%");
-    })               
-                ->get(); 
-        return $get;
-        return response()->json(
-         collect([
-        'response' => 'success',
-        'msg' => $get       
-         ]));
-       }               
-   }
-   
-   function addDecommission(Request $request){
-       $inventoryId =$request->input('ID');     
-       $updateUser = InventoryManagement::where('ID', $inventoryId)->update(['inventory_status' => 2]);
-       return 'success';
-   }
-   
-   function getallDecommission($sid,$key){
-         if($key == "null"){
-        $inventory = InventoryManagement::where('school_id',$sid)->where("inventory_status",2)->orderby('id','asc')->get(); 
-      
-        return response()->json(
-        collect([
-        'response' => 'success',
-        'msg' => $inventory,         
-         ]));
-       }else{
-        $get = InventoryManagement::where('Student_name','LIKE',"%$key%")
-                ->orWhere('Device_model', 'like', '%' . $key . '%')
-                ->orWhere('Serial_number', 'like', '%' . $key . '%')
-                ->get();  
-        return response()->json(
-         collect([
-        'response' => 'success',
-        'msg' => $get       
-         ]));
-       }
-   }
-   
-   
-   
-     public function fetchDeviceDetail($id){       
-      $inventorydata = InventoryManagement::where('ID',$id)->first(); 
-      $userid = $inventorydata->user_id;      
-      $user = User::where('id',$userid)->first();
-      $username = $user->name;
-      $ticketdata = Ticket::where('inventory_id',$id)->get();      
-         $deviceHistory = array();        
-         foreach($ticketdata as $data){  
-         $notes = $data['notes'];
-         $ticketStaus =$data['ticket_status'];
-         $statusdata = TicketStatus::where('ID',$ticketStaus)->first();
-         $status = $statusdata->status;
-         $deviceIssue =$data['device_issue_id'];
-         $issuedata = DeviceIssue::where('ID',$deviceIssue)->first();
-         $issue = $issuedata->issue;
-         $created_at =$data['created_at']->format('m-d-Y');
-         array_push($deviceHistory,["Issue"=>$issue,"Notes"=>$notes,"Status"=>$status,"Issue_createdDate"=>$created_at]);
-         }     
-       return response()->json(
-      collect([
-      'response' => 'success',
-      'msg' => $inventorydata,
-      'deviceHistory' => $deviceHistory,   
-      'userName'=> $username,   
-  ]));
-  }
- public function manualAddEditInventoy(Request $request){
-            $inventory = new InventoryManagement;
-            $inventory->Purchase_date = $request->input('PurchaseDate');
-            $inventory->OEM_warranty_until = $request->input('OemWarrantyUntil');
-            $inventory->Extended_warranty_until = $request->input('ExtendedWarrantyUntil');
-            $inventory->ADP_coverage =$request->input('ADPCoverage');
-            $inventory->OEM = $request->input('OEM');
-            $inventory->Device_model = $request->input('DeviceModel');
-            $inventory->OS = $request->input('OS');
-            $inventory->Serial_number = $request->input('SerialNumber');
-            $inventory->Asset_tag = $request->input('AssetTag');
-            $inventory->Building =$request->input('Building');
-            $inventory->Grade = $request->input('Grade');
-            $inventory->Student_name = $request->input('StudentName');
-            $inventory->Student_ID = $request->input('StudentID');
-            $inventory->Parent_email = $request->input('ParentEmail');
-            $inventory->Parent_phone_number = $request->input('ParentPhoneNumber');
-            $inventory->Parental_coverage = $request->input('ParentalCoverage');
-            $inventory->Repair_cap = $request->input('Repaircap');          
-//            $inventory->inventory_status =$request->input('inventorystatus');
-            $inventory->user_id = $request->input('userId');
-            $inventory->school_id = $request->input('schoolId');            
-            $checkinventory= InventoryManagement::where('ID', $request->input('ID'))->first();  
-               if(isset($checkinventory)){                  
-                $deviceIDfromDB = $checkinventory->ID;          
-                $deviceId= $request->input('ID');                  
-                if($deviceIDfromDB == $deviceId){
-                $updatedInventory=InventoryManagement::where('ID', $deviceId)
-                        ->update(['Purchase_date'=>$request->input('PurchaseDate'),
-                            'OEM_warranty_until'=>$request->input('OemWarrantyUntil'),
-                            'Extended_warranty_until'=>$request->input('ExtendedWarrantyUntil'),
-                            'ADP_coverage'=>$request->input('ADPCoverage'),
-                            'OEM'=>$request->input('OEM'),
-                            'Device_model'=>$request->input('DeviceModel'),
-                            'OS'=>$request->input('OS'),
-                            'Serial_number'=>$request->input('SerialNumber'),
-                            'Asset_tag'=>$request->input('AssetTag'),
-                            'Building'=>$request->input('Building'),
-                            'Grade'=>$request->input('Grade'),
-                            'Student_name'=>$request->input('StudentName'),
-                            'Student_ID'=>$request->input('StudentID'),
-                            'Parent_email'=>$request->input('ParentEmail'),
-                            'Parent_phone_number'=>$request->input('ParentPhoneNumber'),
-                            'Parental_coverage'=>$request->input('ParentalCoverage'),
-                            'Repair_cap'=>$request->input('Repaircap'),
-                            'inventory_status'=>$request->input('inventorystatus'),
-                            'user_id'=>$request->input('userId'),
-                            'school_id'=>$request->input('schoolId')                            
-                            ]);
+                        collect([
+                    'response' => 'success',
+                    'msg' => $inventorydata,
+                    'deviceHistory' => $deviceHistory,
+                    'userName' => $username,
+        ]));
+    }
+
+    public function manualAddEditInventoy(Request $request) {
+        $inventory = new InventoryManagement;
+
+        $inventory->Purchase_date = $request->input('PurchaseDate');
+        $inventory->Device_manufacturer = $request->input('Devicemanufacturer');
+        $inventory->Device_Type = $request->input('DeviceType');
+        $inventory->Device_model = $request->input('Devicemodel');
+        $inventory->Device_os = $request->input('Deviceos');
+        $inventory->Manufacturer_warranty_until = $request->input('Manufacturerwarrantyuntil');
+        $inventory->Manufacturer_ADP_until = $request->input('ManufacturerADPuntil');
+        $inventory->Serial_number = $request->input('Serialnumber');
+        $inventory->Third_party_extended_warranty_until = $request->input('Thirdpartyextendedwarrantyuntil');
+        $inventory->Third_party_ADP_until = $request->input('ThirdpartyADPuntil');
+        $inventory->Expected_retirement = $request->input('Expectedretirement');
+        $inventory->Loaner_device = $request->input('Loanerdevice');
+        $inventory->Device_user_first_name = $request->input('Deviceuserfirstname');
+        $inventory->Device_user_last_name = $request->input('Deviceuserlastname');
+        $inventory->Student_ID = $request->input('StudentID');
+        $inventory->Grade = $request->input('Grade');
+        $inventory->Device_MPN = $request->input('DeviceMPN');
+        $inventory->Asset_tag = $request->input('Assettag');
+        $inventory->Building = $request->input('Building');
+        $inventory->Parent_guardian_name = $request->input('Parentguardianname');
+        $inventory->User_type = $request->input('Usertype');
+        $inventory->Parent_guardian_Email = $request->input('ParentguardianEmail');
+        $inventory->Parent_phone_number = $request->input('Parentphonenumber');
+        $inventory->Parental_coverage = $request->input('Parentalcoverage');
+        $inventory->Repair_cap = $request->input('Repaircap');
+        $inventory->user_id = $request->input('userid');
+        $inventory->school_id = $request->input('schoolid');
+        $inventory->inventory_status = $request->input('inventorystatus');
+        $inventory->save();
+        $checkinventory = InventoryManagement::where('ID', $request->input('ID'))->first();
+        if (isset($checkinventory)) {
+            $deviceIDfromDB = $checkinventory->ID;
+            $deviceId = $request->input('ID');
+            if ($deviceIDfromDB == $deviceId) {
+                $updatedInventory = InventoryManagement::where('ID', $deviceId)->update(['Purchase_date' => $request->input('PurchaseDate'),
+                    'Device_manufacturer' => $request->input('Devicemanufacturer'),
+                    'Device_Type' => $request->input('DeviceType'),
+                    'Device_model' => $request->input('Devicemodel'),
+                    'Device_os' => $request->input('Deviceos'),
+                    'Manufacturer_warranty_until' => $request->input('Manufacturerwarrantyuntil'),
+                    'Manufacturer_ADP_until' => $request->input('ManufacturerADPuntil'),
+                    'Serial_number' => $request->input('Serialnumber'),
+                    'Third_party_extended_warranty_until' => $request->input('Thirdpartyextendedwarrantyuntil'),
+                    'Third_party_ADP_until' => $request->input('ThirdpartyADPuntil'),
+                    'Expected_retirement' => $request->input('Expectedretirement'),
+                    'Loaner_device' => $request->input('Loanerdevice'),
+                    'Device_user_first_name' => $request->input('Deviceuserfirstname'),
+                    'Device_user_last_name' => $request->input('Deviceuserlastname'),
+                    'Student_ID' => $request->input('StudentID'),
+                    'Grade' => $request->input('Grade'),
+                    'Device_MPN' => $request->input('DeviceMPN'),
+                    'Asset_tag' => $request->input('Assettag'),
+                    'Building' => $request->input('Building'),
+                    'Parent_guardian_name' => $request->input('Parentguardianname'),
+                    'User_type' => $request->input('Usertype'),
+                    'Parent_guardian_Email' => $request->input('ParentguardianEmail'),
+                    'Parent_phone_number' => $request->input('Parentphonenumber'),
+                    'Parental_coverage' => $request->input('Parentalcoverage'),
+                    'Repair_cap' => $request->input('Repaircap'),
+                    'user_id' => $request->input('userid'),
+                    'school_id' => $request->input('schoolid'),
+                    'inventory_status' => $request->input('inventorystatus'),
+                ]);
                 return "success";
-               }
-               } else{
-                 $inventory->save();   
-                return response()->json(
-                collect([
-                'response' => 'success',
-                'msg' => $inventory,
-                 ]));
             }
- }
-  public function sortbyInventory($sid,$key,$skey){
-      if($key ==1){
-      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();      
-      }elseif($key == 2){
-      $inventory= InventoryManagement::orderBy("Device_model", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();     
-      }elseif($key == 3){
-      $inventory= InventoryManagement::orderBy("Grade", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();      
-      }elseif($key == 4){
-      $inventory= InventoryManagement::orderBy("Building", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();      
-      }elseif($key == 5){
-      $inventory= InventoryManagement::orderBy("OEM", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();     
-      }elseif($key == 6){
-      $inventory= InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();     
-      }
-      else{
-      return "error";
-      }
- return response()->json(
-                collect([
-                'response' => 'success',
-                'msg' => $inventory,
-                 ])); 
-  }
+        } else {
+            $inventory->save();
+            return response()->json(
+                            collect([
+                        'response' => 'success',
+                        'msg' => $inventory,
+            ]));
+        }
+    }
 
- public function searchInventory($key){
-     $get = InventoryManagement::where('Student_name','LIKE',"%$key%")
-             ->orWhere('Device_model', 'like', '%' . $key . '%')
-             ->orWhere('Serial_number', 'like', '%' . $key . '%')
-             ->get();
-     return response()->json(
-                collect([
-                'response' => 'success',
-                'msg' => $get,
-                 ]));
+    public function sortbyInventory($sid, $key, $skey) {
+        if ($key == 1) {
+            $inventory = InventoryManagement::orderBy("Student_name", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
+        } elseif ($key == 2) {
+            $inventory = InventoryManagement::orderBy("Device_model", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
+        } elseif ($key == 3) {
+            $inventory = InventoryManagement::orderBy("Grade", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
+        } elseif ($key == 4) {
+            $inventory = InventoryManagement::orderBy("Building", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
+        } elseif ($key == 5) {
+            $inventory = InventoryManagement::orderBy("OEM", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
+        } elseif ($key == 6) {
+            $inventory = InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
+        } else {
+            return "error";
+        }
+        return response()->json(
+                        collect([
+                    'response' => 'success',
+                    'msg' => $inventory,
+        ]));
+    }
+
+    public function searchInventory($key) {
+        $get = InventoryManagement::where('Device_user_first_name', 'LIKE', "%$key%")
+                ->orWhere('Device_user_last_name', 'like', '%' . $key . '%')
+                ->orWhere('Device_model', 'like', '%' . $key . '%')
+                ->orWhere('Serial_number', 'like', '%' . $key . '%')
+                ->get();
+        return response()->json(
+                        collect([
+                    'response' => 'success',
+                    'msg' => $get
+        ]));
+    }
+
+    function manageInventoryAction(Request $request) {
+        $idArray = $request->input('IDArray');
+        $actionId = $request->input('actionid');
+        foreach ($idArray as $id) {
+            if ($actionId == 2) {
+                $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 2]);
+            } elseif ($actionId == 3) {
+                $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 1]);
+            } else {
+                return "select any action";
             }
-            
-  function manageInventoryAction(Request $request){ 
-     $idArray = $request->input('IDArray');
-     $actionId= $request->input('actionid');    
-     foreach ($idArray as $id){           
-     if($actionId == 2){
-     $updatedInventory=InventoryManagement::where('ID', $id)->update(['inventory_status'=>2]);         
-     }elseif($actionId ==3){
-      $updatedInventory=InventoryManagement::where('ID', $id)->update(['inventory_status'=>1]);      
-     }
-     
-     else{
-         return "select any action";
-     }
-    
- }
-  return "success";
+        }
+        return "success";
+    }
+
 }
-}
- 
- 
