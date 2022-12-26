@@ -87,7 +87,7 @@ class ManageTicketController extends Controller
         return $status;
     }
     
-    function OpenTickets($sid,$key){
+    function OpenTickets($sid,$key,$flag){
          try{
          $data = Ticket::where('school_id',$sid)->get();
          $array_openTicket = array();             
@@ -176,7 +176,7 @@ class ManageTicketController extends Controller
         return "something went wrong.";
     }
 }
-    function CloseTickets($sid,$key){
+    function CloseTickets($sid,$key,$flag){
        try{
          $data = Ticket::where('school_id',$sid)->get();
          $array_closeTicket = array();             
@@ -217,24 +217,26 @@ class ManageTicketController extends Controller
          'response' => 'success',                           
          'Closeticket'=>$array_closeTicket,          
     ]));                   
-        }elseif($key == 1){
-         $array = collect($array_closeTicket)->sortBy('Grade')->values();
+        }elseif($key == 1){       
+          if($flag == 'as'){
+                $array = collect($array_closeTicket)->sortBy('Grade')->values();
+               
+            }else{
+                $array = collect($array_closeTicket)->sortByDesc('Grade')->values();
+            }
          return response()->json(
           collect([
          'response' => 'success',                            
          'Closeticket'=>$array,          
             ]));  
         
-         }elseif($key == 2){
-         $array = collect($array_closeTicket)->sortBy('Building')->values();
-         return response()->json(
-          collect([
-         'response' => 'success',                            
-         'Closeticket'=>$array,          
-            ]));  
-        
-         }elseif($key == 3){
-         $array = collect($array_closeTicket)->sortByDesc('ticket_status')->values();
+         }elseif($key == 2){      
+          if($flag == 'as'){
+                $array = collect($array_closeTicket)->sortBy('Building')->values();
+               
+            }else{
+                $array = collect($array_closeTicket)->sortByDesc('Building')->values();
+            }
          return response()->json(
           collect([
          'response' => 'success',                            
