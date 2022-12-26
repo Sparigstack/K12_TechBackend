@@ -36,9 +36,12 @@ class ManageTicketController extends Controller
          $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y');  
          $Issuealldata =TicketIssue::where('ticket_Id',$ticketdata['ID'])->get();        
           foreach($Issuealldata as $Issuedata)
-          {                
+          {       
+              
                  $issueId =  $Issuedata->issue_Id;
-                 $StatusallData = TicketStatus::where('ID',$issueId)->first();
+                 $StatusID = $Issuedata->ticket_status;
+                        
+                 $StatusallData = TicketStatus::where('ID',$StatusID)->first();
                  $status = $StatusallData->status;
                  $statusID =$StatusallData->ID;
                  
@@ -105,9 +108,10 @@ class ManageTicketController extends Controller
           foreach($Issuealldata as $Issuedata)
           {         
 //              return  $Issuedata;
-                 $ID =$Issuedata->ID;
+                 $ID =$Issuedata->ID;          
                  $issueId =  $Issuedata->issue_Id;
-                 $StatusallData = TicketStatus::where('ID',$issueId)->first();
+                 $StatusID = $Issuedata->ticket_status;
+                 $StatusallData = TicketStatus::where('ID',$StatusID)->first();
                  $status = $StatusallData->status;
                  $statusID =$StatusallData->ID;
                  
@@ -179,7 +183,8 @@ class ManageTicketController extends Controller
           {        
                  $ID =$Issuedata->ID;
                  $issueId =  $Issuedata->issue_Id;
-                 $StatusallData = TicketStatus::where('ID',$issueId)->first();
+                 $StatusID = $Issuedata->ticket_status;
+                 $StatusallData = TicketStatus::where('ID',$StatusID)->first();
                  $status = $StatusallData->status;
                  $statusID =$StatusallData->ID;
                  
