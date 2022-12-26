@@ -50,11 +50,13 @@ class ManageTicketController extends Controller
                  }
           }
          }
+          $openTicket = collect($array_openTicket)->unique('ticketid')->values();
+           $closeTicket = collect($array_closeTicket)->unique('ticketid')->values();
           
           return response()->json(
           collect([
          'response' => 'success',                  
-          'Openticket'=>$array_openTicket,
+          'Openticket'=>$openTicket,
           'Closeticket'=>$array_closeTicket,          
     ]));
       

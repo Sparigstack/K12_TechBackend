@@ -48,9 +48,11 @@ class TicketController extends Controller
             $ticket->inventory_id = $msg['inventoryId'];          
             $ticket->notes = $msg['Notes'];
             $ticket->save();
+//             return $devicearray;
+            foreach ($devicearray as $devicearraydata) {
+        
 
             $Issue = new TicketIssue();
-            foreach ($devicearray as $devicearraydata) {
 
             $Issue->ticket_Id = $ticket->id;
             $Issue->issue_Id = $devicearraydata['ID'];

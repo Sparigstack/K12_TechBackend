@@ -45,7 +45,7 @@ class InventoryController extends Controller
             {                   
                $value;               
             }              
-            $data = array_combine($escapedheader,$columns);   
+            $data = array_combine($escapedheader,$columns); 
             $Purchase_date=$data['purchasedate']; 
             $OEM_warranty_until=$data['oemwarrantyuntil'];
             $Extended_warranty_until=$data['extendedwarrantyuntil'];
@@ -53,7 +53,7 @@ class InventoryController extends Controller
             $OEM=$data['oem'];
             $Device_model=$data['devicemodel'];
             $OS=$data['os'];
-            $Serial_number=$data['serialnumber'];           
+            $Serial_number=$data['serialnumber'];
             $Asset_tag=$data['assettag'];
             $Building=$data['building'];
             $Grade=$data['grade'];
@@ -62,7 +62,7 @@ class InventoryController extends Controller
             $Parent_email=$data['parentemail'];
             $Parent_phone_number=$data['parentphonenumber'];
             $Parental_coverage=$data['parentalcoverage'];
-            $Repair_cap=$data['repaircap'];
+            $Repair_cap=$data['repaircap'];        
             $Inventory_status=$data['inventorystatus'];             
             $savedInventory= InventoryManagement::where('Serial_number', $data['serialnumber'])->first();
             
