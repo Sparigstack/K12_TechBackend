@@ -165,8 +165,7 @@ class InventoryController extends Controller {
 //        }
     }
 
-    public function getallInventories($sid, $flag, $key) {
-        if ($key == "null") {
+    public function getallInventories($sid, $flag, $key) {  
             $inventory = InventoryManagement::where('school_id', $sid)->where("inventory_status", $flag)->orderby('id', 'asc')->get();
 
             return response()->json(
@@ -174,21 +173,7 @@ class InventoryController extends Controller {
                         'response' => 'success',
                         'msg' => $inventory,
             ]));
-        } else {
-            $get = InventoryManagement::where('school_id', $sid)->where("inventory_status", $flag)->where(function ($query) use ($key) {
-                        $query->where('Device_model', 'LIKE', "%$key%");
-                        $query->orWhere('Device_user_last_name', 'LIKE', "%$key%");
-                        $query->orWhere('Device_user_first_name', 'LIKE', "%$key%");
-                        $query->orWhere('Serial_number', 'LIKE', "%$key%");
-                    })
-                    ->get();
-            return $get;
-            return response()->json(
-                            collect([
-                        'response' => 'success',
-                        'msg' => $get
-            ]));
-        }
+        
     }
 
 //    function addDecommission(Request $request) {
@@ -352,7 +337,6 @@ class InventoryController extends Controller {
 
     public function searchInventory($sid,$key,$flag) {  
         if($key !='null'){
-//             return 'hi';
        $get= InventoryManagement::where('school_id', $sid)->where("inventory_status", $flag)->where(function ($query) use ($key) {
                         $query->where('Device_model', 'LIKE', "%$key%");
                         $query->orWhere('Device_user_last_name', 'LIKE', "%$key%");
