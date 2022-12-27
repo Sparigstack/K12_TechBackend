@@ -350,19 +350,26 @@ class InventoryController extends Controller {
         ]));
     }
 
-    public function searchInventory($key) {
-        $get = InventoryManagement::where('Device_user_first_name', 'LIKE', "%$key%")
-                ->orWhere('Device_user_last_name', 'like', '%' . $key . '%')
-                ->orWhere('Device_model', 'like', '%' . $key . '%')
-                ->orWhere('Serial_number', 'like', '%' . $key . '%')
-                ->get();
+    public function searchInventory($sid,$key,$flag) {  
+        if($key !='null'){
+//             return 'hi';
+       $get= InventoryManagement::where('school_id', $sid)->where("inventory_status", $flag)->where(function ($query) use ($key) {
+                        $query->where('Device_model', 'LIKE', "%$key%");
+                        $query->orWhere('Device_user_last_name', 'LIKE', "%$key%");
+                        $query->orWhere('Device_user_first_name', 'LIKE', "%$key%");
+                        $query->orWhere('Serial_number', 'LIKE', "%$key%");
+                    })->first();
+        }else{
+           
+          $get =  InventoryManagement::where('school_id', $sid)->where("inventory_status", $flag)->get();
+        }
         return response()->json(
                         collect([
                     'response' => 'success',
                     'msg' => $get
         ]));
+    
     }
-
     function manageInventoryAction(Request $request) {
         $idArray = $request->input('IDArray');
         $actionId = $request->input('actionid');

@@ -49,7 +49,7 @@ Route::delete('/deleteOs', [OperatingSystemController::class, 'DeleteOs']);
 Route::post('/addSchool', [SchoolController::class, 'addSchool']);
 //search
 Route::get('/sortby/{sid?}&{key}&{skey}', [InventoryController::class, 'sortbyInventory']);
-Route::get('/searchInventory/{key}', [InventoryController::class, 'searchInventory']);
+Route::get('/searchInventory/{sid}&{key}&{flag}', [InventoryController::class, 'searchInventory']);
 //issue
 Route::get('/allDeviceIssue', [TicketController::class, 'allIssue']);
 Route::post('/generateIssue', [TicketController::class, 'generateIssue']);
