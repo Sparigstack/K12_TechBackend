@@ -37,6 +37,7 @@ class TicketController extends Controller
                 $Issue->ticket_Id = $data->ID;
                 $Issue->issue_Id = $devicearraydata['ID'];
                 $Issue->user_id = $data->user_id;
+                $Issue->inventory_id = $msg['inventoryId']; 
                 $Issue->ticket_status = 1;
                 $Issue->save();
             }
@@ -59,6 +60,7 @@ class TicketController extends Controller
             $Issue->issue_Id = $devicearraydata['ID'];
             $Issue->user_id = $msg['userId'];
             $Issue->ticket_status = 1;
+            $Issue->inventory_id = $msg['inventoryId']; 
             $Issue->save();
             }
 
