@@ -142,8 +142,8 @@ class InventoryController extends Controller {
 //        }
     }
 
-    public function getInventories($sid, $key) {
-        if ($key == "null") {
+    public function getInventories($sid) {
+//        if ($key == "null") {
             $inventory = InventoryManagement::where('school_id', $sid)->where('inventory_status', 1)->orderby('id', 'asc')->paginate(8);
             $decommission = InventoryManagement::where('school_id', $sid)->where('inventory_status', 2)->orderby('id', 'asc')->paginate(8);
             return response()->json(
@@ -152,18 +152,18 @@ class InventoryController extends Controller {
                         'msg' => $inventory,
                         'decommisionInvenoty' => $decommission
             ]));
-        } else {
-            $get = InventoryManagement::where('Device_user_first_name', 'LIKE', "%$key%")
-                    ->orWhere('Device_user_last_name', 'LIKE', "%$key%")
-                    ->orWhere('Device_model', 'like', '%' . $key . '%')
-                    ->orWhere('Serial_number', 'like', '%' . $key . '%')
-                    ->paginate(8);
-            return response()->json(
-                            collect([
-                        'response' => 'success',
-                        'msg' => $get
-            ]));
-        }
+//        } else {
+//            $get = InventoryManagement::where('Device_user_first_name', 'LIKE', "%$key%")
+//                    ->orWhere('Device_user_last_name', 'LIKE', "%$key%")
+//                    ->orWhere('Device_model', 'like', '%' . $key . '%')
+//                    ->orWhere('Serial_number', 'like', '%' . $key . '%')
+//                    ->paginate(8);
+//            return response()->json(
+//                            collect([
+//                        'response' => 'success',
+//                        'msg' => $get
+//            ]));
+//        }
     }
 
     public function getallInventories($sid, $flag, $key) {
@@ -192,11 +192,11 @@ class InventoryController extends Controller {
         }
     }
 
-    function addDecommission(Request $request) {
-        $inventoryId = $request->input('ID');
-        $updateUser = InventoryManagement::where('ID', $inventoryId)->update(['inventory_status' => 2]);
-        return 'success';
-    }
+//    function addDecommission(Request $request) {
+//        $inventoryId = $request->input('ID');
+//        $updateUser = InventoryManagement::where('ID', $inventoryId)->update(['inventory_status' => 2]);
+//        return 'success';
+//    }
 
     function getallDecommission($sid, $key) {
         if ($key == "null") {
@@ -279,7 +279,7 @@ class InventoryController extends Controller {
         $inventory->user_id = $request->input('userid');
         $inventory->school_id = $request->input('schoolid');
         $inventory->inventory_status = $request->input('inventorystatus');
-        $inventory->save();
+      
         $checkinventory = InventoryManagement::where('ID', $request->input('ID'))->first();
         if (isset($checkinventory)) {
             $deviceIDfromDB = $checkinventory->ID;

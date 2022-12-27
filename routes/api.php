@@ -25,13 +25,13 @@ Route::post('/register',[LoginController::class,'register']);
 Route::post('/loginValidation',[LoginController::class,'loginValidation']);
 //inventory
 Route::post('/upload', [InventoryController::class, 'uploadInventory']); 
-Route::get('/getInventories/{sid?}&{key?}', [InventoryController::class, 'getInventories']);
+Route::get('/getInventories/{sid?}', [InventoryController::class, 'getInventories']);
 Route::get('/getexport', [InventoryController::class, 'getexport']);
 Route::post('/addeditmanualInventoy', [InventoryController::class, 'manualAddEditInventoy']);
 Route::get('/getallInventories/{sid?}&{flag}&{key?}', [InventoryController::class, 'getallInventories']);
 Route::get('/getallDecommission/{sid?}&{key?}', [InventoryController::class, 'getallDecommission']);
 Route::post('/manageInventoryAction', [InventoryController::class, 'manageInventoryAction']);
-Route::post('/adddecommission', [InventoryController::class, 'addDecommission']);
+//Route::post('/adddecommission', [InventoryController::class, 'addDecommission']);
 //device
 Route::post('/addNdUpdateDevice', [DeviceTypeController::class, 'addDevice']);
 Route::get('/allDevice', [DeviceTypeController::class, 'allDevice']);
