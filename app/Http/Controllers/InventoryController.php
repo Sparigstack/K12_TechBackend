@@ -342,7 +342,7 @@ class InventoryController extends Controller {
                         $query->orWhere('Device_user_last_name', 'LIKE', "%$key%");
                         $query->orWhere('Device_user_first_name', 'LIKE', "%$key%");
                         $query->orWhere('Serial_number', 'LIKE', "%$key%");
-                    })->first();
+                    })->get();
         }else{
            
           $get =  InventoryManagement::where('school_id', $sid)->where("inventory_status", $flag)->get();
