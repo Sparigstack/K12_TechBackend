@@ -299,8 +299,7 @@ class InventoryController extends Controller {
                     'Parental_coverage' => $request->input('Parentalcoverage'),
                     'Repair_cap' => $request->input('Repaircap'),
                     'user_id' => $request->input('userid'),
-                    'school_id' => $request->input('schoolid'),
-                    'inventory_status' => $request->input('inventorystatus'),
+                    'school_id' => $request->input('schoolid')                    
                 ]);
                 return "success";
             }
