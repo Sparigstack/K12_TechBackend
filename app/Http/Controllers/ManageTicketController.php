@@ -28,7 +28,7 @@ class ManageTicketController extends Controller
          $ticketInventoryID = $ticketdata['inventory_id'];
          $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();
          $serialNum = $Inventory['Serial_number'];
-         $studentName = $Inventory['Student_name'];
+         $studentName = $Inventory['Device_user_last_name'] . $Inventory['Device_user_first_name'];
          $userdId = $Inventory['user_id'];
          $user = User::where('id',$userdId)->first();          
          $userName =$user->name;         
@@ -95,7 +95,7 @@ class ManageTicketController extends Controller
          $ticketInventoryID = $ticketdata['inventory_id'];
          $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();
          $serialNum = $Inventory['Serial_number'];
-         $studentName = $Inventory['Student_name'];
+         $studentName = $Inventory['Device_user_last_name'] . $Inventory['Device_user_first_name'];
          $grade =$Inventory['Grade'];
          $building =$Inventory['Building'];
          $userdId = $Inventory['user_id'];
@@ -184,7 +184,7 @@ class ManageTicketController extends Controller
          $ticketInventoryID = $ticketdata['inventory_id'];
          $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();
          $serialNum = $Inventory['Serial_number'];
-         $studentName = $Inventory['Student_name'];
+         $studentName = $Inventory['Device_user_last_name'] . $Inventory['Device_user_first_name'];
          $grade =$Inventory['Grade'];
          $building =$Inventory['Building'];
          $userdId = $Inventory['user_id'];

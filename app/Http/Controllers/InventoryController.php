@@ -21,7 +21,7 @@ use App\Models\DeviceIssue;
 class InventoryController extends Controller {
 
     public function uploadInventory(Request $request) {
-//        try {
+        try {
             $userId = $request->input('ID');
             $schId = $request->input('schId');
 
@@ -44,8 +44,6 @@ class InventoryController extends Controller {
                 }
               
                 $data = array_combine($escapedheader, $columns);
-//                  return $data;
-//                $User_id =   
                 $Device_manufacturer = $data['devicemanufacturer'];
                 $Device_Type = $data['devicetype'];
                 $Device_model = $data['devicemodel'];
@@ -137,9 +135,9 @@ class InventoryController extends Controller {
                 }
             }
             return 'success';
-//        } catch (\Throwable $th) {
-//            return "Invalid CSV";
-//        }
+        } catch (\Throwable $th) {
+            return "Invalid CSV";
+        }
     }
 
     public function getInventories($sid) {
