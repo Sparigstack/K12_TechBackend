@@ -51,6 +51,8 @@ Route::post('/addSchool', [SchoolController::class, 'addSchool']);
 Route::get('/sortby/{sid?}&{key}&{skey}', [InventoryController::class, 'sortbyInventory']);
 Route::get('/searchInventory/{sid}&{key}&{flag}', [InventoryController::class, 'searchInventory']);
 //issue
+
+Route::get('/searchInventoryCT/{sid}&{key}', [ManageTicketController::class, 'searchInventoryCT']);
 Route::get('/allDeviceIssue', [TicketController::class, 'allIssue']);
 Route::post('/generateIssue', [TicketController::class, 'generateIssue']);
 Route::get('/allTickets/{sid?}&{uid}', [ManageTicketController::class, 'allTickets']);

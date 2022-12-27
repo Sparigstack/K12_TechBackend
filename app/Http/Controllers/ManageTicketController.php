@@ -67,14 +67,10 @@ class ManageTicketController extends Controller
     
     function changeticketStatus(Request $request) {
         try {
-//            $idArray = $request->input('IDArray');
             $ticketStatusID = $request->input('Status');
             $idArray = $request->input('IssueIDArray');
             foreach ($idArray as $ids) {
-//                return $ids['IssueID'];
                 $updatedTicketStatus = TicketIssue::where('ticket_Id', $ids['TicketID'])->where('ID',$ids['IssueID'])->update(['ticket_status' => $ticketStatusID]);
-//                return $updatedTicketStatus;
-//                $TicketUserId =
             }
             return "success";
         } catch (\Throwable $th) {
@@ -255,5 +251,25 @@ class ManageTicketController extends Controller
     }  
   
 }
-}
 
+ function searchInventoryCT($sid,$key){
+        if($key !='null'){
+       $get= InventoryManagement::where('school_id', $sid)->where(function ($query) use ($key) {
+                        $query->where('Device_model', 'LIKE', "%$key%");
+                        $query->orWhere('Device_user_last_name', 'LIKE', "%$key%");
+                        $query->orWhere('Device_user_first_name', 'LIKE', "%$key%");
+                        $query->orWhere('Serial_number', 'LIKE', "%$key%");
+                    })->first();
+        }else{
+           
+          $get =  InventoryManagement::where('school_id', $sid)->get();
+        }
+        return response()->json(
+                        collect([
+                    'response' => 'success',
+                    'msg' => $get
+        ]));
+ }
+
+}
+       
