@@ -29,7 +29,7 @@ class TicketController extends Controller
         $msg = $request->input('msg');
         $devicearray = $request->input('DeviceIssueArray');
      
-        $data = Ticket::where('user_id', $msg['userId'])->first();
+        $data = Ticket::where('inventory_id', $msg['inventoryId'])->first();
         if (isset($data)) {
             foreach ($devicearray as $devicearraydata) {
 
@@ -38,7 +38,7 @@ class TicketController extends Controller
                 $Issue->issue_Id = $devicearraydata['ID'];
                 $Issue->user_id = $data->user_id;
                 $Issue->inventory_id = $msg['inventoryId']; 
-                $Issue->ticket_status = 1;
+//                $Issue->ticket_status = 1;
                 $Issue->save();
             }
            
@@ -49,6 +49,7 @@ class TicketController extends Controller
             $ticket->user_id = $msg['userId'];
             $ticket->inventory_id = $msg['inventoryId'];          
             $ticket->notes = $msg['Notes'];
+            $ticket->ticket_status = 1;
             $ticket->save();
 //             return $devicearray;
             foreach ($devicearray as $devicearraydata) {
@@ -59,7 +60,7 @@ class TicketController extends Controller
             $Issue->ticket_Id = $ticket->id;
             $Issue->issue_Id = $devicearraydata['ID'];
             $Issue->user_id = $msg['userId'];
-            $Issue->ticket_status = 1;
+//            $Issue->ticket_status = 1;
             $Issue->inventory_id = $msg['inventoryId']; 
             $Issue->save();
             }
