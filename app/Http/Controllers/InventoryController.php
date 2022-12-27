@@ -226,9 +226,10 @@ class InventoryController extends Controller {
         $user = User::where('id', $userid)->first();
         $username = $user->name;
         $ticketdata = Ticket::where('inventory_id', $id)->first();
-        $ticketID = $ticketdata->ID;
-        $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();
         $deviceHistory = array();
+        if(isset($ticketdata)){
+        $ticketID = $ticketdata->ID;
+        $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();       
         foreach ($ticketIssueData as $data) {
             $notes = $ticketdata['notes'];
             $ticketStatusId=$data['ticket_status'];
@@ -239,6 +240,7 @@ class InventoryController extends Controller {
             $issue = $issuedata->issue;
             $created_at = $data['created_at']->format('m-d-Y');
             array_push($deviceHistory, ["Issue" => $issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+        }
         }
         return response()->json(
                         collect([
@@ -329,7 +331,7 @@ class InventoryController extends Controller {
 
     public function sortbyInventory($sid, $key, $skey) {
         if ($key == 1) {
-            $inventory = InventoryManagement::orderBy("Student_name", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
+            $inventory = InventoryManagement::orderBy("Device_user_first_name", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
         } elseif ($key == 2) {
             $inventory = InventoryManagement::orderBy("Device_model", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
         } elseif ($key == 3) {
@@ -337,10 +339,8 @@ class InventoryController extends Controller {
         } elseif ($key == 4) {
             $inventory = InventoryManagement::orderBy("Building", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
         } elseif ($key == 5) {
-            $inventory = InventoryManagement::orderBy("OEM", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
-        } elseif ($key == 6) {
             $inventory = InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id", $sid)->where("inventory_status", $skey)->get();
-        } else {
+        }  else {
             return "error";
         }
         return response()->json(
