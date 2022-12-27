@@ -165,7 +165,7 @@ class InventoryController extends Controller {
 //        }
     }
 
-    public function getallInventories($sid, $flag, $key) {  
+    public function getallInventories($sid, $flag) {  
             $inventory = InventoryManagement::where('school_id', $sid)->where("inventory_status", $flag)->orderby('id', 'asc')->get();
 
             return response()->json(
