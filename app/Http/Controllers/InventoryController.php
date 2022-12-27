@@ -107,7 +107,7 @@ class InventoryController extends Controller {
                     $inventory->Device_manufacturer = $Device_manufacturer;
                     $inventory->Device_Type = $Device_Type;
                     $inventory->Device_model = $Device_model;
-//                    $inventory->Device_os = $Device_os;
+                    $inventory->Device_os = $Device_os;
                     $inventory->Manufacturer_warranty_until = $Manufacturer_warranty_until;
                     $inventory->Manufacturer_ADP_until = $Manufacturer_ADP_until;
                     $inventory->Serial_number = $Serial_number;
