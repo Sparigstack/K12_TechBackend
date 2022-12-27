@@ -6,6 +6,7 @@ use App\Models\Personal;
 use App\Models\User;
 use App\Models\Ticket;
 use App\Models\TicketStatus;
+use App\Models\TicketIssue;
 use App\Models\InventoryManagement;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
@@ -224,14 +225,16 @@ class InventoryController extends Controller {
         $userid = $inventorydata->user_id;
         $user = User::where('id', $userid)->first();
         $username = $user->name;
-        $ticketdata = Ticket::where('inventory_id', $id)->get();
+        $ticketdata = Ticket::where('inventory_id', $id)->first();
+        $ticketID = $ticketdata->ID;
+        $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();
         $deviceHistory = array();
-        foreach ($ticketdata as $data) {
-            $notes = $data['notes'];
-            $ticketStaus = $data['ticket_status'];
-            $statusdata = TicketStatus::where('ID', $ticketStaus)->first();
+        foreach ($ticketIssueData as $data) {
+            $notes = $ticketdata['notes'];
+            $ticketStatusId=$data['ticket_status'];
+            $statusdata = TicketStatus::where('ID', $ticketStatusId)->first();
             $status = $statusdata->status;
-            $deviceIssue = $data['device_issue_id'];
+            $deviceIssue = $data['issue_Id'];
             $issuedata = DeviceIssue::where('ID', $deviceIssue)->first();
             $issue = $issuedata->issue;
             $created_at = $data['created_at']->format('m-d-Y');
@@ -276,7 +279,7 @@ class InventoryController extends Controller {
         $inventory->Repair_cap = $request->input('Repaircap');
         $inventory->user_id = $request->input('userid');
         $inventory->school_id = $request->input('schoolid');
-        $inventory->inventory_status = $request->input('inventorystatus');
+        $inventory->inventory_status = 1;
       
         $checkinventory = InventoryManagement::where('ID', $request->input('ID'))->first();
         if (isset($checkinventory)) {
