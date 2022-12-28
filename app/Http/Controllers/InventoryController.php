@@ -222,12 +222,18 @@ class InventoryController extends Controller {
               foreach($ticketalllog as $logdata){ 
                  
                   $ID =$logdata['ID'];
-                  $Ticket_Id = $logdata['Ticket_id'];
+                   $Ticket_Id = $logdata['Ticket_id'];
                   $old_status = $logdata['Status_from'];
-                  $updated_status = $logdata['Status_to'];
+                  $StatusallData = TicketStatus::where('ID',$old_status)->first();
+                  $previous_status = $StatusallData->status;
+                  $new_status = $logdata['Status_to'];
+                  $StatusData = TicketStatus::where('ID',$new_status)->first();
+                  $updated_status =$StatusData->status;
                   $date = $logdata['created_at']->format('m-d-Y');
                   $updated_by = $logdata['updated_by_user_id'];
-                  array_push($ticketlog, ["Ticket_id"=>$Ticket_Id,"ID"=>$ID,"update_by_user"=>$updated_by,"date"=>$date,"updated_status"=>$updated_status,"previous_status"=>$old_status]);
+                  $user = User::where('id', $updated_by)->first();
+                  $updated_by_user = $user->name;
+                  array_push($ticketlog, ["Ticket_id"=>$Ticket_Id,"ID"=>$ID,"update_by_user"=>$updated_by_user,"date"=>$date,"updated_status"=>$updated_status,"previous_status"=>$previous_status]);
               }
             $notes = $ticketdata['notes'];
             $created_user = $ticketdata['user_id'];
@@ -269,9 +275,7 @@ class InventoryController extends Controller {
          $ticketalllog=TicketStatusLog::where('Ticket_id',$tid)->get();  
               $ticketlog = array();
               foreach($ticketalllog as $logdata){          
-                  $ID =$logdata['ID'];
-                 
-                  
+                  $ID =$logdata['ID'];                                   
                   $old_status = $logdata['Status_from'];
                   $StatusallData = TicketStatus::where('ID',$old_status)->first();
                   $previous_status = $StatusallData->status;
