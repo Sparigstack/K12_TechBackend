@@ -212,12 +212,14 @@ class InventoryController extends Controller {
         $username = $user->name;
         $ticketdata = Ticket::where('inventory_id', $id)->first();
         $deviceHistory = array();
+        
         if(isset($ticketdata)){
             $statusID = $ticketdata['ticket_status'];        
             $StatusallData = TicketStatus::where('ID',$statusID)->first();
             $status = $StatusallData->status;   
         $ticketID = $ticketdata->ID;
-        $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();       
+        $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();   
+          $array_issue = array(); 
         foreach ($ticketIssueData as $data) {
             $notes = $ticketdata['notes'];
             // $ticketStatusId=$data['ticket_status'];
@@ -226,9 +228,11 @@ class InventoryController extends Controller {
             $deviceIssue = $data['issue_Id'];
             $issuedata = DeviceIssue::where('ID', $deviceIssue)->first();
             $issue = $issuedata->issue;
+            array_push($array_issue,[$issue]); 
             $created_at = $data['created_at']->format('m-d-Y');
-            array_push($deviceHistory, ["Issue" => $issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+          
         }
+          array_push($deviceHistory, ["Issue" => $issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
         }
         return response()->json(
                         collect([
@@ -250,7 +254,8 @@ class InventoryController extends Controller {
             $StatusallData = TicketStatus::where('ID',$statusID)->first();
             $status = $StatusallData->status;   
         $ticketID = $ticketdata->ID;
-        $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();       
+        $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();   
+          $array_issue = array(); 
         foreach ($ticketIssueData as $data) {
             $notes = $ticketdata['notes'];
             // $ticketStatusId=$data['ticket_status'];
@@ -259,9 +264,11 @@ class InventoryController extends Controller {
             $deviceIssue = $data['issue_Id'];
             $issuedata = DeviceIssue::where('ID', $deviceIssue)->first();
             $issue = $issuedata->issue;
+            array_push($array_issue,[$issue]); 
             $created_at = $data['created_at']->format('m-d-Y');
-            array_push($deviceHistory, ["Issue" => $issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+           
         }
+         array_push($deviceHistory, ["Issue" => $array_issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
         }
         return response()->json(
                         collect([
