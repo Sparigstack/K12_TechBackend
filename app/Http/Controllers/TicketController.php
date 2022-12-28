@@ -31,17 +31,36 @@ class TicketController extends Controller
      
         $data = Ticket::where('inventory_id', $msg['inventoryId'])->first();
         if (isset($data)) {
-            foreach ($devicearray as $devicearraydata) {
+           if($data->ticket_status == 2){
+            $ticket = new Ticket();
+            $ticket->school_id = $msg['schoolId'];
+            $ticket->user_id = $msg['userId'];
+            $ticket->inventory_id = $msg['inventoryId'];          
+            $ticket->notes = $msg['Notes'];
+            $ticket->ticket_status = 1;
+            $ticket->save();
+            foreach ($devicearray as $devicearraydata) {        
 
-               $Issue = new TicketIssue();
-                $Issue->ticket_Id = $data->ID;
-                $Issue->issue_Id = $devicearraydata['ID'];
-                $Issue->user_id = $data->user_id;
-                $Issue->inventory_id = $msg['inventoryId']; 
-//                $Issue->ticket_status = 1;
-                $Issue->save();
+            $Issue = new TicketIssue();
+            $Issue->ticket_Id = $ticket->id;
+            $Issue->issue_Id = $devicearraydata['ID'];
+            $Issue->user_id = $msg['userId'];
+            $Issue->inventory_id = $msg['inventoryId']; 
+            $Issue->save();
             }
            
+            Ticket::where('id', $ticket->id)->update(['ticket_issue_Id' => $Issue->id]);
+           }else{ 
+            foreach ($devicearray as $devicearraydata) {
+
+                 $Issue = new TicketIssue();
+                 $Issue->ticket_Id = $data->ID;
+                 $Issue->issue_Id = $devicearraydata['ID'];
+                 $Issue->user_id = $data->user_id;
+                 $Issue->inventory_id = $msg['inventoryId']; 
+                 $Issue->save();
+             }
+           }                       
             }
          else {
             $ticket = new Ticket();
@@ -51,21 +70,15 @@ class TicketController extends Controller
             $ticket->notes = $msg['Notes'];
             $ticket->ticket_status = 1;
             $ticket->save();
-//             return $devicearray;
             foreach ($devicearray as $devicearraydata) {
         
-
             $Issue = new TicketIssue();
-
             $Issue->ticket_Id = $ticket->id;
             $Issue->issue_Id = $devicearraydata['ID'];
             $Issue->user_id = $msg['userId'];
-//            $Issue->ticket_status = 1;
             $Issue->inventory_id = $msg['inventoryId']; 
             $Issue->save();
-            }
-
-           
+            }           
             Ticket::where('id', $ticket->id)->update(['ticket_issue_Id' => $Issue->id]);
         }
         return "success";

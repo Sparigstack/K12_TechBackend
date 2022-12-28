@@ -52,13 +52,14 @@ class ManageTicketController extends Controller
                  $lastName = $inventory_student->Device_user_last_name;
                  $Device_model =$inventory_student->Device_model;
 
-                 if($statusID == 2){                     
-                     array_push($array_closeTicket,["Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","ticket_status"=>$status,"Date"=>$ticketCreateDate]);
-                 }else{
-                     
-                     array_push($array_openTicket,["Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","ticket_status"=>$status,"Date"=>$ticketCreateDate]);
-                 }
+                
           }
+          if($statusID == 2){                     
+            array_push($array_closeTicket,["Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","ticket_status"=>$status,"Date"=>$ticketCreateDate]);
+        }else{
+            
+            array_push($array_openTicket,["Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","ticket_status"=>$status,"Date"=>$ticketCreateDate]);
+        }
          }
           $openTicket = collect($array_openTicket)->unique('ticketid')->values();
            $closeTicket = collect($array_closeTicket)->unique('ticketid')->values();
@@ -92,7 +93,7 @@ class ManageTicketController extends Controller
     }
     
     function OpenTickets($sid,$key,$flag){
-//         try{
+         try{
          $data = Ticket::where('school_id',$sid)->get();
        
          $array_openTicket = array();             
@@ -102,7 +103,8 @@ class ManageTicketController extends Controller
          $statusID = $ticketdata['ticket_status'];        
          $StatusallData = TicketStatus::where('ID',$statusID)->first();
          $status = $StatusallData->status;
-         $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();        
+         $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();
+         $InventoryID = $Inventory['ID'];        
          $serialNum = $Inventory['Serial_number'];     
          $grade =$Inventory['Grade'];
          $building =$Inventory['Building'];
@@ -129,11 +131,11 @@ class ManageTicketController extends Controller
                  $Device_model =$inventory_student->Device_model;
                  $device_issue_data = DeviceIssue::where('ID',$device_issue_id)->first();
                  $device_issue =$device_issue_data->issue;              
-                 array_push($array_issue,$device_issue);          
+                 array_push($array_issue,[$device_issue]);          
                  
           }
           if($statusID != 2){                                         
-            array_push($array_openTicket,["Device_isuue"=>$array_issue,"Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"IssuedbID"=>$ID,"Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>$ticketID,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
+            array_push($array_openTicket,["Inventory_ID"=>$InventoryID,"Device_isuue"=>$array_issue,"Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"IssuedbID"=>$ID,"Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>$ticketID,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
         }
          }          
         if($key =="null"){
@@ -188,12 +190,12 @@ class ManageTicketController extends Controller
          'Openticket'=>$array_openTicket,          
             ]));
          }        
-//        } catch (\Throwable $th) {    
-//        return "something went wrong.";
-//    }
+        } catch (\Throwable $th) {    
+        return "something went wrong.";
+    }
 }
     function CloseTickets($sid,$key,$flag){
-//       try{
+       try{
          $data = Ticket::where('school_id',$sid)->get();
          $array_closeTicket = array();             
         foreach($data as $ticketdata){    
@@ -201,7 +203,8 @@ class ManageTicketController extends Controller
          $statusID = $ticketdata['ticket_status'];        
          $StatusallData = TicketStatus::where('ID',$statusID)->first();
          $status = $StatusallData->status;
-         $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();
+         $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();        
+         $InventoryID = $Inventory['ID'];
          $serialNum = $Inventory['Serial_number'];
          $studentName = $Inventory['Device_user_last_name'] . $Inventory['Device_user_first_name'];
          $grade =$Inventory['Grade'];
@@ -232,7 +235,7 @@ class ManageTicketController extends Controller
                  
           }
           if($statusID == 2){                                         
-            array_push($array_closeTicket,["Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"IssuedbID"=>$ID,"Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>$ticketID,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
+            array_push($array_closeTicket,["Inventory_ID"=>$InventoryID,"Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"IssuedbID"=>$ID,"Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>$ticketID,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
         }
           
          } 
@@ -278,9 +281,9 @@ class ManageTicketController extends Controller
          'Closeticket'=>$array_closeTicket,          
             ]));
          }        
-//        } catch (\Throwable $th) {    
-//        return "something went wrong.";
-//    }  
+        } catch (\Throwable $th) {    
+        return "something went wrong.";
+    }  
   
 }
 
