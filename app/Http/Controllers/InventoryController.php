@@ -215,7 +215,11 @@ class InventoryController extends Controller {
 //        
         if (isset($ticketalldata)) {
             foreach($ticketalldata as $ticketdata){
+//                return $ticketdata;
             $notes = $ticketdata['notes'];
+            $created_user = $ticketdata['user_id'];
+            $user_data =  User::where('id', $created_user)->first();
+            $created_by_user = $user->name;
             $created_at = $ticketdata['created_at']->format('m-d-Y');
             $statusID = $ticketdata['ticket_status'];
             $StatusallData = TicketStatus::where('ID', $statusID)->first();
@@ -228,7 +232,7 @@ class InventoryController extends Controller {
                 $issue = $issuedata->issue;
                 array_push($array_issue, [$issue]);
             }
-             array_push($deviceHistory, ["Issue" => $array_issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+             array_push($deviceHistory, ["Created_by_user"=>$created_by_user,"Issue" => $array_issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
             }
            
         }
@@ -249,6 +253,9 @@ class InventoryController extends Controller {
         $ticketdata = Ticket::where('ID', $tid)->first();
         $deviceHistory = array();
         if(isset($ticketdata)){
+            $created_user = $ticketdata['user_id'];
+            $user_data =  User::where('id', $created_user)->first();
+            $created_by_user = $user->name;
             $statusID = $ticketdata['ticket_status'];        
             $StatusallData = TicketStatus::where('ID',$statusID)->first();
             $status = $StatusallData->status;   
@@ -267,7 +274,7 @@ class InventoryController extends Controller {
             $created_at = $data['created_at']->format('m-d-Y');
            
         }
-         array_push($deviceHistory, ["Issue" => $array_issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+         array_push($deviceHistory, ["Created_by_user"=>$created_by_user,"Issue" => $array_issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
         }
         return response()->json(
                         collect([
