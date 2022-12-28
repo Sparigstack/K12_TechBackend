@@ -15,8 +15,7 @@ use Illuminate\Support\Facades\Request as Input;
 use Illuminate\Contracts\Container\BindingResolutionException;
 
 class TicketController extends Controller
-{
-    
+{    
     public function allIssue(){     
         $issues = DeviceIssue::all();
          return response()->json(

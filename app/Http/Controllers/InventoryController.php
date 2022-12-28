@@ -241,7 +241,6 @@ class InventoryController extends Controller {
 
     public function manualAddEditInventoy(Request $request) {
         $inventory = new InventoryManagement;
-
         $inventory->Purchase_date = $request->input('PurchaseDate');
         $inventory->Device_manufacturer = $request->input('Devicemanufacturer');
         $inventory->Device_Type = $request->input('DeviceType');

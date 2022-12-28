@@ -22,8 +22,7 @@ class ManageTicketController extends Controller
     function allTickets($sid,$uid){ 
          $data = Ticket::where('school_id',$sid)->get();
          $array_openTicket = array();
-         $array_closeTicket = array();
-       
+         $array_closeTicket = array();       
          foreach($data as $ticketdata){    
          $ticketInventoryID = $ticketdata['inventory_id'];
          $statusID = $ticketdata['ticket_status'];        
