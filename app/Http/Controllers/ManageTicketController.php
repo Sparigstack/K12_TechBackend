@@ -6,6 +6,7 @@ use App\Models\DeviceIssue;
 use App\Models\Ticket;
 use App\Models\TicketStatus;
 use App\Models\TicketIssue;
+use App\Models\TicketStatusLog;
 use App\Models\User;
 use App\Models\InventoryManagement;
 use App\Http\Requests\ProfileUpdateRequest;
@@ -84,7 +85,9 @@ class ManageTicketController extends Controller
         } catch (\Throwable $th) {
             return "something went wrong.";
         }
+        
     }
+    
 
     function getTicketStatusforManageTicket(Request $request){
         $status = TicketStatus::all();

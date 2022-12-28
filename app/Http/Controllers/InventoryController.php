@@ -211,11 +211,10 @@ class InventoryController extends Controller {
         $user = User::where('id', $userid)->first();
         $username = $user->name; 
         $ticketalldata = Ticket::where('inventory_id', $id)->get();
-        $deviceHistory = array();
-//        
+        $deviceHistory = array();    
         if (isset($ticketalldata)) {
             foreach($ticketalldata as $ticketdata){
-//                return $ticketdata;
+
             $notes = $ticketdata['notes'];
             $created_user = $ticketdata['user_id'];
             $user_data =  User::where('id', $created_user)->first();
