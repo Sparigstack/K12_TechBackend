@@ -26,6 +26,9 @@ class ManageTicketController extends Controller
        
          foreach($data as $ticketdata){    
          $ticketInventoryID = $ticketdata['inventory_id'];
+         $statusID = $ticketdata['ticket_status'];        
+         $StatusallData = TicketStatus::where('ID',$statusID)->first();
+         $status = $StatusallData->status;
          $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();
          $serialNum = $Inventory['Serial_number'];     
          $userdId = $Inventory['user_id'];
@@ -38,11 +41,11 @@ class ManageTicketController extends Controller
           {       
               
                  $issueId =  $Issuedata->issue_Id;
-                 $StatusID = $Issuedata->ticket_status;
-                        
-                 $StatusallData = TicketStatus::where('ID',$StatusID)->first();
-                 $status = $StatusallData->status;
-                 $statusID =$StatusallData->ID;
+////                 $StatusID = $Issuedata->ticket_status;
+//                        
+//                 $StatusallData = TicketStatus::where('ID',$StatusID)->first();
+//                 $status = $StatusallData->status;
+//                 $statusID =$StatusallData->ID;
                  $issue_inventory_id = $Issuedata->inventory_id;
                  $inventory_student = InventoryManagement::where('id',$issue_inventory_id)->first();
                  $firstName = $inventory_student->Device_user_first_name;
@@ -50,7 +53,7 @@ class ManageTicketController extends Controller
                  $Device_model =$inventory_student->Device_model;
 
                  if($statusID == 2){                     
-                     array_push($array_closeTicket,["Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","ticket_status"=>"close","Date"=>$ticketCreateDate]);
+                     array_push($array_closeTicket,["Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","ticket_status"=>$status,"Date"=>$ticketCreateDate]);
                  }else{
                      
                      array_push($array_openTicket,["Device_model"=>$Device_model,"firstName"=>$firstName,"lastName"=>$lastName,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>"$ticketID","ticket_status"=>$status,"Date"=>$ticketCreateDate]);
