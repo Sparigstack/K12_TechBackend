@@ -209,31 +209,30 @@ class InventoryController extends Controller {
         $inventorydata = InventoryManagement::where('ID', $id)->first();
         $userid = $inventorydata->user_id;
         $user = User::where('id', $userid)->first();
-        $username = $user->name;
-        $ticketdata = Ticket::where('inventory_id', $id)->first();
+        $username = $user->name; 
+        $ticketalldata = Ticket::where('inventory_id', $id)->get();
         $deviceHistory = array();
-        
-        if(isset($ticketdata)){
-            $statusID = $ticketdata['ticket_status'];        
-            $StatusallData = TicketStatus::where('ID',$statusID)->first();
-            $status = $StatusallData->status;   
-        $ticketID = $ticketdata->ID;
-        $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();   
-          $array_issue = array(); 
-        foreach ($ticketIssueData as $data) {
+//        
+        if (isset($ticketalldata)) {
+            foreach($ticketalldata as $ticketdata){
             $notes = $ticketdata['notes'];
-            // $ticketStatusId=$data['ticket_status'];
-            // $statusdata = TicketStatus::where('ID', $ticketStatusId)->first();
-            // $status = $statusdata->status;
-            $deviceIssue = $data['issue_Id'];
-            $issuedata = DeviceIssue::where('ID', $deviceIssue)->first();
-            $issue = $issuedata->issue;
-            array_push($array_issue,[$issue]); 
-            $created_at = $data['created_at']->format('m-d-Y');
-          
+            $created_at = $ticketdata['created_at']->format('m-d-Y');
+            $statusID = $ticketdata['ticket_status'];
+            $StatusallData = TicketStatus::where('ID', $statusID)->first();
+            $status = $StatusallData->status;
+            $ticketIssueData = TicketIssue::where('ticket_Id', $ticketdata['ID'])->get();
+            $array_issue = array();
+            foreach ($ticketIssueData as $data) {
+                $deviceIssue = $data['issue_Id'];
+                $issuedata = DeviceIssue::where('ID', $deviceIssue)->first();
+                $issue = $issuedata->issue;
+                array_push($array_issue, [$issue]);
+            }
+             array_push($deviceHistory, ["Issue" => $array_issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+            }
+           
         }
-          array_push($deviceHistory, ["Issue" => $issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
-        }
+
         return response()->json(
                         collect([
                     'response' => 'success',
