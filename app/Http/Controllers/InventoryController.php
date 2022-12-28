@@ -216,16 +216,18 @@ class InventoryController extends Controller {
        
         if (isset($ticketalldata)) {
             foreach($ticketalldata as $ticketdata){
-             $ticketalllog=TicketStatusLog::where('Ticket_id',$ticketdata['ID'])->get();            
-//              $ticketlog = array();
-//              foreach($ticketalllog as $logdata){          
-//                  $ID =$logdata['ID'];
-//                  $old_status = $logdata['Status_from'];
-//                  $updated_status = $logdata['Status_to'];
-//                  $date = $logdata['created_at']->format('m-d-Y');
-//                  $updated_by = $logdata['updated_by_user_id'];
-//                  array_push($ticketlog, ["ID"=>$ID,"update_by_user"=>$updated_by,"date"=>$date,"updated_status"=>$updated_status,"previous_status"=>$old_status]);
-//              }
+             $ticketalllog=TicketStatusLog::where('Ticket_id',$ticketdata['ID'])->get();  
+             $ticketID = $ticketdata['ID'];
+              $ticketlog = array();
+              foreach($ticketalllog as $logdata){          
+                  $ID =$logdata['ID'];
+                  $Ticket_Id = $logdata['Ticket_id'];
+                  $old_status = $logdata['Status_from'];
+                  $updated_status = $logdata['Status_to'];
+                  $date = $logdata['created_at']->format('m-d-Y');
+                  $updated_by = $logdata['updated_by_user_id'];
+                  array_push($ticketlog, ["Ticket_id"=>$Ticket_Id,"ID"=>$ID,"update_by_user"=>$updated_by,"date"=>$date,"updated_status"=>$updated_status,"previous_status"=>$old_status]);
+              }
             $notes = $ticketdata['notes'];
             $created_user = $ticketdata['user_id'];
             $user_data =  User::where('id', $created_user)->first();
@@ -243,7 +245,7 @@ class InventoryController extends Controller {
                 array_push($array_issue, [$issue]);
             }
             
-             array_push($deviceHistory, ["Created_by_user"=>$created_by_user,"Issue" => $array_issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+             array_push($deviceHistory, ["ticketHistory"=>$ticketlog,"Ticket_ID"=>$ticketID,"Created_by_user"=>$created_by_user,"Issue" => $array_issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
             }
            
         }
@@ -253,7 +255,7 @@ class InventoryController extends Controller {
                     'response' => 'success',
                     'msg' => $inventorydata,
                     'deviceHistory' => $deviceHistory,
-                    'ticketHistory' => $ticketlog,       
+//                    'ticketHistory' => $ticketlog,       
                     'userName' => $username,
         ]));
     }
