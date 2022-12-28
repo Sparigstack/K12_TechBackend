@@ -238,6 +238,39 @@ class InventoryController extends Controller {
                     'userName' => $username,
         ]));
     }
+    public function fetchDeviceDetailforTicket($id,$tid) {
+        $inventorydata = InventoryManagement::where('ID', $id)->first();
+        $userid = $inventorydata->user_id;
+        $user = User::where('id', $userid)->first();
+        $username = $user->name;
+        $ticketdata = Ticket::where('ID', $tid)->first();
+        $deviceHistory = array();
+        if(isset($ticketdata)){
+            $statusID = $ticketdata['ticket_status'];        
+            $StatusallData = TicketStatus::where('ID',$statusID)->first();
+            $status = $StatusallData->status;   
+        $ticketID = $ticketdata->ID;
+        $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();       
+        foreach ($ticketIssueData as $data) {
+            $notes = $ticketdata['notes'];
+            // $ticketStatusId=$data['ticket_status'];
+            // $statusdata = TicketStatus::where('ID', $ticketStatusId)->first();
+            // $status = $statusdata->status;
+            $deviceIssue = $data['issue_Id'];
+            $issuedata = DeviceIssue::where('ID', $deviceIssue)->first();
+            $issue = $issuedata->issue;
+            $created_at = $data['created_at']->format('m-d-Y');
+            array_push($deviceHistory, ["Issue" => $issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+        }
+        }
+        return response()->json(
+                        collect([
+                    'response' => 'success',
+                    'msg' => $inventorydata,
+                    'deviceHistory' => $deviceHistory,
+                    'userName' => $username,
+        ]));
+    }
 
     public function manualAddEditInventoy(Request $request) {
         $inventory = new InventoryManagement;
