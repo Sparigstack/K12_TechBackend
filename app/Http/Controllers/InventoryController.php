@@ -277,7 +277,9 @@ class InventoryController extends Controller {
                   $updated_status =$StatusData->status;
                   $date = $logdata['created_at']->format('m-d-Y');
                   $updated_by = $logdata['updated_by_user_id'];
-                  array_push($ticketlog, ["ID"=>$ID,"update_by_user"=>$updated_by,"date"=>$date,"updated_status"=>$updated_status,"previous_status"=>$previous_status]);
+                  $user = User::where('id', $updated_by)->first();
+                  $updated_by_user = $user->name;
+                  array_push($ticketlog, ["ID"=>$ID,"update_by_user"=>$updated_by_user,"date"=>$date,"updated_status"=>$updated_status,"previous_status"=>$previous_status]);
               }
         $deviceHistory = array();
         if(isset($ticketdata)){
