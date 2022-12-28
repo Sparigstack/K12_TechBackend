@@ -74,17 +74,23 @@ class ManageTicketController extends Controller
     }
     
     function changeticketStatus(Request $request) {
-        try {
+//        try {
             $ticketStatusID = $request->input('Status');
             $idArray = $request->input('IssueIDArray');
           
-            foreach ($idArray as $ids) {             
+            foreach ($idArray as $ids) { 
+                 $ticketlog = new TicketStatusLog();                
+                 $ticketlog->Ticket_id = $ids['TicketID'];
+                 $ticketdata = Ticket::where('ID',$ids['TicketID'])->first();
+                 $ticketlog->Status_from = $ticketdata->ticket_status;
+                 $ticketlog->Status_to = $ticketStatusID;
+                 $ticketlog->save();
                 $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
             }
             return "success";
-        } catch (\Throwable $th) {
-            return "something went wrong.";
-        }
+//        } catch (\Throwable $th) {
+//            return "something went wrong.";
+//        }
         
     }
     
