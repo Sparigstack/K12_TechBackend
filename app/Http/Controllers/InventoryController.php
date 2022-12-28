@@ -219,7 +219,8 @@ class InventoryController extends Controller {
              $ticketalllog=TicketStatusLog::where('Ticket_id',$ticketdata['ID'])->get();  
              $ticketID = $ticketdata['ID'];
               $ticketlog = array();
-              foreach($ticketalllog as $logdata){          
+              foreach($ticketalllog as $logdata){ 
+                 
                   $ID =$logdata['ID'];
                   $Ticket_Id = $logdata['Ticket_id'];
                   $old_status = $logdata['Status_from'];

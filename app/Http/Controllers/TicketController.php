@@ -30,6 +30,7 @@ class TicketController extends Controller
      
         $data = Ticket::where('inventory_id', $msg['inventoryId'])->first();
         if (isset($data)) {
+            
            if($data->ticket_status == 2){
             $ticket = new Ticket();
             $ticket->school_id = $msg['schoolId'];
