@@ -73,9 +73,10 @@ class ManageTicketController extends Controller
       
     }
     
-    function changeticketStatus(Request $request) {
+     function changeticketStatus(Request $request) {
         try {
             $ticketStatusID = $request->input('Status');
+            $ticketupdateduserId = $request->input('UserId');
             $idArray = $request->input('IssueIDArray');
           
             foreach ($idArray as $ids) { 
@@ -84,6 +85,7 @@ class ManageTicketController extends Controller
                  $ticketdata = Ticket::where('ID',$ids['TicketID'])->first();
                  $ticketlog->Status_from = $ticketdata->ticket_status;
                  $ticketlog->Status_to = $ticketStatusID;
+                 $ticketlog->updated_by_user_id = $ticketupdateduserId;
                  $ticketlog->save();
                 $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
             }
