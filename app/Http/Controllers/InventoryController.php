@@ -169,18 +169,20 @@ catch (\Throwable $th) {
    public function getInventories($sid){
 
 //        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where('inventory_status',1)->orderby('id','asc')->paginate(8); 
-//        $decommission = InventoryManagement::with('student')->where('school_id',$sid)->where('inventory_status',2)->orderby('id','asc')->paginate(8);
-//        $user = User::find($user_id);
-//        $organization = Organization::where('id', $user->organization_id)->pluck('name')->first();
+//        $decommission = InventoryManagement::with('student')->where('school_id',$sid)->where('inventory_status',2)->orderby('id','asc')->paginate(8); 
         $inventory =  DB::table('inventory_management')
-        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',1)
+        ->get();
+        
+        $decommission =  DB::table('inventory_management')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',2)
         ->get();
         
         return response()->json(
         collect([
         'response' => 'success',
         'msg' => $inventory,
-//        'decommisionInvenoty'=>$decommission    
+        'decommisionInvenoty'=>$decommission    
         ]));
 
        
