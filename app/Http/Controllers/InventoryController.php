@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\QueryBuilder\QueryBuilder;
 use Exception;
 use App\Models\DeviceIssue;
+use Illuminate\Support\Facades\DB;
 
 class InventoryController extends Controller
 {
@@ -166,33 +167,28 @@ catch (\Throwable $th) {
     } 
 
    public function getInventories($sid){
-//       if($key == "null"){
-        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where('inventory_status',1)->orderby('id','asc')->paginate(8); 
-        $decommission = InventoryManagement::with('student')->where('school_id',$sid)->where('inventory_status',2)->orderby('id','asc')->paginate(8);
+
+//        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where('inventory_status',1)->orderby('id','asc')->paginate(8); 
+//        $decommission = InventoryManagement::with('student')->where('school_id',$sid)->where('inventory_status',2)->orderby('id','asc')->paginate(8);
+//        $user = User::find($user_id);
+//        $organization = Organization::where('id', $user->organization_id)->pluck('name')->first();
+        $inventory =  DB::table('inventory_management')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+        ->get();
+        
         return response()->json(
         collect([
         'response' => 'success',
         'msg' => $inventory,
-        'decommisionInvenoty'=>$decommission    
+//        'decommisionInvenoty'=>$decommission    
         ]));
-//       }else{
-//        $get = InventoryManagement::where('Device_user_first_name','LIKE',"%$key%")
-//		        ->orWhere('Device_user_last_name','LIKE',"%$key%")
-//                ->orWhere('Device_model', 'like', '%' . $key . '%')
-//                ->orWhere('Serial_number', 'like', '%' . $key . '%')
-//                ->paginate(8);  
-//        return response()->json(
-//         collect([
-//        'response' => 'success',
-//        'msg' => $get       
-//         ]));
-//       }
+
        
         
    }
    public function getallInventories($sid,$flag,$key){
        if($key == "null"){
-        $inventory = InventoryManagement::where('school_id',$sid)->where("inventory_status",$flag)->orderby('id','asc')->get(); 
+        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where("inventory_status",$flag)->orderby('id','asc')->get(); 
       
         return response()->json(
         collect([
@@ -200,10 +196,10 @@ catch (\Throwable $th) {
         'msg' => $inventory,         
          ]));
        }else{           
-        $get = InventoryManagement::where('school_id',$sid)->where("inventory_status",$flag)->where(function($query) use ($key){
+        $get = InventoryManagement::with('student')->where('school_id',$sid)->where("inventory_status",$flag)->where(function($query) use ($key){
         $query->where('Device_model','LIKE',"%$key%");
         $query->orWhere('Device_user_last_name','LIKE',"%$key%");
-		$query->orWhere('Device_user_first_name','LIKE',"%$key%");
+        $query->orWhere('Device_user_first_name','LIKE',"%$key%");
         $query->orWhere('Serial_number','LIKE',"%$key%");
     })               
         ->get(); 
