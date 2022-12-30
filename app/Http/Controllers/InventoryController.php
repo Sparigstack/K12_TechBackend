@@ -447,11 +447,14 @@ catch (\Throwable $th) {
   }
 
  public function searchInventory($key){
-     $get = InventoryManagement::where('Device_user_first_name','LIKE',"%$key%")
-		        ->orWhere('Device_user_last_name','like', '%' . $key . '%')
-                ->orWhere('Device_model', 'like', '%' . $key . '%')
-                ->orWhere('Serial_number', 'like', '%' . $key . '%')
-                ->get();  
+      $get = DB::table('inventory_management')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+              ->where('students.Device_user_first_name','LIKE',"%$key%")
+		->orWhere('students.Device_user_last_name','like', '%' . $key . '%')
+              ->orWhere('inventory_management.Device_model', 'like', '%' . $key . '%')
+              ->orWhere('inventory_management.Serial_number', 'like', '%' . $key . '%')
+              ->get();  
+     
         return response()->json(
          collect([
         'response' => 'success',
