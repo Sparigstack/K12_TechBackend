@@ -13,4 +13,7 @@ class Student extends Model
     use HasApiTokens, HasFactory, Notifiable;
     protected $table="students";
      
+    public function inventoryManagement() {
+    return $this->belongsTo(InventoryManagement::class,'Inventory_ID', 'ID');
+    }
 }

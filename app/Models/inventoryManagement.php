@@ -9,4 +9,8 @@ class inventoryManagement extends Model
 {
     use HasFactory;
    protected $table="inventory_management"; 
+   
+   public function student() {
+    return $this->belongsTo(Student::class, 'ID','Inventory_ID');
+    }
 }

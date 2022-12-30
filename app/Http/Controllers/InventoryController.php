@@ -165,28 +165,28 @@ catch (\Throwable $th) {
     }
     } 
 
-   public function getInventories($sid,$key){
-       if($key == "null"){
-        $inventory = InventoryManagement::where('school_id',$sid)->where('inventory_status',1)->orderby('id','asc')->paginate(8); 
-        $decommission = InventoryManagement::where('school_id',$sid)->where('inventory_status',2)->orderby('id','asc')->paginate(8);
+   public function getInventories($sid){
+//       if($key == "null"){
+        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where('inventory_status',1)->orderby('id','asc')->paginate(8); 
+        $decommission = InventoryManagement::with('student')->where('school_id',$sid)->where('inventory_status',2)->orderby('id','asc')->paginate(8);
         return response()->json(
         collect([
         'response' => 'success',
         'msg' => $inventory,
         'decommisionInvenoty'=>$decommission    
          ]));
-       }else{
-        $get = InventoryManagement::where('Device_user_first_name','LIKE',"%$key%")
-		        ->orWhere('Device_user_last_name','LIKE',"%$key%")
-                ->orWhere('Device_model', 'like', '%' . $key . '%')
-                ->orWhere('Serial_number', 'like', '%' . $key . '%')
-                ->paginate(8);  
-        return response()->json(
-         collect([
-        'response' => 'success',
-        'msg' => $get       
-         ]));
-       }
+//       }else{
+//        $get = InventoryManagement::where('Device_user_first_name','LIKE',"%$key%")
+//		        ->orWhere('Device_user_last_name','LIKE',"%$key%")
+//                ->orWhere('Device_model', 'like', '%' . $key . '%')
+//                ->orWhere('Serial_number', 'like', '%' . $key . '%')
+//                ->paginate(8);  
+//        return response()->json(
+//         collect([
+//        'response' => 'success',
+//        'msg' => $get       
+//         ]));
+//       }
        
         
    }
