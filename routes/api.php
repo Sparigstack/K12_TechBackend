@@ -25,7 +25,7 @@ Route::post('/register',[LoginController::class,'register']);
 Route::post('/loginValidation',[LoginController::class,'loginValidation']);
 //inventory
 Route::post('/upload', [InventoryController::class, 'uploadInventory']); 
-Route::get('/getInventories/{sid?}', [InventoryController::class, 'getInventories']);
+Route::get('/getInventories/{sid?}', [InventoryController::class, 'getInventories']); 
 Route::get('/getexport', [InventoryController::class, 'getexport']);
 Route::post('/addeditmanualInventoy', [InventoryController::class, 'manualAddEditInventoy']);
 Route::get('/getallInventories/{sid?}&{flag}', [InventoryController::class, 'getallInventories']);

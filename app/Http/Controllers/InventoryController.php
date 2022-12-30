@@ -174,7 +174,7 @@ catch (\Throwable $th) {
         'response' => 'success',
         'msg' => $inventory,
         'decommisionInvenoty'=>$decommission    
-         ]));
+        ]));
 //       }else{
 //        $get = InventoryManagement::where('Device_user_first_name','LIKE',"%$key%")
 //		        ->orWhere('Device_user_last_name','LIKE',"%$key%")
