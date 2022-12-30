@@ -193,7 +193,7 @@ catch (\Throwable $th) {
 //        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where("inventory_status",$flag)->orderby('id','asc')->get(); 
        $inventory =  DB::table('inventory_management')
         ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',$flag)
-        ->orderby('id','asc')->get();
+        ->orderby('inventory_management.ID','asc')->get();
        
         return response()->json(
         collect([
