@@ -230,7 +230,9 @@ catch (\Throwable $th) {
    
    function getallDecommission($sid,$key){
          if($key == "null"){
-        $inventory = InventoryManagement::where('school_id',$sid)->where("inventory_status",2)->orderby('id','asc')->get(); 
+        $inventory =  DB::table('inventory_management')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',2)->update(['inventory_status' => 2])
+        ->get();
       
         return response()->json(
         collect([
