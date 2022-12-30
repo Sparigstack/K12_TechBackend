@@ -190,19 +190,23 @@ catch (\Throwable $th) {
    }
    public function getallInventories($sid,$flag,$key){
        if($key == "null"){
-        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where("inventory_status",$flag)->orderby('id','asc')->get(); 
-      
+//        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where("inventory_status",$flag)->orderby('id','asc')->get(); 
+       $inventory =  DB::table('inventory_management')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',$flag)
+        ->orderby('id','asc')->get();
+       
         return response()->json(
         collect([
         'response' => 'success',
         'msg' => $inventory,         
          ]));
        }else{           
-        $get = InventoryManagement::with('student')->where('school_id',$sid)->where("inventory_status",$flag)->where(function($query) use ($key){
-        $query->where('Device_model','LIKE',"%$key%");
-        $query->orWhere('Device_user_last_name','LIKE',"%$key%");
-        $query->orWhere('Device_user_first_name','LIKE',"%$key%");
-        $query->orWhere('Serial_number','LIKE',"%$key%");
+        $get =  $inventory =  DB::table('inventory_management')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',$flag)->where(function($query) use ($key){
+        $query->where('inventory_management.Device_model','LIKE',"%$key%");
+        $query->orWhere('students.Device_user_last_name','LIKE',"%$key%");
+        $query->orWhere('students.Device_user_first_name','LIKE',"%$key%");
+        $query->orWhere('inventory_management.Serial_number','LIKE',"%$key%");
     })               
         ->get(); 
         return $get;
@@ -215,8 +219,12 @@ catch (\Throwable $th) {
    }
    
    function addDecommission(Request $request){
-       $inventoryId =$request->input('ID');     
-       $updateUser = InventoryManagement::where('ID', $inventoryId)->update(['inventory_status' => 2]);
+       $inventoryId =$request->input('ID');   
+            
+        $updateUser =  DB::table('inventory_management')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',2)->update(['inventory_status' => 2])
+        ->get();
+//       $updateUser = InventoryManagement::where('ID', $inventoryId)->update(['inventory_status' => 2]);
        return 'success';
    }
    
