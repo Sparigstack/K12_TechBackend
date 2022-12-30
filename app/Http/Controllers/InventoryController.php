@@ -250,9 +250,7 @@ catch (\Throwable $th) {
          ]));
        }
    }
-   
-   
-   
+         
      public function fetchDeviceDetail($id){       
       $inventorydata = InventoryManagement::where('ID',$id)->first(); 
       $userid = $inventorydata->user_id;      
