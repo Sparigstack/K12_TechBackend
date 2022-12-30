@@ -188,8 +188,8 @@ catch (\Throwable $th) {
        
         
    }
-   public function getallInventories($sid,$flag,$key){
-       if($key == "null"){
+   public function getallInventories($sid,$flag){
+//       if($key == "null"){
 //        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where("inventory_status",$flag)->orderby('id','asc')->get(); 
        $inventory =  DB::table('inventory_management')
         ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',$flag)
@@ -200,22 +200,22 @@ catch (\Throwable $th) {
         'response' => 'success',
         'msg' => $inventory,         
          ]));
-       }else{           
-        $get =  $inventory =  DB::table('inventory_management')
-        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',$flag)->where(function($query) use ($key){
-        $query->where('inventory_management.Device_model','LIKE',"%$key%");
-        $query->orWhere('students.Device_user_last_name','LIKE',"%$key%");
-        $query->orWhere('students.Device_user_first_name','LIKE',"%$key%");
-        $query->orWhere('inventory_management.Serial_number','LIKE',"%$key%");
-    })               
-        ->get(); 
-        return $get;
-        return response()->json(
-         collect([
-        'response' => 'success',
-        'msg' => $get       
-         ]));
-       }               
+//       }else{           
+//        $get =  $inventory =  DB::table('inventory_management')
+//        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',$flag)->where(function($query) use ($key){
+//        $query->where('inventory_management.Device_model','LIKE',"%$key%");
+//        $query->orWhere('students.Device_user_last_name','LIKE',"%$key%");
+//        $query->orWhere('students.Device_user_first_name','LIKE',"%$key%");
+//        $query->orWhere('inventory_management.Serial_number','LIKE',"%$key%");
+//    })               
+//        ->get(); 
+//        return $get;
+//        return response()->json(
+//         collect([
+//        'response' => 'success',
+//        'msg' => $get       
+//         ]));
+//       }               
    }
    
    function addDecommission(Request $request){

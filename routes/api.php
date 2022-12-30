@@ -28,7 +28,7 @@ Route::post('/upload', [InventoryController::class, 'uploadInventory']);
 Route::get('/getInventories/{sid?}', [InventoryController::class, 'getInventories']); 
 Route::get('/getexport', [InventoryController::class, 'getexport']);
 Route::post('/addeditmanualInventoy', [InventoryController::class, 'manualAddEditInventoy']);
-Route::get('/getallInventories/{sid?}&{flag}&{key}', [InventoryController::class, 'getallInventories']);
+Route::get('/getallInventories/{sid?}&{flag}', [InventoryController::class, 'getallInventories']);
 Route::get('/getallDecommission/{sid?}&{key?}', [InventoryController::class, 'getallDecommission']);
 Route::post('/manageInventoryAction', [InventoryController::class, 'manageInventoryAction']);
 //Route::post('/adddecommission', [InventoryController::class, 'addDecommission']);
