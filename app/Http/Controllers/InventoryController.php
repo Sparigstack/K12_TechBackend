@@ -231,8 +231,8 @@ catch (\Throwable $th) {
    function getallDecommission($sid,$key){
          if($key == "null"){
         $inventory =  DB::table('inventory_management')
-        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',2)->update(['inventory_status' => 2])
-        ->get();
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',2)
+        ->orderby('inventory_management.ID','asc')->get();
       
         return response()->json(
         collect([
@@ -240,8 +240,9 @@ catch (\Throwable $th) {
         'msg' => $inventory,         
          ]));
        }else{
-        $get = InventoryManagement::where('Device_user_first_name','LIKE',"%$key%")
-		        ->orWhere('Device_user_last_name','like', '%' . $key . '%')
+        $get = DB::table('inventory_management')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('Device_user_first_name','LIKE',"%$key%")
+		->orWhere('Device_user_last_name','like', '%' . $key . '%')
                 ->orWhere('Device_model', 'like', '%' . $key . '%')
                 ->orWhere('Serial_number', 'like', '%' . $key . '%')
                 ->get();  
