@@ -218,15 +218,15 @@ catch (\Throwable $th) {
 //       }               
    }
    
-   function addDecommission(Request $request){
-       $inventoryId =$request->input('ID');   
-            
-        $updateUser =  DB::table('inventory_management')
-        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',2)->update(['inventory_status' => 2])
-        ->get();
-//       $updateUser = InventoryManagement::where('ID', $inventoryId)->update(['inventory_status' => 2]);
-       return 'success';
-   }
+//   function addDecommission(Request $request){
+//       $inventoryId =$request->input('ID');   
+//            
+//        $updateUser =  DB::table('inventory_management')
+//        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',2)->update(['inventory_status' => 2])
+//        ->get();
+////       $updateUser = InventoryManagement::where('ID', $inventoryId)->update(['inventory_status' => 2]);
+//       return 'success';
+//   }
    
    function getallDecommission($sid,$key){
          if($key == "null"){
@@ -352,7 +352,7 @@ catch (\Throwable $th) {
 	    $inventory->Repair_cap= $request->input('Repaircap');
             $inventory->user_id = $request->input('userid');
             $inventory->school_id =$request->input('schoolid');
-	    $inventory->inventory_status =$request->input('inventorystatus');
+	    $inventory->inventory_status =1;
 //            $inventory->save();
 //			return $inventory;
 			$Student = new Student;
@@ -390,8 +390,7 @@ catch (\Throwable $th) {
                     'User_type' => $request->input('Usertype'),
                     'Repair_cap' => $request->input('Repaircap'),
                     'user_id' => $request->input('userid'),
-                    'school_id' => $request->input('schoolid'),
-                    'inventory_status' => $request->input('inventorystatus')
+                    'school_id' => $request->input('schoolid')                    
                 ]);
 							
 							
