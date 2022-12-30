@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Ticket;
 use App\Models\TicketStatus;
 use App\Models\InventoryManagement;
+use App\Models\TicketStatusLog;
 use App\Models\Student;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
@@ -95,23 +96,14 @@ class InventoryController extends Controller
 						  'Third_party_extended_warranty_until'=>$Third_party_extended_warranty_until ? $Third_party_extended_warranty_until : $savedInventory->Third_party_extended_warranty_until,
 						  'Third_party_ADP_until'=>$Third_party_ADP_until ?$Third_party_ADP_until: $savedInventory->Third_party_ADP_until,
 						  'Expected_retirement'=>$Expected_retirement ?$Expected_retirement:  $savedInventory->Expected_retirement,
-						  'Loaner_device'=>$Loaner_device ? $Loaner_device:$savedInventory->Loaner_device,
-						 // 'Device_user_first_name'=>$Device_user_first_name ?Device_user_first_name:$savedInventory->Device_user_first_name,
-						  //'Device_user_last_name'=>$Device_user_last_name?$Device_user_last_name:$savedInventory->Device_user_last_name,
-						  //'Student_ID'=>$Student_ID ? $Student_ID: $savedInventory->Student_ID,
-						  //'Grade'=>$Grade ? $Grade : $savedInventory->Grade ,
+						  'Loaner_device'=>$Loaner_device ? $Loaner_device:$savedInventory->Loaner_device,						
 						  'Device_MPN'=>$Device_MPN ?$Device_MPN:$savedInventory->Device_MPN,
-						  'Asset_tag'=>$Asset_tag ? $Asset_tag : $savedInventory->Asset_tag ,
-						  //'Building'=>$Building ? $Building : $savedInventory->Building,
-						  //'Parent_guardian_name'=>$Parent_guardian_name ?$Parent_guardian_name :$savedInventory->Parent_guardian_name,
-						  'User_type'=>$User_type ?$User_type :$savedInventory->User_type,
-						  //'Parent_guardian_Email'=>$Parent_guardian_Email ?$Parent_guardian_Email :$savedInventory->Parent_guardian_Email,
-						  //'Parent_phone_number'=>$Parent_phone_number ?$Parent_phone_number:$savedInventory->Parent_phone_number,
-						  //'Parental_coverage'=>$Parental_coverage ? $Parental_coverage:$savedInventory->Parental_coverage ,
-                          'Repair_cap'=>$Repair_cap ? $Repair_cap:$savedInventory->Repair_cap]);
+						  'Asset_tag'=>$Asset_tag ? $Asset_tag : $savedInventory->Asset_tag ,						
+						  'User_type'=>$User_type ?$User_type :$savedInventory->User_type,						  
+                                                  'Repair_cap'=>$Repair_cap ? $Repair_cap:$savedInventory->Repair_cap]);
 						  
 				 $savedStudent = Student::where('Inventory_Id',$InventoryID)->first();	  
-                             $updatedstudentDetail = Student::where('Inventory_Id',$InventoryID)
+                                 $updatedstudentDetail = Student::where('Inventory_Id',$InventoryID)
 				  ->update(['Device_user_first_name'=>$Device_user_first_name ?$Device_user_first_name:$savedStudent->Device_user_first_name,
 						    'Device_user_last_name'=>$Device_user_last_name?$Device_user_last_name:$savedStudent->Device_user_last_name,
 //						    'Student_ID'=>$Student_ID ? $Student_ID: $savedInventory->Student_ID,
@@ -281,6 +273,61 @@ catch (\Throwable $th) {
       'userName'=> $username,   
   ]));
   }
+      public function fetchDeviceDetailforTicket($id,$tid) {
+        $inventorydata = InventoryManagement::where('ID', $id)->first();
+        $userid = $inventorydata->user_id;
+        $user = User::where('id', $userid)->first();
+        $username = $user->name;
+        $ticketdata = Ticket::where('ID', $tid)->first();
+         $ticketalllog=TicketStatusLog::where('Ticket_id',$tid)->get();  
+              $ticketlog = array();
+              foreach($ticketalllog as $logdata){          
+                  $ID =$logdata['ID'];                                   
+                  $old_status = $logdata['Status_from'];
+                  $StatusallData = TicketStatus::where('ID',$old_status)->first();
+                  $previous_status = $StatusallData->status;
+                  $new_status = $logdata['Status_to'];
+                  $StatusData = TicketStatus::where('ID',$new_status)->first();
+                  $updated_status =$StatusData->status;
+                  $date = $logdata['created_at']->format('m-d-Y');
+                  $updated_by = $logdata['updated_by_user_id'];
+                  $user = User::where('id', $updated_by)->first();
+                  $updated_by_user = $user->name;
+                  array_push($ticketlog, ["ID"=>$ID,"update_by_user"=>$updated_by_user,"date"=>$date,"updated_status"=>$updated_status,"previous_status"=>$previous_status]);
+              }
+        $deviceHistory = array();
+        if(isset($ticketdata)){
+            $created_user = $ticketdata['user_id'];
+            $user_data =  User::where('id', $created_user)->first();
+            $created_by_user = $user->name;
+            $statusID = $ticketdata['ticket_status'];        
+            $StatusallData = TicketStatus::where('ID',$statusID)->first();
+            $status = $StatusallData->status;   
+        $ticketID = $ticketdata->ID;
+        $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();   
+          $array_issue = array(); 
+        foreach ($ticketIssueData as $data) {
+            $notes = $ticketdata['notes'];
+            // $ticketStatusId=$data['ticket_status'];
+            // $statusdata = TicketStatus::where('ID', $ticketStatusId)->first();
+            // $status = $statusdata->status;
+            $deviceIssue = $data['issue_Id'];
+            $issuedata = DeviceIssue::where('ID', $deviceIssue)->first();
+            $issue = $issuedata->issue;
+            array_push($array_issue,[$issue]); 
+            $created_at = $data['created_at']->format('m-d-Y');
+           
+        }
+         array_push($deviceHistory, ["Ticket_history"=>$ticketlog,"Created_by_user"=>$created_by_user,"Issue" => $array_issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+        }
+        return response()->json(
+                        collect([
+                    'response' => 'success',
+                    'msg' => $inventorydata,
+                    'deviceHistory' => $deviceHistory,
+                    'userName' => $username,
+        ]));
+    }
  public function manualAddEditInventoy(Request $request){
             $inventory = new InventoryManagement;           
             $inventory->Purchase_date = $request->input('PurchaseDate');
@@ -294,26 +341,17 @@ catch (\Throwable $th) {
             $inventory->Third_party_extended_warranty_until = $request->input('Thirdpartyextendedwarrantyuntil');
             $inventory->Third_party_ADP_until = $request->input('ThirdpartyADPuntil');
             $inventory->Expected_retirement = $request->input('Expectedretirement');
-            $inventory->Loaner_device = $request->input('Loanerdevice');
-           // $inventory->Device_user_first_name = $request->input('Deviceuserfirstname');
-           // $inventory->Device_user_last_name = $request->input('Deviceuserlastname');
-            //$inventory->Student_ID = $request->input('StudentID');
-            //$inventory->Grade = $request->input('Grade');
+            $inventory->Loaner_device = $request->input('Loanerdevice');        
             $inventory->Device_MPN = $request->input('DeviceMPN');
-            $inventory->Asset_tag =$request->input('Assettag');
-			//$inventory->Building =$request->input('Building');
-			//$inventory->Parent_guardian_name =$request->input('Parentguardianname');
-			$inventory->User_type =$request->input('Usertype');
-			//$inventory->Parent_guardian_Email =$request->input('ParentguardianEmail');
-			//$inventory->Parent_phone_number =$request->input('Parentphonenumber');
-			//$inventory->Parental_coverage =$request->input('Parentalcoverage');
-			$inventory->Repair_cap= $request->input('Repaircap');
+            $inventory->Asset_tag =$request->input('Assettag');		
+            $inventory->User_type =$request->input('Usertype');		
+	    $inventory->Repair_cap= $request->input('Repaircap');
             $inventory->user_id = $request->input('userid');
             $inventory->school_id =$request->input('schoolid');
-			$inventory->inventory_status =$request->input('inventorystatus');
-            //$inventory->save();
-			
-			$Student = new Students;
+	    $inventory->inventory_status =$request->input('inventorystatus');
+//            $inventory->save();
+//			return $inventory;
+			$Student = new Student;
 			$Student->Device_user_first_name = $request->input('Deviceuserfirstname');
 			$Student->Device_user_last_name = $request->input('Deviceuserlastname');
 			$Student->Grade = $request->input('Grade');
@@ -322,66 +360,59 @@ catch (\Throwable $th) {
 			$Student->Parent_guardian_Email =$request->input('ParentguardianEmail');
 			$Student->Parent_phone_number =$request->input('Parentphonenumber');
 			$Student->Parental_coverage =$request->input('Parentalcoverage');
-			$Student->Inventory_Id =$inventory->ID;
+			$Student->Inventory_Id =$inventory->id;
+                        $Student->School_ID =$request->input('schoolid');
  
             $checkinventory= InventoryManagement::where('ID', $request->input('ID'))->first();  
                if(isset($checkinventory)){                  
                 $deviceIDfromDB = $checkinventory->ID;          
                 $deviceId= $request->input('ID');                  
                 if($deviceIDfromDB == $deviceId){
-                $updatedInventory=InventoryManagement::where('ID', $deviceId)
-                        ->update([$inventory->Purchase_date = $request->input('PurchaseDate'),
-            $inventory->Device_manufacturer = $request->input('Devicemanufacturer'),
-            $inventory->Device_Type = $request->input('DeviceType'),
-            $inventory->Device_model = $request->input('Devicemodel'),
-            $inventory->Device_os = $request->input('Deviceos'),
-            $inventory->Manufacturer_warranty_until = $request->input('Manufacturerwarrantyuntil'),
-            $inventory->Manufacturer_ADP_until = $request->input('ManufacturerADPuntil'),
-            $inventory->Serial_number =$request->input('Serialnumber'),
-            $inventory->Third_party_extended_warranty_until = $request->input('Thirdpartyextendedwarrantyuntil'),
-            $inventory->Third_party_ADP_until = $request->input('ThirdpartyADPuntil'),
-            $inventory->Expected_retirement = $request->input('Expectedretirement'),
-            $inventory->Loaner_device = $request->input('Loanerdevice'),
-           // $inventory->Device_user_first_name = $request->input('Deviceuserfirstname');
-            //$inventory->Device_user_last_name = $request->input('Deviceuserlastname');
-            $inventory->Student_ID = $request->input('StudentID'),
-            //$inventory->Grade = $request->input('Grade');
-            $inventory->Device_MPN = $request->input('DeviceMPN'),
-            $inventory->Asset_tag =$request->input('Assettag'),
-			//$inventory->Building =$request->input('Building');
-			//$inventory->Parent_guardian_name =$request->input('Parentguardianname');
-			$inventory->User_type =$request->input('Usertype'),
-			//$inventory->Parent_guardian_Email =$request->input('ParentguardianEmail');
-			//$inventory->Parent_phone_number =$request->input('Parentphonenumber');
-			//$inventory->Parental_coverage =$request->input('Parentalcoverage');
-			$inventory->Repair_cap= $request->input('Repaircap'),
-            $inventory->user_id = $request->input('userid'),
-            $inventory->school_id =$request->input('schoolid'),
-			$inventory->inventory_status =$request->input('inventorystatus')                          
-                            ]);
+                $updatedInventory = InventoryManagement::where('ID', $deviceId)
+                        ->update(['Purchase_date' => $request->input('PurchaseDate'),
+                    'Device_manufacturer' => $request->input('Devicemanufacturer'),
+                    'Device_Type' => $request->input('DeviceType'),
+                    'Device_model' => $request->input('Devicemodel'),
+                    'Device_os' => $request->input('Deviceos'),
+                    'Manufacturer_warranty_until' => $request->input('Manufacturerwarrantyuntil'),
+                    'Manufacturer_ADP_until' => $request->input('ManufacturerADPuntil'),
+                    'Serial_number' => $request->input('Serialnumber'),
+                    'Third_party_extended_warranty_until' => $request->input('Thirdpartyextendedwarrantyuntil'),
+                    'Third_party_ADP_until' => $request->input('ThirdpartyADPuntil'),
+                    'Expected_retirement' => $request->input('Expectedretirement'),
+                    'Loaner_device' => $request->input('Loanerdevice'),                   
+                    'Device_MPN' => $request->input('DeviceMPN'),
+                    'Asset_tag' => $request->input('Assettag'),
+                    'User_type' => $request->input('Usertype'),
+                    'Repair_cap' => $request->input('Repaircap'),
+                    'user_id' => $request->input('userid'),
+                    'school_id' => $request->input('schoolid'),
+                    'inventory_status' => $request->input('inventorystatus')
+                ]);
 							
 							
-          $updatedStudent =	Students::where('Inventory_Id', $deviceId)->update([
-		  $Student->Device_user_first_name = $request->input('Deviceuserfirstname'),
-          $Student->Device_user_last_name = $request->input('Deviceuserlastname'),
-		  $Student->Grade = $request->input('Grade'),
-		  $Student->Building =$request->input('Building'),
-		  $Student->Parent_guardian_name =$request->input('Parentguardianname'),
-		  $Student->Parent_guardian_Email =$request->input('ParentguardianEmail'),
-		  $Student->Parent_phone_number =$request->input('Parentphonenumber'),
-		  $Student->Parental_coverage =$request->input('Parentalcoverage'),				
+          $updatedStudent = Student::where('Inventory_Id', $deviceId)->update([
+		  'Device_user_first_name' => $request->input('Deviceuserfirstname'),
+                  'Device_user_last_name' => $request->input('Deviceuserlastname'),
+		  'Grade' => $request->input('Grade'),
+		  'Building' =>$request->input('Building'),
+		  'Parent_guardian_name' =>$request->input('Parentguardianname'),
+		  'Parent_guardian_Email' =>$request->input('ParentguardianEmail'),
+		  'Parent_phone_number' =>$request->input('Parentphonenumber'),
+		  'Parental_coverage' =>$request->input('Parentalcoverage'),				
 		  ]);	
 			
                 return "success";
                }
                } else{
-                 $inventory->save(); 
-				 $Student->save();
+                 $inventory->save(); 				
+                 $Student->save();                
+                Student::where('ID', $Student->id)->update(['Inventory_ID'=>$inventory->id]);
                 return response()->json(
                 collect([
                 'response' => 'success',
                 'msg' => $inventory,
-			    'student'=>$Student,
+                'student'=>$Student,
                  ]));
             }
  }
