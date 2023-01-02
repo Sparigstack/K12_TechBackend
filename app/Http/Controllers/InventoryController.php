@@ -8,6 +8,7 @@ use App\Models\TicketStatus;
 use App\Models\InventoryManagement;
 use App\Models\TicketStatusLog;
 use App\Models\Student;
+use App\Models\TicketIssue;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -192,7 +193,7 @@ catch (\Throwable $th) {
 //       if($key == "null"){
 //        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where("inventory_status",$flag)->orderby('id','asc')->get(); 
        $inventory =  DB::table('inventory_management')
-        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',$flag)
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.Loaner_device',0)->where('inventory_status',$flag)
         ->orderby('inventory_management.ID','asc')->get();
        
         return response()->json(
@@ -231,7 +232,7 @@ catch (\Throwable $th) {
    function getallDecommission($sid){
 //         if($key == "null"){
         $inventory =  DB::table('inventory_management')
-        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',2)
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.inventory_status',2)
         ->orderby('inventory_management.ID','asc')->get();
       
         return response()->json(
@@ -254,34 +255,70 @@ catch (\Throwable $th) {
 //       }
    }
          
-     public function fetchDeviceDetail($id){       
-      $inventorydata = InventoryManagement::where('ID',$id)->first(); 
-      $userid = $inventorydata->user_id;      
-      $user = User::where('id',$userid)->first();
-      $username = $user->name;
-      $ticketdata = Ticket::where('inventory_id',$id)->get();      
-         $deviceHistory = array();        
-         foreach($ticketdata as $data){  
-         $notes = $data['notes'];
-         $ticketStaus =$data['ticket_status'];
-         $statusdata = TicketStatus::where('ID',$ticketStaus)->first();
-         $status = $statusdata->status;
-         $deviceIssue =$data['device_issue_id'];
-         $issuedata = DeviceIssue::where('ID',$deviceIssue)->first();
-         $issue = $issuedata->issue;
-         $created_at =$data['created_at']->format('m-d-Y');
-         array_push($deviceHistory,["Issue"=>$issue,"Notes"=>$notes,"Status"=>$status,"Issue_createdDate"=>$created_at]);
-         }     
-       return response()->json(
-      collect([
-      'response' => 'success',
-      'msg' => $inventorydata,
-      'deviceHistory' => $deviceHistory,   
-      'userName'=> $username,   
-  ]));
-  }
-      public function fetchDeviceDetailforTicket($id,$tid) {
-        $inventorydata = InventoryManagement::where('ID', $id)->first();
+     public function fetchDeviceDetail($id) {
+        $inventorydata = DB::table('inventory_management')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+        ->where('inventory_management.ID',$id)->first();
+        $userid = $inventorydata->user_id;
+        $user = User::where('id', $userid)->first();
+        $username = $user->name; 
+        $ticketalldata = Ticket::where('inventory_id', $id)->get();
+        $deviceHistory = array(); 
+       
+        if (isset($ticketalldata)) {
+            foreach($ticketalldata as $ticketdata){
+             $ticketalllog=TicketStatusLog::where('Ticket_id',$ticketdata['ID'])->get();  
+             $ticketID = $ticketdata['ID'];
+              $ticketlog = array();
+              foreach($ticketalllog as $logdata){ 
+
+                  $ID =$logdata['ID'];
+                   $Ticket_Id = $logdata['Ticket_id'];
+                  $old_status = $logdata['Status_from'];
+                  $StatusallData = TicketStatus::where('ID',$old_status)->first();
+                  $previous_status = $StatusallData->status;
+                  $new_status = $logdata['Status_to'];
+                  $StatusData = TicketStatus::where('ID',$new_status)->first();
+                  $updated_status =$StatusData->status;
+                  $date = $logdata['created_at']->format('m-d-Y');
+                  $updated_by = $logdata['updated_by_user_id'];
+                  $user = User::where('id', $updated_by)->first();
+                  $updated_by_user = $user->name;
+                  array_push($ticketlog, ["Ticket_id"=>$Ticket_Id,"ID"=>$ID,"update_by_user"=>$updated_by_user,"date"=>$date,"updated_status"=>$updated_status,"previous_status"=>$previous_status]);
+              }
+            $notes = $ticketdata['notes'];
+            $created_user = $ticketdata['user_id'];
+            $user_data =  User::where('id', $created_user)->first();
+            $created_by_user = $user->name;
+            $created_at = $ticketdata['created_at']->format('m-d-Y');
+            $statusID = $ticketdata['ticket_status'];
+            $StatusallData = TicketStatus::where('ID', $statusID)->first();
+            $status = $StatusallData->status;
+            $ticketIssueData = TicketIssue::where('ticket_Id', $ticketdata['ID'])->get();
+            $array_issue = array();
+            foreach ($ticketIssueData as $data) {
+                $deviceIssue = $data['issue_Id'];
+                $issuedata = DeviceIssue::where('ID', $deviceIssue)->first();
+                $issue = $issuedata->issue;
+                array_push($array_issue, [$issue]);
+            }
+            
+             array_push($deviceHistory, ["ticketHistory"=>$ticketlog,"Ticket_ID"=>$ticketID,"Created_by_user"=>$created_by_user,"Issue" => $array_issue, "Notes" => $notes, "Status" => $status, "Issue_createdDate" => $created_at]);
+            }
+           
+        }
+        return response()->json(
+                        collect([
+                    'response' => 'success',
+                    'msg' => $inventorydata,
+                    'deviceHistory' => $deviceHistory,                   
+                    'userName' => $username,
+        ]));
+    }
+    public function fetchDeviceDetailforTicket($id,$tid) {
+       $inventorydata = DB::table('inventory_management')
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+        ->where('inventory_management.ID',$id)->first();
         $userid = $inventorydata->user_id;
         $user = User::where('id', $userid)->first();
         $username = $user->name;
@@ -314,10 +351,7 @@ catch (\Throwable $th) {
         $ticketIssueData = TicketIssue::where('ticket_Id',$ticketID)->get();   
           $array_issue = array(); 
         foreach ($ticketIssueData as $data) {
-            $notes = $ticketdata['notes'];
-            // $ticketStatusId=$data['ticket_status'];
-            // $statusdata = TicketStatus::where('ID', $ticketStatusId)->first();
-            // $status = $statusdata->status;
+            $notes = $ticketdata['notes'];          
             $deviceIssue = $data['issue_Id'];
             $issuedata = DeviceIssue::where('ID', $deviceIssue)->first();
             $issue = $issuedata->issue;
@@ -423,22 +457,64 @@ catch (\Throwable $th) {
             }
  }
   public function sortbyInventory($sid,$key,$skey){
-      if($key ==1){
-      $inventory= InventoryManagement::orderBy("Student_name", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();      
+      if($skey == 3){
+          if($key ==1){
+      $inventory= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("students.Device_user_first_name", "asc")->where("Loaner_device",1)->get();      
       }elseif($key == 2){
-      $inventory= InventoryManagement::orderBy("Device_model", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();     
+      $inventory=DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("inventory_management.Device_model", "asc")->where("Loaner_device",1)->get();   
       }elseif($key == 3){
-      $inventory= InventoryManagement::orderBy("Grade", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();      
+      $inventory= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("students.Grade", "asc")->where("Loaner_device",1)->get(); 
       }elseif($key == 4){
-      $inventory= InventoryManagement::orderBy("Building", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();      
+      $inventory= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("students.Building", "asc")->where("Loaner_device",1)->get(); 
       }elseif($key == 5){
-      $inventory= InventoryManagement::orderBy("OEM", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();     
+      $inventory= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("inventory_management.Serial_number", "asc")->where("Loaner_device",1)->get(); 
       }elseif($key == 6){
-      $inventory= InventoryManagement::orderBy("Purchase_date", "asc")->where("school_id",$sid)->where("inventory_status",$skey)->get();     
+      $inventory= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("inventory_management.Purchase_date", "asc")->where("Loaner_device",1)->get(); 
       }
       else{
       return "error";
+      } 
+      }else{
+      if($key == 1){
+      $inventory= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("students.Device_user_first_name", "asc")->where("inventory_management.inventory_status",$skey)->get();      
+      }elseif($key == 2){
+      $inventory= IDB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("inventory_management.Device_model", "asc")->where("inventory_management.inventory_status",$skey)->get();     
+      }elseif($key == 3){
+      $inventory= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("students.Grade", "asc")->where("inventory_management.inventory_status",$skey)->get();      
+      }elseif($key == 4){
+      $inventory= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("students.Building", "asc")->where("inventory_management.inventory_status",$skey)->get();      
+      }elseif($key == 5){
+      $inventory= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("inventory_management.Serial_number", "asc")->where("inventory_management.inventory_status",$skey)->get();     
+      }elseif($key == 6){
+      $inventory= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->orderBy("inventory_management.Purchase_date", "asc")->where("inventory_management.inventory_status",$skey)->get();     
       }
+      else{
+      return "error";
+      }}
  return response()->json(
                 collect([
                 'response' => 'success',
@@ -446,22 +522,70 @@ catch (\Throwable $th) {
                  ])); 
   }
 
- public function searchInventory($key){
-      $get = DB::table('inventory_management')
-        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
-              ->where('students.Device_user_first_name','LIKE',"%$key%")
-		->orWhere('students.Device_user_last_name','like', '%' . $key . '%')
-              ->orWhere('inventory_management.Device_model', 'like', '%' . $key . '%')
-              ->orWhere('inventory_management.Serial_number', 'like', '%' . $key . '%')
-              ->get();  
-     
+// public function searchInventory($key){
+//      $get = DB::table('inventory_management')
+//        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+//              ->where('students.Device_user_first_name','LIKE',"%$key%")
+//		->orWhere('students.Device_user_last_name','like', '%' . $key . '%')
+//              ->orWhere('inventory_management.Device_model', 'like', '%' . $key . '%')
+//              ->orWhere('inventory_management.Serial_number', 'like', '%' . $key . '%')
+//              ->get();  
+//     
+//        return response()->json(
+//         collect([
+//        'response' => 'success',
+//        'msg' => $get       
+//         ]));
+        
+//            }
+      public function searchInventory($sid,$key,$flag){  
+        if($key !='null'){
+           if($flag == 3){
+                $get = DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)
+                        ->where("inventory_management.Loaner_device",1)
+                        ->where(function ($query) use ($key) {
+                        $query->where('inventory_management.Device_model', 'LIKE', "%$key%");
+                        $query->orWhere('students.Device_user_last_name', 'LIKE', "%$key%");
+                        $query->orWhere('students.Device_user_first_name', 'LIKE', "%$key%");
+                        $query->orWhere('inventory_management.Serial_number', 'LIKE', "%$key%");
+                    })->get();
+           }else{
+                  $get= DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)->where("inventory_management.inventory_status", $flag)
+                        ->where(function ($query) use ($key) {
+                        $query->where('inventory_management.Device_model', 'LIKE', "%$key%");
+                        $query->orWhere('students.Device_user_last_name', 'LIKE', "%$key%");
+                        $query->orWhere('students.Device_user_first_name', 'LIKE', "%$key%");
+                        $query->orWhere('inventory_management.Serial_number', 'LIKE', "%$key%");
+                    })->get();
+        }
+        
+       }else{
+           if($flag == 3){
+               $get = DB::table('inventory_management')
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                        ->where('inventory_management.school_id', $sid)
+                        ->where("inventory_management.Loaner_device",1)
+                        ->get();
+           }else{
+               $get= DB::table('inventory_management')
+                       ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
+                       ->where('inventory_management.school_id', $sid)
+                       ->where("inventory_management.inventory_status", $flag)
+                       ->get();
+        }
+       }
         return response()->json(
-         collect([
-        'response' => 'success',
-        'msg' => $get       
-         ]));
-            }
-            
+                        collect([
+                    'response' => 'success',
+                    'msg' => $get
+        ]));
+    
+    }   
+  
   function manageInventoryAction(Request $request){ 
      $idArray = $request->input('IDArray');
      $actionId= $request->input('actionid');    

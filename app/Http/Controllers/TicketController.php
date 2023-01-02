@@ -6,6 +6,8 @@ use App\Models\DeviceIssue;
 use App\Models\Ticket;
 use App\Models\TicketIssue;
 use App\Models\User;
+use App\Models\StudentInventory;
+use App\Models\Student;
 use App\Models\InventoryManagement;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
@@ -13,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request as Input;
 use Illuminate\Contracts\Container\BindingResolutionException;
+
 
 class TicketController extends Controller
 {    
@@ -27,7 +30,8 @@ class TicketController extends Controller
      public function generateIssue(Request $request){            
         $msg = $request->input('msg');
         $devicearray = $request->input('DeviceIssueArray');
-     
+        $studentdata = Student::where('Inventory_ID',$msg['inventoryId'])->first();        
+        $studentId=$studentdata->ID;
         $data = Ticket::where('inventory_id', $msg['inventoryId'])->first();
         if (isset($data)) {
             
@@ -81,7 +85,12 @@ class TicketController extends Controller
             }           
             Ticket::where('id', $ticket->id)->update(['ticket_issue_Id' => $Issue->id]);
         }
-        return "success";
+        $studentInventory = new StudentInventory();
+        $studentInventory->Student_ID = $studentId;
+        $studentInventory->Inventory_Id = $msg['inventoryId'];
+        $studentInventory->Loner_ID = $msg['lonerId'];
+        $studentInventory->save();        
+        return "success";      
 
 }
 }
