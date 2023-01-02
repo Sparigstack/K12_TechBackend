@@ -8,6 +8,7 @@ use App\Models\TicketStatus;
 use App\Models\TicketIssue;
 use App\Models\TicketStatusLog;
 use App\Models\User;
+use App\Models\Student;
 use App\Models\InventoryManagement;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
@@ -49,8 +50,9 @@ class ManageTicketController extends Controller
 //                 $statusID =$StatusallData->ID;
                  $issue_inventory_id = $Issuedata->inventory_id;
                  $inventory_student = InventoryManagement::where('id',$issue_inventory_id)->first();
-                 $firstName = $inventory_student->Device_user_first_name;
-                 $lastName = $inventory_student->Device_user_last_name;
+                 $student_data = Student::where('Inventory_ID',$inventory_student->ID)->first();
+                 $firstName = $student_data->Device_user_first_name;
+                 $lastName = $student_data->Device_user_last_name;
                  $Device_model =$inventory_student->Device_model;
 
                 
