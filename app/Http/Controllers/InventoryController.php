@@ -348,7 +348,7 @@ catch (\Throwable $th) {
             $inventory->Third_party_extended_warranty_until = $request->input('Thirdpartyextendedwarrantyuntil');
             $inventory->Third_party_ADP_until = $request->input('ThirdpartyADPuntil');
             $inventory->Expected_retirement = $request->input('Expectedretirement');
-            $inventory->Loaner_device = $request->input('Loanerdevice');        
+            $inventory->Loaner_device = $request->input('Loanerdevice');   //01     
             $inventory->Device_MPN = $request->input('DeviceMPN');
             $inventory->Asset_tag =$request->input('Assettag');		
             $inventory->User_type =$request->input('Usertype');		

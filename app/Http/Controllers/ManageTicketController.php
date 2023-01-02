@@ -299,15 +299,16 @@ class ManageTicketController extends Controller
 
  function searchInventoryCT($sid,$key){
         if($key !='null'){
-       $get= InventoryManagement::where('school_id', $sid)->where(function ($query) use ($key) {
-                        $query->where('Device_model', 'LIKE', "%$key%");
-                        $query->orWhere('Device_user_last_name', 'LIKE', "%$key%");
-                        $query->orWhere('Device_user_first_name', 'LIKE', "%$key%");
-                        $query->orWhere('Serial_number', 'LIKE', "%$key%");
+                  
+       $get= DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('school_id', $sid)
+               ->where(function ($query) use ($key) {
+                        $query->where('inventory_management.Device_model', 'LIKE', "%$key%");
+                        $query->orWhere('students.Device_user_last_name', 'LIKE', "%$key%");
+                        $query->orWhere('students.Device_user_first_name', 'LIKE', "%$key%");
+                        $query->orWhere('inventory_management.Serial_number', 'LIKE', "%$key%");
                     })->get();
-        }else{
-           
-          $get =  InventoryManagement::where('school_id', $sid)->get();
+        }else{           
+          $get = DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('school_id', $sid)->get();
         }
         return response()->json(
                         collect([
