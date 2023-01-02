@@ -12,5 +12,5 @@ class inventoryManagement extends Model
    
    public function student() {
     return $this->belongsTo(Student::class, 'ID','Inventory_ID');
-    }
+}
 }
