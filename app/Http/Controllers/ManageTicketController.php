@@ -18,6 +18,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 class ManageTicketController extends Controller
 {
     function allTickets($sid,$uid){ 
@@ -297,10 +298,10 @@ class ManageTicketController extends Controller
   
 }
 
- function searchInventoryCT($sid,$key){
+  function searchInventoryCT($sid,$key){
         if($key !='null'){
                   
-       $get= DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('school_id', $sid)
+       $get= DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.school_id', $sid)->where('inventory_management.Loaner_device',0)
                ->where(function ($query) use ($key) {
                         $query->where('inventory_management.Device_model', 'LIKE', "%$key%");
                         $query->orWhere('students.Device_user_last_name', 'LIKE', "%$key%");
@@ -308,7 +309,7 @@ class ManageTicketController extends Controller
                         $query->orWhere('inventory_management.Serial_number', 'LIKE', "%$key%");
                     })->get();
         }else{           
-          $get = DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('school_id', $sid)->get();
+          $get = DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.school_id', $sid)->where('inventory_management.Loaner_device',0)->get();
         }
         return response()->json(
                         collect([
@@ -316,6 +317,25 @@ class ManageTicketController extends Controller
                     'msg' => $get
         ]));
  }
-
+function allLonerDevice($sid,$key){
+    if($key !='null'){
+                  
+       $get= DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.school_id', $sid)->where('inventory_management.Loaner_device',1)
+               ->where(function ($query) use ($key) {
+                        $query->where('inventory_management.Device_model', 'LIKE', "%$key%");
+                        $query->orWhere('students.Device_user_last_name', 'LIKE', "%$key%");
+                        $query->orWhere('students.Device_user_first_name', 'LIKE', "%$key%");
+                        $query->orWhere('inventory_management.Serial_number', 'LIKE', "%$key%");
+                    })->get();
+        }else{           
+          $get = DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.school_id', $sid)->where('inventory_management.Loaner_device',1)->get();
+        }
+        return response()->json(
+                        collect([
+                    'response' => 'success',
+                    'msg' => $get
+        ]));
+}
+ 
 }
        

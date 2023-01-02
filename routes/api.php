@@ -29,7 +29,7 @@ Route::get('/getInventories/{sid?}', [InventoryController::class, 'getInventorie
 Route::get('/getexport', [InventoryController::class, 'getexport']);
 Route::post('/addeditmanualInventoy', [InventoryController::class, 'manualAddEditInventoy']);
 Route::get('/getallInventories/{sid?}&{flag}', [InventoryController::class, 'getallInventories']);
-Route::get('/getallDecommission/{sid?}&{key?}', [InventoryController::class, 'getallDecommission']);
+Route::get('/getallDecommission/{sid?}', [InventoryController::class, 'getallDecommission']);
 Route::post('/manageInventoryAction', [InventoryController::class, 'manageInventoryAction']);
 //Route::post('/adddecommission', [InventoryController::class, 'addDecommission']);
 //device
@@ -62,6 +62,7 @@ Route::get('/openTickets/{sid?}&{key}&{flag}', [ManageTicketController::class, '
 Route::get('/closeTickets/{sid?}&{key}&{flag}', [ManageTicketController::class, 'CloseTickets']);
 Route::get('/getTicketNotes/{sid?}&{id}', [ManageTicketController::class, 'getTicketNotes']);
 Route::get('/searchOpenTicket/{sid?}&{key}&{flag}', [ManageTicketController::class, 'searchOpenTicket']);
+Route::get('/allLonerDevice/{sid}&{key}', [ManageTicketController::class, 'allLonerDevice']);
 
 //Route::get('/filterTickets/{sid?}&{fid}', [ManageTicketController::class, 'filterTickets']);
 //Route::get('/searchTicket/{sid?}&{skey}', [ManageTicketController::class, 'searchTicket']);
