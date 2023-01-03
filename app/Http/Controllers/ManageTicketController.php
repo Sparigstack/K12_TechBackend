@@ -9,6 +9,7 @@ use App\Models\TicketIssue;
 use App\Models\TicketStatusLog;
 use App\Models\User;
 use App\Models\Student;
+use App\Models\StudentInventory;
 use App\Models\InventoryManagement;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
@@ -91,6 +92,12 @@ class ManageTicketController extends Controller
                  $ticketlog->updated_by_user_id = $ticketupdateduserId;
                  $ticketlog->save();
                 $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
+            }
+               if($flag == 1){
+                  $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null]);
+            }else{
+                  $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null,"Inventory_Id"=>$lonerID]);
+                  $updateInventory = InventoryManagement::where('id',$lonerID)->update(['Loaner_device'=>0]);
             }
             return "success";
         } catch (\Throwable $th) {
