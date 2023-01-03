@@ -101,20 +101,24 @@ class ManageTicketController extends Controller
                  
                  $inventoryID = $ticketdata->inventory_id;
                  $studentinentorydata = StudentInventory::where('Inventory_Id',$inventoryID)->first();
-                 $$lonerID = $studentinentorydata->Loner_ID; 
-               if($flag ==1){
-                   if($closestatus == 1){                       
-                        $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null,'Inventory_Id'=>$lonerID]);
-                        $updateInventory = InventoryManagement::where('id',$lonerID)->update(['Loaner_device'=>0]);
+              if($studentinentorydata == ""){
+                $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
+              }else{
+                 $lonerID = $studentinentorydata->Loner_ID; 
+                if($flag ==1){
+                    if($closestatus == 1){                       
+                            $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null,'Inventory_Id'=>$lonerID]);
+                            $updateInventory = InventoryManagement::where('id',$lonerID)->update(['Loaner_device'=>0]);
+                            $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
+                    }                 
+                    else{
+                        $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null]);
                         $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
-                   }                 
-                   else{
-                       $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null]);
-                       $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
-                  }
-               }else{
-                    $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
-               }  
+                    }
+                }else{
+                        $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
+                }  
+            }
 //          
             
         }
