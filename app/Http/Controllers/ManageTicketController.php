@@ -41,7 +41,7 @@ class ManageTicketController extends Controller
          $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y');  
          $ticketCreatedByUserName = $ticketdata['user_id'];
          $userdata =User::where('id',$ticketCreatedByUserName)->first();
-         $ticketCreatedBy = $ticketCreatedByUserName->name;
+         $ticketCreatedBy = $userdata->name;
          $Issuealldata =TicketIssue::where('ticket_Id',$ticketdata['ID'])->get();        
           foreach($Issuealldata as $Issuedata)
           {       
@@ -85,7 +85,10 @@ class ManageTicketController extends Controller
             $ticketStatusID = $request->input('Status');
             $ticketupdateduserId = $request->input('UserId');
             $idArray = $request->input('IssueIDArray');
-          
+            $flag = $request->input('Flag');
+            $closestatus = $request->input('CloseStatus');
+            $inventoryID = $request->input('InventoryID');
+            $lonerID =  $request->input('LonerID');            
             foreach ($idArray as $ids) { 
                  $ticketlog = new TicketStatusLog();                
                  $ticketlog->Ticket_id = $ids['TicketID'];
@@ -94,16 +97,20 @@ class ManageTicketController extends Controller
                  $ticketlog->Status_to = $ticketStatusID;
                  $ticketlog->updated_by_user_id = $ticketupdateduserId;
                  $ticketlog->save();
-                $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
-            }
-               if($flag == 1){
-                  $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null]);
-            }else{
-                  $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null,"Inventory_Id"=>$lonerID]);
-                  $updateInventory = InventoryManagement::where('id',$lonerID)->update(['Loaner_device'=>0]);
-            }
+               if($flag ==1){
+                   if($closestatus == 1){
+                        $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null,"Inventory_Id"=>$lonerID]);
+                        $updateInventory = InventoryManagement::where('id',$lonerID)->update(['Loaner_device'=>0]);
+                   }                 
+                   else{
+                       $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null]);
+                  }
+               }else{
+                    $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
+               }  
+//          
             return "success";
-        } catch (\Throwable $th) {
+        } }catch (\Throwable $th) {
             return "something went wrong.";
         }
         
@@ -145,7 +152,7 @@ class ManageTicketController extends Controller
          $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y'); 
          $ticketCreatedByUserName = $ticketdata['user_id'];
          $userdata =User::where('id',$ticketCreatedByUserName)->first();
-         $ticketCreatedBy = $ticketCreatedByUserName->name;
+         $ticketCreatedBy = $userdata->name;
          $Issuealldata =TicketIssue::where('ticket_Id',$ticketdata['ID'])->get();       
          $array_issue = array(); 
           foreach($Issuealldata as $Issuedata)
@@ -253,7 +260,7 @@ class ManageTicketController extends Controller
          $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y'); 
           $ticketCreatedByUserName = $ticketdata['user_id'];
          $userdata =User::where('id',$ticketCreatedByUserName)->first();
-         $ticketCreatedBy = $ticketCreatedByUserName->name;
+         $ticketCreatedBy = $userdata->name;
          $Issuealldata =TicketIssue::where('ticket_Id',$ticketdata['ID'])->get();        
                  foreach($Issuealldata as $Issuedata)
           {                             
