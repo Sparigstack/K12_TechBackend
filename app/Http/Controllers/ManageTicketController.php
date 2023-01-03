@@ -81,7 +81,7 @@ class ManageTicketController extends Controller
     }
     
      function changeticketStatus(Request $request) {
-        try {
+//        try {
             $ticketStatusID = $request->input('Status');
             $ticketupdateduserId = $request->input('UserId');
             $idArray = $request->input('IssueIDArray');
@@ -101,18 +101,21 @@ class ManageTicketController extends Controller
                    if($closestatus == 1){
                         $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null,"Inventory_Id"=>$lonerID]);
                         $updateInventory = InventoryManagement::where('id',$lonerID)->update(['Loaner_device'=>0]);
+                        $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
                    }                 
                    else{
                        $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null]);
+                       $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
                   }
                }else{
                     $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
                }  
 //          
             return "success";
-        } }catch (\Throwable $th) {
-            return "something went wrong.";
         }
+//        }catch (\Throwable $th) {
+//            return "something went wrong.";
+//        }
         
     }
     

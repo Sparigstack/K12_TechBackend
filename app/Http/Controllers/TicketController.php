@@ -30,6 +30,7 @@ class TicketController extends Controller
      public function generateIssue(Request $request){            
         $msg = $request->input('msg');
         $devicearray = $request->input('DeviceIssueArray');
+//        $lonerdevice = $request->input('lonerId');
         $studentdata = Student::where('Inventory_ID',$msg['inventoryId'])->first();        
         $studentId=$studentdata->ID;
         $data = Ticket::where('inventory_id', $msg['inventoryId'])->first();
