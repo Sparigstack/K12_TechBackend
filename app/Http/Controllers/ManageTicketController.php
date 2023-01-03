@@ -81,14 +81,14 @@ class ManageTicketController extends Controller
     }
     
      function changeticketStatus(Request $request) {
-//        try {
+        try {
             $ticketStatusID = $request->input('Status');
             $ticketupdateduserId = $request->input('UserId');
             $idArray = $request->input('IssueIDArray');
             $flag = $request->input('Flag');
             $closestatus = $request->input('closestatus');
-            $inventoryID = $request->input('InventoryID');
-            $lonerID =  $request->input('LonerID');     
+//            $inventoryID = $request->input('InventoryID');
+//            $lonerID =  $request->input('LonerID');     
             
             foreach ($idArray as $ids) { 
                  $ticketlog = new TicketStatusLog();                
@@ -98,6 +98,10 @@ class ManageTicketController extends Controller
                  $ticketlog->Status_to = $ticketStatusID;
                  $ticketlog->updated_by_user_id = $ticketupdateduserId;
                  $ticketlog->save();
+                 
+                 $inventoryID = $ticketdata->inventory_id;
+                 $studentinentorydata = StudentInventory::where('Inventory_Id',$inventoryID)->first();
+                 $$lonerID = $studentinentorydata->Loner_ID; 
                if($flag ==1){
                    if($closestatus == 1){                       
                         $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null,'Inventory_Id'=>$lonerID]);
@@ -112,11 +116,12 @@ class ManageTicketController extends Controller
                     $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
                }  
 //          
-            return "success";
+            
         }
-//        }catch (\Throwable $th) {
-//            return "something went wrong.";
-//        }
+        return "success";
+        }catch (\Throwable $th) {
+            return "something went wrong.";
+        }
         
     }
     
