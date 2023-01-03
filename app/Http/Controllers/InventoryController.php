@@ -65,8 +65,7 @@ class InventoryController extends Controller
             $Expected_retirement=$data['expectedretirement'];
             $Loaner_device=$data['loanerdevice'];
             $Device_user_first_name=$data['deviceuserfirstname'];
-            $Device_user_last_name=$data['deviceuserlastname'];
-//            $Student_ID=$data['studentid']; 
+            $Device_user_last_name=$data['deviceuserlastname'];        
             $Grade=$data['gradedepartment'];
             $Device_MPN= $data['devicempn'];          
             $Serial_number=$data['serialnumber'];
@@ -107,8 +106,7 @@ class InventoryController extends Controller
 				 $savedStudent = Student::where('Inventory_Id',$InventoryID)->first();	  
                                  $updatedstudentDetail = Student::where('Inventory_Id',$InventoryID)
 				  ->update(['Device_user_first_name'=>$Device_user_first_name ?$Device_user_first_name:$savedStudent->Device_user_first_name,
-						    'Device_user_last_name'=>$Device_user_last_name?$Device_user_last_name:$savedStudent->Device_user_last_name,
-//						    'Student_ID'=>$Student_ID ? $Student_ID: $savedInventory->Student_ID,
+						    'Device_user_last_name'=>$Device_user_last_name?$Device_user_last_name:$savedStudent->Device_user_last_name,						   
 						    'Grade'=>$Grade ? $Grade : $savedStudent->Grade ,
 					            'Building'=>$Building ? $Building : $savedStudent->Building,
 						    'Parent_guardian_name'=>$Parent_guardian_name ?$Parent_guardian_name :$savedStudent->Parent_guardian_name,
@@ -150,13 +148,7 @@ class InventoryController extends Controller
 		        $Student->Parental_coverage =$Parental_coverage;
                         $Student->Inventory_ID =$inventory->id;
                         $Student->School_ID =$schId;                        
-                        $Student->save();
-			
-		//	$Student_Inventory = new StudentInventory;
-		//	$Student_Inventory->Inventory_Id = $inventory->ID;
-		//	$Student_Inventory->Student_ID = $Student->ID;
-		//	$Student_Inventory->Loner_ID = $inventory->ID;
-		//	$Student_Inventory->save();
+                        $Student->save();	
          }
          
             }
@@ -190,8 +182,7 @@ catch (\Throwable $th) {
         
    }
    public function getallInventories($sid,$flag){
-//       if($key == "null"){
-//        $inventory = InventoryManagement::with('student')->where('school_id',$sid)->where("inventory_status",$flag)->orderby('id','asc')->get(); 
+
        $inventory =  DB::table('inventory_management')
         ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.Loaner_device',0)->where('inventory_status',$flag)
         ->orderby('inventory_management.ID','asc')->get();
@@ -201,38 +192,15 @@ catch (\Throwable $th) {
         'response' => 'success',
         'msg' => $inventory,         
          ]));
-//       }else{           
-//        $get =  $inventory =  DB::table('inventory_management')
-//        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',$flag)->where(function($query) use ($key){
-//        $query->where('inventory_management.Device_model','LIKE',"%$key%");
-//        $query->orWhere('students.Device_user_last_name','LIKE',"%$key%");
-//        $query->orWhere('students.Device_user_first_name','LIKE',"%$key%");
-//        $query->orWhere('inventory_management.Serial_number','LIKE',"%$key%");
-//    })               
-//        ->get(); 
-//        return $get;
-//        return response()->json(
-//         collect([
-//        'response' => 'success',
-//        'msg' => $get       
-//         ]));
-//       }               
+              
    }
    
-//   function addDecommission(Request $request){
-//       $inventoryId =$request->input('ID');   
-//            
-//        $updateUser =  DB::table('inventory_management')
-//        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status',2)->update(['inventory_status' => 2])
-//        ->get();
-////       $updateUser = InventoryManagement::where('ID', $inventoryId)->update(['inventory_status' => 2]);
-//       return 'success';
-//   }
+
    
    function getallDecommission($sid){
-//         if($key == "null"){
+
         $inventory =  DB::table('inventory_management')
-        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.inventory_status',2)
+        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.Loaner_device',0)->where('inventory_management.inventory_status',2)
         ->orderby('inventory_management.ID','asc')->get();
       
         return response()->json(
@@ -240,19 +208,7 @@ catch (\Throwable $th) {
         'response' => 'success',
         'msg' => $inventory,         
          ]));
-//       }else{
-//        $get = DB::table('inventory_management')
-//        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('students.Device_user_first_name','LIKE',"%$key%")
-//		->orWhere('students.Device_user_last_name','like', '%' . $key . '%')
-//                ->orWhere('inventory_management.Device_model', 'like', '%' . $key . '%')
-//                ->orWhere('inventory_management.Serial_number', 'like', '%' . $key . '%')
-//                ->get();  
-//        return response()->json(
-//         collect([
-//        'response' => 'success',
-//        'msg' => $get       
-//         ]));
-//       }
+
    }
          
      public function fetchDeviceDetail($id) {
@@ -522,22 +478,6 @@ catch (\Throwable $th) {
                  ])); 
   }
 
-// public function searchInventory($key){
-//      $get = DB::table('inventory_management')
-//        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')
-//              ->where('students.Device_user_first_name','LIKE',"%$key%")
-//		->orWhere('students.Device_user_last_name','like', '%' . $key . '%')
-//              ->orWhere('inventory_management.Device_model', 'like', '%' . $key . '%')
-//              ->orWhere('inventory_management.Serial_number', 'like', '%' . $key . '%')
-//              ->get();  
-//     
-//        return response()->json(
-//         collect([
-//        'response' => 'success',
-//        'msg' => $get       
-//         ]));
-        
-//            }
       public function searchInventory($sid,$key,$flag){  
         if($key !='null'){
            if($flag == 3){
