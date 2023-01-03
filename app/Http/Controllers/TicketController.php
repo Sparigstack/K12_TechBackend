@@ -29,8 +29,7 @@ class TicketController extends Controller
 }
      public function generateIssue(Request $request){            
         $msg = $request->input('msg');
-        $devicearray = $request->input('DeviceIssueArray');
-//        $lonerdevice = $request->input('lonerId');
+        $devicearray = $request->input('DeviceIssueArray');     
         $studentdata = Student::where('Inventory_ID',$msg['inventoryId'])->first();        
         $studentId=$studentdata->ID;
         $data = Ticket::where('inventory_id', $msg['inventoryId'])->first();
@@ -86,6 +85,7 @@ class TicketController extends Controller
             }           
             Ticket::where('id', $ticket->id)->update(['ticket_issue_Id' => $Issue->id]);
         }
+        if( $msg['lonerDeviceStatus'] == 1){        
         $studentInventory = new StudentInventory();
         $studentInventory->Student_ID = $studentId;
         $studentInventory->Inventory_Id = $msg['inventoryId'];
@@ -93,6 +93,9 @@ class TicketController extends Controller
         $studentInventory->save();        
         return "success";      
 
+}else{
+    return "success";
 }
+     }
 }
     

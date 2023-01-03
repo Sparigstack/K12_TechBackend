@@ -86,9 +86,10 @@ class ManageTicketController extends Controller
             $ticketupdateduserId = $request->input('UserId');
             $idArray = $request->input('IssueIDArray');
             $flag = $request->input('Flag');
-            $closestatus = $request->input('CloseStatus');
+            $closestatus = $request->input('closestatus');
             $inventoryID = $request->input('InventoryID');
-            $lonerID =  $request->input('LonerID');            
+            $lonerID =  $request->input('LonerID');     
+            
             foreach ($idArray as $ids) { 
                  $ticketlog = new TicketStatusLog();                
                  $ticketlog->Ticket_id = $ids['TicketID'];
@@ -98,8 +99,8 @@ class ManageTicketController extends Controller
                  $ticketlog->updated_by_user_id = $ticketupdateduserId;
                  $ticketlog->save();
                if($flag ==1){
-                   if($closestatus == 1){
-                        $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null,"Inventory_Id"=>$lonerID]);
+                   if($closestatus == 1){                       
+                        $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null,'Inventory_Id'=>$lonerID]);
                         $updateInventory = InventoryManagement::where('id',$lonerID)->update(['Loaner_device'=>0]);
                         $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
                    }                 
