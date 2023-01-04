@@ -336,7 +336,7 @@ class InventoryController extends Controller {
         if($request->input('Loanerdevice')== 1){
              $inventory->inventory_status = 3;
         }else{
-            $inventory->inventory_status = 1;
+         $inventory->inventory_status = 1;
         }
 //            $inventory->save();
 //			return $inventory;
@@ -522,10 +522,13 @@ class InventoryController extends Controller {
             if ($actionId == 2) {
                 $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 2]);
             } elseif ($actionId == 3) {
+                $inventorydata = InventoryManagement::where('ID', $id)->first();
+                if($inventorydata->Loaner_device ==1){
+                     $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 3]);
+                }else{
                 $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 1]);
-            } elseif ($actionId == 4) {
-                $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 3]);
-            } else {
+            } 
+            }else {
                 return "select any action";
             }
         }
