@@ -15,6 +15,8 @@
             <file>file:/C:/xampp/htdocs/K12_Project/app/Models/inventoryManagement.php</file>
             <file>file:/C:/xampp/htdocs/K12_Project/routes/api.php</file>
             <file>file:/C:/xampp/htdocs/K12_Project/app/Http/Controllers/InventoryController.php</file>
+            <file>file:/C:/xampp/htdocs/K12_Project/app/Models/StudentInventory.php</file>
+            <file>file:/C:/xampp/htdocs/K12_Project/app/Http/Controllers/TicketController.php</file>
             <file>file:/C:/xampp/htdocs/K12_Project/app/Http/Controllers/ManageTicketController.php</file>
         </group>
     </open-files>

@@ -175,7 +175,7 @@ class InventoryController extends Controller {
     public function getallInventories($sid, $flag) {
 
         $inventory = DB::table('inventory_management')
-                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.Loaner_device', 0)->where('inventory_status', $flag)
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_status', $flag)
                         ->orderby('inventory_management.ID', 'asc')->get();
 
         return response()->json(
@@ -188,7 +188,7 @@ class InventoryController extends Controller {
     function getallDecommission($sid) {
 
         $inventory = DB::table('inventory_management')
-                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.Loaner_device', 0)->where('inventory_management.inventory_status', 2)
+                        ->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.inventory_status', 2)
                         ->orderby('inventory_management.ID', 'asc')->get();
 
         return response()->json(
@@ -332,7 +332,12 @@ class InventoryController extends Controller {
         $inventory->Repair_cap = $request->input('Repaircap');
         $inventory->user_id = $request->input('userid');
         $inventory->school_id = $request->input('schoolid');
-        $inventory->inventory_status = 1;
+        
+        if($request->input('Loanerdevice')== 1){
+             $inventory->inventory_status = 3;
+        }else{
+            $inventory->inventory_status = 1;
+        }
 //            $inventory->save();
 //			return $inventory;
         $Student = new Student;
@@ -518,6 +523,8 @@ class InventoryController extends Controller {
                 $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 2]);
             } elseif ($actionId == 3) {
                 $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 1]);
+            } elseif ($actionId == 4) {
+                $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 3]);
             } else {
                 return "select any action";
             }
