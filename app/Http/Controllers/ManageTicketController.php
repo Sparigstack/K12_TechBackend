@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use App\Models\LonerDeviceLog;
 
 class ManageTicketController extends Controller
 {
@@ -107,6 +108,8 @@ class ManageTicketController extends Controller
                         $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null]);
                         $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
                     }
+                   $date= now()->format('Y-m-d');
+                   LonerDeviceLog::where('Loner_ID',$lonerID)->update(['End_date'=>$date]);     
               }else{ 
                         $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
                 }  
@@ -137,7 +140,7 @@ class ManageTicketController extends Controller
              $lonerdeviceid = $studentinventorydata->Loner_ID;
              $lonerdevicedetails = Student::where('Inventory_ID',$lonerdeviceid)->first();
              $lonerdevicename  =  $lonerdevicedetails->Device_user_first_name . ' ' .$lonerdevicedetails->Device_user_last_name;                         
-         }
+    }
          $statusID = $ticketdata['ticket_status'];        
          $StatusallData = TicketStatus::where('ID',$statusID)->first();
          $status = $StatusallData->status;
