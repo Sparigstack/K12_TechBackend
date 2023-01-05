@@ -134,9 +134,9 @@ class ManageTicketController extends Controller
          $ticketInventoryID = $ticketdata['inventory_id'];
          $studentinventorydata = StudentInventory ::where('Inventory_ID',$ticketInventoryID)->first();
          if(isset($studentinventorydata)){
-             $lonerflag = 1;
-         }else{
-             $lonerflag =0;
+             $lonerdeviceid = $studentinventorydata->Loner_ID;
+             $lonerdevicedetails = Student::where('Inventory_ID',$lonerdeviceid)->first();
+             $lonerdevicename =  $lonerdevicedetails->Device_user_first_name . ' ' .$lonerdevicedetails->Device_user_last_name;                         
          }
          $statusID = $ticketdata['ticket_status'];        
          $StatusallData = TicketStatus::where('ID',$statusID)->first();
@@ -176,7 +176,7 @@ class ManageTicketController extends Controller
                  array_push($array_issue,[$device_issue]);                           
                 }
                 if($statusID != 2){                                         
-                 array_push($array_openTicket,["flag"=>$lonerflag,"student_Id"=>$student_Id,"Inventory_ID"=>$InventoryID,"Device_isuue"=>$array_issue,"Device_model"=>$Device_model,"studentname"=>$firstName.' '.$lastName,"IssuedbID"=>$ID,"Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"TicketCreatedBy"=>$ticketCreatedBy,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>$ticketID,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
+                 array_push($array_openTicket,["lonerdevicename"=>$lonerdevicename,"student_Id"=>$student_Id,"Inventory_ID"=>$InventoryID,"Device_isuue"=>$array_issue,"Device_model"=>$Device_model,"studentname"=>$firstName.' '.$lastName,"IssuedbID"=>$ID,"Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"TicketCreatedBy"=>$ticketCreatedBy,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>$ticketID,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
                 }
         }          
         if($key =="null"){
