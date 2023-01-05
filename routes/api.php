@@ -62,7 +62,7 @@ Route::get('/closeTickets/{sid?}&{key}&{flag}', [ManageTicketController::class, 
 Route::get('/getTicketNotes/{sid?}&{id}', [ManageTicketController::class, 'getTicketNotes']);
 Route::get('/searchOpenTicket/{sid?}&{key}&{flag}', [ManageTicketController::class, 'searchOpenTicket']);
 Route::get('/allLonerDevice/{sid}&{key}', [ManageTicketController::class, 'allLonerDevice']);
-Route::get('/lonerdeviceHistory/{sid}&{id}', [ManageTicketController::class, 'lonerdeviceHistory']);
+Route::get('/lonerdeviceHistory/{id}', [ManageTicketController::class, 'lonerdeviceHistory']);
 
 //Route::get('/filterTickets/{sid?}&{fid}', [ManageTicketController::class, 'filterTickets']);
 //Route::get('/searchTicket/{sid?}&{skey}', [ManageTicketController::class, 'searchTicket']);

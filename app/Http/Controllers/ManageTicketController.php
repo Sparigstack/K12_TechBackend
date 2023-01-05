@@ -368,7 +368,7 @@ function allLonerDevice($sid,$key){
                     'msg' => $get
         ]));
 }
- function lonerdeviceHistory($sid,$id){
+ function lonerdeviceHistory($id){
      $lonerdevicelogdata = LonerDeviceLog::where('Loner_ID',$id)->first(); 
     
      $startDate = $lonerdevicelogdata->Start_date;
