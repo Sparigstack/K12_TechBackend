@@ -92,14 +92,14 @@ class TicketController extends Controller
         $studentInventory->Inventory_Id = $msg['inventoryId'];
         $studentInventory->Loner_ID = $msg['lonerId'];
         $studentInventory->save();        
-//        return "success";      
+//             
         
         $lonerdevicelog = new LonerDeviceLog();
         $lonerdevicelog->Student_ID = $studentId;
         $lonerdevicelog->Loner_ID = $msg['lonerId'];
         $lonerdevicelog->Start_date = now()->format('Y-m-d');
         $lonerdevicelog->save();
-        
+       return "success";  
 
 }else{
     return "success";
