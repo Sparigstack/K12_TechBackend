@@ -368,6 +368,24 @@ function allLonerDevice($sid,$key){
                     'msg' => $get
         ]));
 }
- 
+ function lonerdeviceHistory($sid,$id){
+     $lonerdevicelogdata = LonerDeviceLog::where('Loner_ID',$id)->first(); 
+    
+     $startDate = $lonerdevicelogdata->Start_date;
+     $endDate = $lonerdevicelogdata->End_date ;
+     $array_lonerdevice = array();
+     $lonerdata = InventoryManagement::where('id',$id)->first();
+     $lonermodel =  $lonerdata->Device_model;
+     $lonerstudentdata = Student::where('Inventory_ID',$id)->first();
+     
+     $lonername  =$lonerstudentdata->Device_user_first_name.' '.$lonerstudentdata->Device_user_last_name;
+     $studentwhouselonerdevice = $lonerdevicelogdata->Student_ID;
+     $studentwhouselonerdevicedata = Student::where('ID',$studentwhouselonerdevice)->first();
+    
+    $studentname = $studentwhouselonerdevicedata->Device_user_first_name.' '.$studentwhouselonerdevicedata->Device_user_last_name;
+        
+      array_push($array_lonerdevice,["lonerdevicemodel"=>$lonermodel,"startDate"=>$startDate,"endDate"=>$endDate,"name"=>$lonername,"whoUseLonerDevice"=>$studentname]);
+    return  $array_lonerdevice;
+ }
 }
        
