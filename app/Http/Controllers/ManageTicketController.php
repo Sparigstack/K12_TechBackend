@@ -136,7 +136,7 @@ class ManageTicketController extends Controller
          if(isset($studentinventorydata)){
              $lonerdeviceid = $studentinventorydata->Loner_ID;
              $lonerdevicedetails = Student::where('Inventory_ID',$lonerdeviceid)->first();
-             $lonerdevicename =  $lonerdevicedetails->Device_user_first_name . ' ' .$lonerdevicedetails->Device_user_last_name;                         
+             $lonerdevicename  =  $lonerdevicedetails->Device_user_first_name . ' ' .$lonerdevicedetails->Device_user_last_name;                         
          }
          $statusID = $ticketdata['ticket_status'];        
          $StatusallData = TicketStatus::where('ID',$statusID)->first();
