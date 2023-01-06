@@ -102,9 +102,9 @@ class TicketController extends Controller
         $lonerdevicelog->save();
        return "success";  
 
-}else{
-    return "success";
-}
-     }
+       }else{
+            return "success";
+      }
+ }
 }
     
