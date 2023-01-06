@@ -56,15 +56,16 @@ class TicketController extends Controller
            
             Ticket::where('id', $ticket->id)->update(['ticket_issue_Id' => $Issue->id]);
            }else{ 
-            foreach ($devicearray as $devicearraydata) {
-
-                 $Issue = new TicketIssue();
-                 $Issue->ticket_Id = $data->ID;
-                 $Issue->issue_Id = $devicearraydata['ID'];
-                 $Issue->user_id = $data->user_id;
-                 $Issue->inventory_id = $msg['inventoryId']; 
-                 $Issue->save();
-             }
+               return "ticket already generated";
+//            foreach ($devicearray as $devicearraydata) {
+//
+//                 $Issue = new TicketIssue();
+//                 $Issue->ticket_Id = $data->ID;
+//                 $Issue->issue_Id = $devicearraydata['ID'];
+//                 $Issue->user_id = $data->user_id;
+//                 $Issue->inventory_id = $msg['inventoryId']; 
+//                 $Issue->save();
+//             }
            }                       
             }
          else {
