@@ -364,7 +364,7 @@ function allLonerDevice($sid,$key){
 }
  function lonerdeviceHistory($id){
      $lonerdevicelogdata = LonerDeviceLog::where('Loner_ID',$id)->first(); 
-  
+  //if koi data na hoy to
      if(isset($lonerdevicelogdata)){
      $startDate = $lonerdevicelogdata->Start_date;
      $endDate = $lonerdevicelogdata->End_date ;
