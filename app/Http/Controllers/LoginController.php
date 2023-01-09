@@ -91,12 +91,20 @@ class LoginController extends Controller
         $user->school_id = $schoolID;
         $user->status = 'Approve';
         $user->save();
+        return Response::json(array(
+                            'status' => "success",  
+                            'response'=>'Approve'
+                     ));
        }else{
            $user = new User;
         $user->name = $firstname.''.$lastname;
         $user->email = $email;             
         $user->status = 'Reject';
         $user->save();
+        return Response::json(array(
+                            'status' => "success", 
+                             'response'=>'Reject'
+                ));
        }
     }
 
