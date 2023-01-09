@@ -362,27 +362,33 @@ function allLonerDevice($sid,$key){
                     'msg' => $get
         ]));
 }
- function lonerdeviceHistory($id){
-     $lonerdevicelogdata = LonerDeviceLog::where('Loner_ID',$id)->first(); 
-  //if koi data na hoy to
+function lonerdeviceHistory($id){
+     $lonerdevicelogdata = LonerDeviceLog::where('Loner_ID',$id)->first();   
      if(isset($lonerdevicelogdata)){
      $startDate = $lonerdevicelogdata->Start_date;
      $endDate = $lonerdevicelogdata->End_date ;
      $array_lonerdevice = array();
      $lonerdata = InventoryManagement::where('id',$id)->first();
      $lonermodel =  $lonerdata->Device_model;
-     $lonerstudentdata = Student::where('Inventory_ID',$id)->first();
-     
-     $lonername  =$lonerstudentdata->Device_user_first_name.' '.$lonerstudentdata->Device_user_last_name;
+     $studentinventories = StudentInventory::where('Loner_ID',$id)->first();      
+     $lonerstudentdata = Student::where('ID',$studentinventories->Student_ID)->first();    
+     $lonername  =$lonerstudentdata->Device_user_first_name.' '.$lonerstudentdata->Device_user_last_name;   
      $studentwhouselonerdevice = $lonerdevicelogdata->Student_ID;
-     $studentwhouselonerdevicedata = Student::where('ID',$studentwhouselonerdevice)->first();
-    
-    $studentname = $studentwhouselonerdevicedata->Device_user_first_name.' '.$studentwhouselonerdevicedata->Device_user_last_name;
-        
-      array_push($array_lonerdevice,["lonerdevicemodel"=>$lonermodel,"startDate"=>$startDate,"endDate"=>$endDate,"name"=>$lonername,"whoUseLonerDevice"=>$studentname]);
-    return  $array_lonerdevice;
+     $studentwhouselonerdevicedata = Student::where('ID',$studentwhouselonerdevice)->first();               
+      array_push($array_lonerdevice,["lonerdevicemodel"=>$lonermodel,"startDate"=>$startDate,"endDate"=>$endDate,"whoUseLonerDevice"=>$lonername]);
+     return response()->json(
+                        collect([
+                    'response' => 'success',
+                    'msg' => $array_lonerdevice
+        ]));
+     
  }else{
-     return 'No data found ';
+     return response()->json(
+                        collect([
+                    'response' => 'Error',
+                   
+        ]));
+
  }
 }
 }
