@@ -364,7 +364,8 @@ function allLonerDevice($sid,$key){
 }
  function lonerdeviceHistory($id){
      $lonerdevicelogdata = LonerDeviceLog::where('Loner_ID',$id)->first(); 
-    
+  
+     if(isset($lonerdevicelogdata)){
      $startDate = $lonerdevicelogdata->Start_date;
      $endDate = $lonerdevicelogdata->End_date ;
      $array_lonerdevice = array();
@@ -380,6 +381,9 @@ function allLonerDevice($sid,$key){
         
       array_push($array_lonerdevice,["lonerdevicemodel"=>$lonermodel,"startDate"=>$startDate,"endDate"=>$endDate,"name"=>$lonername,"whoUseLonerDevice"=>$studentname]);
     return  $array_lonerdevice;
+ }else{
+     return 'No data found';
  }
+}
 }
 
