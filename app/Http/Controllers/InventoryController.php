@@ -20,6 +20,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Exception;
 use App\Models\DeviceIssue;
 use Illuminate\Support\Facades\DB;
+use App\Models\ErrorLog;
+
 
 class InventoryController extends Controller {
 
@@ -148,6 +150,11 @@ class InventoryController extends Controller {
             return 'success';
         }catch (\Throwable $th) {
             return "Invalid CSV";
+            $errorfrom = 'uploadInventory';
+            $errormsg = $th;
+            $uid = $request->input('ID');
+            
+            ErrorLog($errorfrom,$errormsg,$uid);
         }
     }
 
