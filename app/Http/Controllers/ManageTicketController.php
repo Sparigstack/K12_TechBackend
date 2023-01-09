@@ -382,7 +382,7 @@ function allLonerDevice($sid,$key){
       array_push($array_lonerdevice,["lonerdevicemodel"=>$lonermodel,"startDate"=>$startDate,"endDate"=>$endDate,"name"=>$lonername,"whoUseLonerDevice"=>$studentname]);
     return  $array_lonerdevice;
  }else{
-     return 'No data found';
+     return 'No data found ';
  }
 }
 }
