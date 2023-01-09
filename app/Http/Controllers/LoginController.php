@@ -40,7 +40,7 @@ class LoginController extends Controller
            }
         }else{
                              return Response::json(array(
-                            'status' => 'SignUp 1st',                            
+                            'status' => 'SignUpFirst',                            
                 ));
         
         }
