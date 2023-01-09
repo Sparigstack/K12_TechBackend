@@ -236,7 +236,7 @@ class ManageTicketController extends Controller
          $array_closeTicket = array(); 
          
          foreach($data as $ticketdata){           
-         $ticketInventoryID = $ticketdata['inventory_id'];//inventoryid          
+         $ticketInventoryID = $ticketdata['inventory_id'];//inventoryid           
          $statusID = $ticketdata['ticket_status'];        
          $StatusallData = TicketStatus::where('ID',$statusID)->first();
          $status = $StatusallData->status;
