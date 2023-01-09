@@ -21,7 +21,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\LonerDeviceLog;
+use App\Exceptions\InvalidOrderException;
 class ManageTicketController extends Controller
 {
     function allTickets($sid,$uid){ 
@@ -107,6 +108,8 @@ class ManageTicketController extends Controller
                         $updateStudentInventory = StudentInventory::where('Inventory_Id',$inventoryID)->update(['Loner_ID'=>null]);
                         $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
                     }
+                   $date= now()->format('Y-m-d');
+                   LonerDeviceLog::where('Loner_ID',$lonerID)->update(['End_date'=>$date]);     
               }else{ 
                         $updatedTicketStatus = Ticket::where('ID',$ids['TicketID'])->update(['ticket_status'=>$ticketStatusID]);
                 }  
@@ -131,52 +134,44 @@ class ManageTicketController extends Controller
          $array_openTicket = array(); 
          
          foreach($data as $ticketdata){           
-         $ticketInventoryID = $ticketdata['inventory_id'];
-         $studentinventorydata = StudentInventory ::where('Inventory_ID',$ticketInventoryID)->first();
-         if(isset($studentinventorydata)){
-             $lonerflag = 1;
-         }else{
-             $lonerflag =0;
-         }
+         $ticketInventoryID = $ticketdata['inventory_id'];//inventoryid          
          $statusID = $ticketdata['ticket_status'];        
          $StatusallData = TicketStatus::where('ID',$statusID)->first();
          $status = $StatusallData->status;
-         $Inventory = InventoryManagement::where('ID',$ticketInventoryID)->first();
-         $InventoryID = $Inventory->ID;        
-         $serialNum = $Inventory->Serial_number;     
-         $student_data = Student::where('Inventory_ID',$InventoryID)->first();
-         $firstName = $student_data->Device_user_first_name;
-         $lastName = $student_data->Device_user_last_name;
-         $grade =$student_data->Grade;
-         $building =$student_data->Building;
-         $student_Id = $student_data->ID;
-         $userdId = $Inventory['user_id'];
          $notes = $ticketdata['notes'];
+         $Inventory = InventoryManagement::with('student')->where('ID',$ticketInventoryID)->first();      
+         $serialNum = $Inventory->Serial_number;     
+         $Device_model = $Inventory->Device_model;
+         $firstName = $Inventory->student->Device_user_first_name ?? "";
+         $lastName = $Inventory->student->Device_user_last_name ??'' ;
+         $grade =$Inventory->student->Grade ?? '' ;
+         $building =$Inventory->student->Building ??'' ;
+         $student_Id = $Inventory->student->ID ??'' ;  
+         $userdId = $Inventory['user_id'];        
          $user = User::where('id',$userdId)->first();          
-         $userName =$user->name;         
+         $userName =$user->name;   
+         
          $ticketID =$ticketdata['ID'];
          $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y'); 
          $ticketCreatedByUserName = $ticketdata['user_id'];
          $userdata =User::where('id',$ticketCreatedByUserName)->first();
          $ticketCreatedBy = $userdata->name;
-         $Issuealldata =TicketIssue::where('ticket_Id',$ticketdata['ID'])->get();       
+         
+         $Issuealldata =TicketIssue::where('ticket_Id',$ticketdata['ID'])->get();      
+       
          $array_issue = array(); 
                 foreach($Issuealldata as $Issuedata)
                 {                             
                  $ID =$Issuedata->ID;          
                  $device_issue_id =  $Issuedata->issue_Id;
                  $issue_inventory_id = $Issuedata->inventory_id;
-                 $inventory_student = InventoryManagement::where('id',$issue_inventory_id)->first();
-                 $student_data = Student::where('Inventory_ID',$inventory_student->ID)->first();
-                 $firstName = $student_data->Device_user_first_name;
-                 $lastName = $student_data->Device_user_last_name;
-                 $Device_model =$inventory_student->Device_model;
+                 $inventory_student = InventoryManagement::where('id',$issue_inventory_id)->first();                                
                  $device_issue_data = DeviceIssue::where('ID',$device_issue_id)->first();
                  $device_issue =$device_issue_data->issue;              
                  array_push($array_issue,[$device_issue]);                           
                 }
                 if($statusID != 2){                                         
-                 array_push($array_openTicket,["flag"=>$lonerflag,"student_Id"=>$student_Id,"Inventory_ID"=>$InventoryID,"Device_isuue"=>$array_issue,"Device_model"=>$Device_model,"studentname"=>$firstName.' '.$lastName,"IssuedbID"=>$ID,"Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"TicketCreatedBy"=>$ticketCreatedBy,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>$ticketID,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
+                 array_push($array_openTicket,["student_Id"=>$student_Id,"Inventory_ID"=>$ticketInventoryID,"Device_isuue"=>$array_issue,"Device_model"=>$Device_model,"studentname"=>$firstName.' '.$lastName,"IssuedbID"=>$ID,"Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"TicketCreatedBy"=>$ticketCreatedBy,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>$ticketID,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
                 }
         }          
         if($key =="null"){
@@ -233,51 +228,53 @@ class ManageTicketController extends Controller
         } catch (\Throwable $th) {    
           return "something went wrong.";
     }
-}
-    function CloseTickets($sid,$key,$flag){
+}    
+
+       function CloseTickets($sid,$key,$flag){
        try{
-         $data = Ticket::where('school_id',$sid)->get();
-         $array_closeTicket = array();  
+       $data = Ticket::where('school_id',$sid)->get();       
+         $array_closeTicket = array(); 
          
-         foreach($data as $ticketdata){    
-         $ticketInventoryID = $ticketdata['inventory_id'];
+         foreach($data as $ticketdata){           
+         $ticketInventoryID = $ticketdata['inventory_id'];//inventoryid          
          $statusID = $ticketdata['ticket_status'];        
          $StatusallData = TicketStatus::where('ID',$statusID)->first();
          $status = $StatusallData->status;
-         $Inventory = InventoryManagement::where('id',$ticketInventoryID)->first();        
-         $InventoryID = $Inventory['ID'];
-         $serialNum = $Inventory['Serial_number'];
-         $student_data = Student::where('Inventory_ID',$InventoryID)->first();
-         $firstName = $student_data->Device_user_first_name;
-         $lastName = $student_data->Device_user_last_name;
-         $grade =$student_data->Grade;
-         $building =$student_data->Building;
-         $student_Id = $student_data->ID;
-         $userdId = $Inventory['user_id'];
          $notes = $ticketdata['notes'];
+         $Inventory = InventoryManagement::with('student')->where('ID',$ticketInventoryID)->first();      
+         $serialNum = $Inventory->Serial_number;     
+         $Device_model = $Inventory->Device_model;
+         $firstName = $Inventory->student->Device_user_first_name ?? "";
+         $lastName = $Inventory->student->Device_user_last_name ??'' ;
+         $grade =$Inventory->student->Grade ?? '' ;
+         $building =$Inventory->student->Building ??'' ;
+         $student_Id = $Inventory->student->ID ??'' ;  
+         $userdId = $Inventory['user_id'];        
          $user = User::where('id',$userdId)->first();          
-         $userName =$user->name;         
+         $userName =$user->name;   
+         
          $ticketID =$ticketdata['ID'];
          $ticketCreateDate =$ticketdata['created_at']->format('d-m-Y'); 
-          $ticketCreatedByUserName = $ticketdata['user_id'];
+         $ticketCreatedByUserName = $ticketdata['user_id'];
          $userdata =User::where('id',$ticketCreatedByUserName)->first();
          $ticketCreatedBy = $userdata->name;
-         $Issuealldata =TicketIssue::where('ticket_Id',$ticketdata['ID'])->get();        
-                 foreach($Issuealldata as $Issuedata)
+         
+         $Issuealldata =TicketIssue::where('ticket_Id',$ticketdata['ID'])->get();      
+       
+         $array_issue = array(); 
+                foreach($Issuealldata as $Issuedata)
                 {                             
                  $ID =$Issuedata->ID;          
                  $device_issue_id =  $Issuedata->issue_Id;
                  $issue_inventory_id = $Issuedata->inventory_id;
-                 $inventory_student = InventoryManagement::where('id',$issue_inventory_id)->first();
-                 $student_data = Student::where('Inventory_ID',$inventory_student->ID)->first();
-                 $firstName = $student_data->Device_user_first_name;
-                 $lastName = $student_data->Device_user_last_name;
-                 $Device_model =$inventory_student->Device_model;  
-                 }
-                 if($statusID == 2){                                         
-                 array_push($array_closeTicket,["student_Id"=>$student_Id,"Inventory_ID"=>$InventoryID,"Device_model"=>$Device_model,"studentname"=>$firstName.' '.$lastName,"IssuedbID"=>$ID,"Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"TicketCreatedBy"=>$ticketCreatedBy,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>$ticketID,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
-                 }
-          
+                 $inventory_student = InventoryManagement::where('id',$issue_inventory_id)->first();                                
+                 $device_issue_data = DeviceIssue::where('ID',$device_issue_id)->first();
+                 $device_issue =$device_issue_data->issue;              
+                 array_push($array_issue,[$device_issue]);                           
+                }
+                if($statusID == 2){                                         
+                 array_push($array_closeTicket,["student_Id"=>$student_Id,"Inventory_ID"=>$ticketInventoryID,"Device_model"=>$Device_model,"studentname"=>$firstName.' '.$lastName,"IssuedbID"=>$ID,"Building"=>$building,"Grade"=>$grade,"notes"=>$notes,"TicketCreatedBy"=>$ticketCreatedBy,"userName"=>$userName,"serialNum"=>$serialNum,"ticketid"=>$ticketID,"ticket_status"=>$status,"Date"=>$ticketCreateDate]);
+                }
          } 
                    
 
@@ -348,16 +345,16 @@ class ManageTicketController extends Controller
  }
 function allLonerDevice($sid,$key){
     if($key !='null'){
-                  
-       $get= DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.school_id', $sid)->where('inventory_management.Loaner_device',1)->where('inventory_management.inventory_status',3)
+         $lonerdata = DB::table('student_inventories')->pluck('Loner_ID')->all();  
+  
+       $get= InventoryManagement::with('student')->where('school_id', $sid)->where('Loaner_device',1)
                ->where(function ($query) use ($key) {
-                        $query->where('inventory_management.Device_model', 'LIKE', "%$key%");
-                        $query->orWhere('students.Device_user_last_name', 'LIKE', "%$key%");
-                        $query->orWhere('students.Device_user_first_name', 'LIKE', "%$key%");
-                        $query->orWhere('inventory_management.Serial_number', 'LIKE', "%$key%");
-                    })->get();
-        }else{           
-          $get = DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.school_id', $sid)->where('inventory_management.Loaner_device',1)->where('inventory_management.inventory_status',3)->get();
+                        $query->where('Device_model', 'LIKE', "%$key%");                        
+                        $query->orWhere('Serial_number', 'LIKE', "%$key%");
+                    })->whereNotIn('ID', $lonerdata)->get();
+        }else{    
+            $get = InventoryManagement::with('student')->where('school_id',$sid)->where('inventory_management.Loaner_device',1)->get();
+//          $get = DB::table('inventory_management')->leftJoin('students', 'students.Inventory_ID', '=', 'inventory_management.ID')->where('inventory_management.school_id', $sid)->where('inventory_management.Loaner_device',1)->get();
         }
         return response()->json(
                         collect([
@@ -365,6 +362,24 @@ function allLonerDevice($sid,$key){
                     'msg' => $get
         ]));
 }
- 
+ function lonerdeviceHistory($id){
+     $lonerdevicelogdata = LonerDeviceLog::where('Loner_ID',$id)->first(); 
+    
+     $startDate = $lonerdevicelogdata->Start_date;
+     $endDate = $lonerdevicelogdata->End_date ;
+     $array_lonerdevice = array();
+     $lonerdata = InventoryManagement::where('id',$id)->first();
+     $lonermodel =  $lonerdata->Device_model;
+     $lonerstudentdata = Student::where('Inventory_ID',$id)->first();
+     
+     $lonername  =$lonerstudentdata->Device_user_first_name.' '.$lonerstudentdata->Device_user_last_name;
+     $studentwhouselonerdevice = $lonerdevicelogdata->Student_ID;
+     $studentwhouselonerdevicedata = Student::where('ID',$studentwhouselonerdevice)->first();
+    
+    $studentname = $studentwhouselonerdevicedata->Device_user_first_name.' '.$studentwhouselonerdevicedata->Device_user_last_name;
+        
+      array_push($array_lonerdevice,["lonerdevicemodel"=>$lonermodel,"startDate"=>$startDate,"endDate"=>$endDate,"name"=>$lonername,"whoUseLonerDevice"=>$studentname]);
+    return  $array_lonerdevice;
+ }
 }
-       
+

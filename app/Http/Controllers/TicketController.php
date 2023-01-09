@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\StudentInventory;
 use App\Models\Student;
 use App\Models\InventoryManagement;
+use App\Models\LonerDeviceLog;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,15 +56,16 @@ class TicketController extends Controller
            
             Ticket::where('id', $ticket->id)->update(['ticket_issue_Id' => $Issue->id]);
            }else{ 
-            foreach ($devicearray as $devicearraydata) {
-
-                 $Issue = new TicketIssue();
-                 $Issue->ticket_Id = $data->ID;
-                 $Issue->issue_Id = $devicearraydata['ID'];
-                 $Issue->user_id = $data->user_id;
-                 $Issue->inventory_id = $msg['inventoryId']; 
-                 $Issue->save();
-             }
+               return "ticket already generated";
+//            foreach ($devicearray as $devicearraydata) {
+//
+//                 $Issue = new TicketIssue();
+//                 $Issue->ticket_Id = $data->ID;
+//                 $Issue->issue_Id = $devicearraydata['ID'];
+//                 $Issue->user_id = $data->user_id;
+//                 $Issue->inventory_id = $msg['inventoryId']; 
+//                 $Issue->save();
+//             }
            }                       
             }
          else {
@@ -91,11 +93,18 @@ class TicketController extends Controller
         $studentInventory->Inventory_Id = $msg['inventoryId'];
         $studentInventory->Loner_ID = $msg['lonerId'];
         $studentInventory->save();        
-        return "success";      
+//             
+        
+        $lonerdevicelog = new LonerDeviceLog();
+        $lonerdevicelog->Student_ID = $studentId;
+        $lonerdevicelog->Loner_ID = $msg['lonerId'];
+        $lonerdevicelog->Start_date = now()->format('Y-m-d');
+        $lonerdevicelog->save();
+       return "success";  
 
-}else{
-    return "success";
-}
-     }
+       }else{
+            return "success";
+      }
+ }
 }
     

@@ -347,17 +347,7 @@ class InventoryController extends Controller {
          $inventory->inventory_status = 1;
         }
         
-        $Student = new Student;
-        $Student->Device_user_first_name = $request->input('Deviceuserfirstname');
-        $Student->Device_user_last_name = $request->input('Deviceuserlastname');
-        $Student->Grade = $request->input('Grade');
-        $Student->Building = $request->input('Building');
-        $Student->Parent_guardian_name = $request->input('Parentguardianname');
-        $Student->Parent_guardian_Email = $request->input('ParentguardianEmail');
-        $Student->Parent_phone_number = $request->input('Parentphonenumber');
-        $Student->Parental_coverage = $request->input('Parentalcoverage');
-        $Student->Inventory_Id = $inventory->id;
-        $Student->School_ID = $request->input('schoolid');
+       
 
         $checkinventory = InventoryManagement::where('ID', $request->input('ID'))->first();
         if (isset($checkinventory)) {
@@ -399,9 +389,26 @@ class InventoryController extends Controller {
                 return "success";
             }
         } else {
+            
             $inventory->save();
-            $Student->save();
-            Student::where('ID', $Student->id)->update(['Inventory_ID' => $inventory->id]);
+        if($request->input('flag')== 1){
+        $Student = new Student;
+        $Student->Device_user_first_name = $request->input('Deviceuserfirstname');
+        $Student->Device_user_last_name = $request->input('Deviceuserlastname');
+        $Student->Grade = $request->input('Grade');
+        $Student->Building = $request->input('Building');
+        $Student->Parent_guardian_name = $request->input('Parentguardianname');
+        $Student->Parent_guardian_Email = $request->input('ParentguardianEmail');
+        $Student->Parent_phone_number = $request->input('Parentphonenumber');
+        $Student->Parental_coverage = $request->input('Parentalcoverage');
+        $Student->Inventory_Id = $inventory->id;
+        $Student->School_ID = $request->input('schoolid');
+        $Student->save();
+        Student::where('ID', $Student->id)->update(['Inventory_ID' => $inventory->id]);
+        }
+            
+            }
+     if($request->input('flag')== 1){       
             return response()->json(
                             collect([
                         'response' => 'success',
@@ -409,8 +416,15 @@ class InventoryController extends Controller {
                         'student' => $Student,
             ]));
         }
+        else{
+            return response()->json(
+                            collect([
+                        'response' => 'success',
+                        'msg' => $inventory,                       
+            ]));
+        }
+    
     }
-
     public function sortbyInventory($sid, $key, $skey) {
     if ($skey == 3) {
                 if ($key == 1) {
