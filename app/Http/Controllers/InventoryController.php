@@ -21,7 +21,8 @@ use Exception;
 use App\Models\DeviceIssue;
 use Illuminate\Support\Facades\DB;
 use App\Models\ErrorLog;
-
+use App\Helpers\Helper;
+use App\Exceptions\InvalidOrderException;
 
 class InventoryController extends Controller {
 
@@ -148,13 +149,10 @@ class InventoryController extends Controller {
                 }
             }
             return 'success';
-        }catch (\Throwable $th) {
-            return "Invalid CSV";
-            $errorfrom = 'uploadInventory';
-            $errormsg = $th;
-            $uid = $request->input('ID');
-            
-            ErrorLog($errorfrom,$errormsg,$uid);
+        }catch (\Throwable $th) {               
+            Helper::Parseerror('uploadInventory',$th->getMessage(),$request->input('ID'),'high');
+            return "Invalid CSV";                    
+           
         }
     }
 
