@@ -29,46 +29,22 @@ class LoginController extends Controller
                 } else {
                     $updatedLoginDetail = User::where('email',$usersavedemail->email)->update(['remember_token' => $userAccessToken, 'microsoft_id' => $userMicrosoftId]);
                 }
-          return Response::json(array(
-                            'status' => "success",
-                            'msg' => $usersavedemail
+                            return Response::json(array(
+                            'status' => "success",                            
                 ));
                 }else{
-               return 'Users Domain name is not valid';  
+              
+                             return Response::json(array(
+                            'status' => 'Users Domain name is not valid'                           
+                ));
            }
         }else{
-          return 'SignUp 1st';
+                             return Response::json(array(
+                            'status' => 'SignUp 1st',                            
+                ));
+        
         }
-//            $email = $usersavedemail->email;
-//            $useremail = $request->input('email');
-//            if ($email == $useremail) {
-//                if($usersavedemail->status == 'Approve'){
-//                $userAccessToken = $request->input('accessToken');
-//                $userMicrosoftId = $request->input('microsoftId');
-//                $userGoogleId = $request->input('googleId');
-//                $flag = $request->input('flag');
-//                if ($flag == 1) {
-//                    $updatedLoginDetail = User::where('email', $useremail)->update(['remember_token' => $userAccessToken, 'google_id' => $userGoogleId]);
-//                } else {
-//                    $updatedLoginDetail = User::where('email', $useremail)->update(['remember_token' => $userAccessToken, 'microsoft_id' => $userMicrosoftId]);
-//                }
-//                return Response::json(array(
-//                            'status' => "success",
-//                            'msg' => $user
-//                ));
-//            }else{
-//               return Response::json(array(
-//                            'status' => "invalid user",                           
-//                )); 
-//            }
-//            } else {
-//              $user->save();
-//               return Response::json(array(
-//                        'status' => "success",
-//                        'msg' => $user
-//            ));
-//        }
-//    }
+
     }
 
     function loginValidation(Request $request) {
