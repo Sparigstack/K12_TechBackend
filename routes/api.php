@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
 });
 Route::post('/register',[LoginController::class,'register']);
 Route::post('/loginValidation',[LoginController::class,'loginValidation']);
+Route::post('/addUsers',[LoginController::class,'addUsers']);
 //inventory
 Route::post('/upload', [InventoryController::class, 'uploadInventory']); 
 Route::get('/getInventories/{sid?}', [InventoryController::class, 'getInventories']); 
