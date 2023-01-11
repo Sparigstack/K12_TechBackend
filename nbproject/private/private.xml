@@ -5,21 +5,20 @@
             <url>routes/api.php</url>
             <bookmark id="1">
                 <name/>
-                <line>25</line>
+                <line>26</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/xampp/htdocs/K12_Project/app/Helpers/Helper.php</file>
             <file>file:/C:/xampp/htdocs/K12_Project/routes/api.php</file>
+            <file>file:/C:/xampp/htdocs/K12_Project/app/Helpers/Utility.php</file>
             <file>file:/C:/xampp/htdocs/K12_Project/app/Http/Controllers/LoginController.php</file>
-            <file>file:/C:/xampp/htdocs/K12_Project/app/Http/Controllers/Controller.php</file>
-            <file>file:/C:/xampp/htdocs/K12_Project/app/Http/Controllers/DeviceTypeController.php</file>
+            <file>file:/C:/xampp/htdocs/K12_Project/app/Http/Controllers/ErrorLogController.php</file>
             <file>file:/C:/xampp/htdocs/K12_Project/app/Http/Controllers/InventoryController.php</file>
-            <file>file:/C:/xampp/htdocs/K12_Project/app/Models/StudentInventory.php</file>
-            <file>file:/C:/xampp/htdocs/K12_Project/app/Http/Controllers/TicketController.php</file>
-            <file>file:/C:/xampp/htdocs/K12_Project/app/Http/Controllers/ManageTicketController.php</file>
+            <file>file:/C:/xampp/htdocs/K12_Project/app/Models/InventoryManagement.php</file>
         </group>
     </open-files>
 </project-private>
