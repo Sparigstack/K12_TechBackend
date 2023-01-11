@@ -541,16 +541,11 @@ class InventoryController extends Controller {
         foreach ($idArray as $id) {
             if($actionId == 2){
                      $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 2]);
-            }elseif($actionId == 3){
-                $inventorydata = InventoryManagement::where('ID', $id)->first();
-                if($inventorydata->Loaner_device == 1){
-                     $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 3]);
-                }else{
-                     $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 1]);
-                } 
-            }else {
-                return "select any action";
-            }
+                     }elseif($actionId == 3) {
+                       $updatedInventory = InventoryManagement::where('ID', $id)->update(['inventory_status' => 1]);
+                     }else{
+                         return 'select active or decommission';
+                     }
         }
         return "success";
     }
